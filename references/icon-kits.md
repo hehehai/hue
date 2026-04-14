@@ -67,7 +67,7 @@ For each brand, extract these five attributes from the brand's actual icons (fet
 
 **CDN.**
 ```html
-<link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@1.8.0/font/lucide.css">
 <i class="icon icon-heart"></i>
 ```
 
@@ -92,7 +92,7 @@ For each brand, extract these five attributes from the brand's actual icons (fet
 
 **CDN.**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.41.1/dist/tabler-icons.min.css">
 <i class="ti ti-heart"></i>
 ```
 
@@ -117,7 +117,7 @@ For each brand, extract these five attributes from the brand's actual icons (fet
 
 **CDN.**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@v7.11.0/css/iconoir.css">
 <i class="iconoir-heart"></i>
 ```
 
@@ -215,7 +215,7 @@ iconography:
     weight: "default (2px)"
     match_score: "high"
     match_reasoning: "Iconoir is the only kit in the pool with intentional hand-drawn irregularity. Stroke weight (2px) is slightly heavier than observed (~1.75px), but the humanist personality matches. Phosphor thin would be second choice but too delicate."
-    cdn: "https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css"
+    cdn: "https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@v7.11.0/css/iconoir.css"
     icon_class_prefix: "iconoir-"
   disclaimer: "Icons in the generated preview are a best-match fallback from the Iconoir kit. The brand's actual icons are proprietary and not redistributed."
 ```

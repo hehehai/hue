@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear — Analysis Sample</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --neutral-0: #FFFFFF;
+    --neutral-50: #F7F8F8;
+    --neutral-100: #E6E6E6;
+    --neutral-200: #D0D6E0;
+    --neutral-300: #8A8F98;
+    --neutral-400: #62666D;
+    --neutral-500: #3E4146;
+    --neutral-600: #28282C;
+    --neutral-700: #23252A;
+    --neutral-800: #141516;
+    --neutral-900: #0F1011;
+    --neutral-950: #08090A;
+
+    --brand-50: #EEF1FF;
+    --brand-100: #D9DEFF;
+    --brand-200: #B8C0FF;
+    --brand-300: #9AA5FF;
+    --brand-400: #828FFF;
+    --brand-500: #7170FF;
+    --brand-600: #5E6AD2;
+    --brand-700: #5142C4;
+    --brand-800: #2A2D48;
+    --brand-900: #18182F;
+
+    --red: #EB5757;
+    --green: #27A644;
+    --amber: #F0BF00;
+    --blue: #4EA7FC;
+
+    --sp-2xs: 2px;
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 32px;
+    --sp-2xl: 48px;
+    --sp-3xl: 64px;
+    --sp-4xl: 96px;
+    --sp-5xl: 128px;
+
+    --r-0: 0px;
+    --r-sm: 4px;
+    --r-control: 6px;
+    --r-card: 8px;
+    --r-panel: 12px;
+    --r-pill: 999px;
+
+    --font-sans: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg: var(--neutral-950);
+    --surface1: var(--neutral-900);
+    --surface2: var(--neutral-800);
+    --surface3: var(--neutral-700);
+    --border: var(--neutral-700);
+    --border-vis: var(--neutral-600);
+    --text1: var(--neutral-50);
+    --text2: var(--neutral-200);
+    --text3: var(--neutral-300);
+    --text4: var(--neutral-400);
+    --accent: var(--brand-600);
+    --accent-hover: var(--brand-400);
+    --accent-subtle: var(--brand-900);
+    --hero-fog: radial-gradient(circle at 50% 60%, rgba(94, 106, 210, 0.08), transparent 42%);
+  }
+
+  [data-theme="light"] {
+    --bg: var(--neutral-0);
+    --surface1: var(--neutral-50);
+    --surface2: #F5F5F5;
+    --surface3: var(--neutral-100);
+    --border: #E0E0E0;
+    --border-vis: var(--neutral-200);
+    --text1: #2F2F31;
+    --text2: #5C5D5F;
+    --text3: #9E9EA0;
+    --text4: #B0B5C0;
+    --accent: var(--brand-600);
+    --accent-hover: #6D78D5;
+    --accent-subtle: var(--brand-50);
+    --hero-fog: radial-gradient(circle at 50% 58%, rgba(109, 120, 213, 0.08), transparent 42%);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text1);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    transition: background 240ms ease, color 240ms ease;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+    pointer-events: none;
+    cursor: default;
+  }
+  button {
+    font: inherit;
+    border: 0;
+  }
+  .theme-btn {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .mono {
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  .lp-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(20px);
+  }
+  .lp-header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 72px;
+    gap: 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .brand-mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.8));
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-mark::before,
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+  .brand-mark::before {
+    background:
+      linear-gradient(145deg,
+        transparent 0 26%,
+        var(--bg) 26% 34%,
+        transparent 34% 49%,
+        var(--bg) 49% 57%,
+        transparent 57% 72%,
+        var(--bg) 72% 80%,
+        transparent 80% 100%);
+    transform: rotate(-18deg);
+  }
+  .lp-nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+  .lp-nav .divider {
+    width: 1px;
+    height: 18px;
+    background: color-mix(in srgb, var(--border) 85%, transparent);
+  }
+  .lp-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 510;
+    transition: all 100ms ease-out;
+  }
+  .btn-neutral {
+    background: var(--text1);
+    color: var(--bg);
+    box-shadow:
+      0px 8px 2px 0px rgba(0,0,0,0),
+      0px 5px 2px 0px rgba(0,0,0,0.01),
+      0px 3px 2px 0px rgba(0,0,0,0.04),
+      0px 1px 1px 0px rgba(0,0,0,0.07),
+      0px 0px 1px 0px rgba(0,0,0,0.08);
+  }
+  [data-theme="dark"] .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: var(--text1);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      rgba(255,255,255,0.03) 0px 0px 0px 1px inset,
+      rgba(255,255,255,0.04) 0px 1px 0px 0px inset,
+      rgba(0,0,0,0.6) 0px 0px 0px 1px,
+      rgba(0,0,0,0.1) 0px 4px 4px 0px;
+  }
+  [data-theme="light"] .btn-secondary {
+    background: var(--surface3);
+    color: var(--text1);
+    border: 1px solid var(--border);
+  }
+  .btn-link {
+    padding: 0;
+    min-height: auto;
+    background: transparent;
+    color: var(--accent-hover);
+  }
+
+  .lp-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 88px 0 72px;
+  }
+  .lp-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--hero-fog);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .hero-copy {
+    padding-top: 48px;
+    max-width: 620px;
+  }
+  .hero-copy h1 {
+    margin: 0 0 20px;
+    font-size: clamp(48px, 6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.022em;
+    font-weight: 510;
+  }
+  .hero-copy p {
+    max-width: 420px;
+    color: var(--text2);
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+  .hero-link .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  .device {
+    position: relative;
+    min-height: 560px;
+    border-radius: var(--r-panel);
+    border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface1) 98%, transparent), color-mix(in srgb, var(--surface1) 94%, transparent));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--border) 95%, transparent) inset,
+      0 28px 80px rgba(0, 0, 0, 0.38);
+    overflow: hidden;
+  }
+  .device::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 120px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.26));
+    pointer-events: none;
+  }
+  .device-shell {
+    display: grid;
+    grid-template-columns: 146px 1fr;
+    min-height: 560px;
+  }
+  .sidebar {
+    border-right: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+    background: color-mix(in srgb, var(--surface1) 90%, transparent);
+    padding: 14px 10px;
+  }
+  .workspace {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 10px;
+    color: var(--text1);
+    font-size: 13px;
+  }
+  .search {
+    margin: 8px 0 14px;
+    min-height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-radius: var(--r-control);
+    color: var(--text4);
+    border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+    background: rgba(255,255,255,0.02);
+    font-size: 12px;
+  }
+  .nav-group {
+    margin-top: 10px;
+  }
+  .nav-label {
+    margin: 12px 4px 8px;
+    color: var(--text4);
+    font-size: 11px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin: 2px 0;
+    padding: 0 6px;
+    border-radius: var(--r-control);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 510;
+  }
+  .nav-item.active {
+    background: rgba(255,255,255,0.04);
+  }
+  .nav-item .status {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(39, 166, 68, 0.4);
+  }
+  .content {
+    padding: 14px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 12px;
+  }
+  .content-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text3);
+    font-size: 12px;
+  }
+  .title-row {
+    display: grid;
+    grid-template-columns: 1.1fr 240px;
+    gap: 12px;
+  }
+  .issue-head,
+  .issue-side,
+  .subpanel,
+  .metric-panel {
+    border-radius: var(--r-panel);
+    background: var(--surface1);
+    box-shadow: 0 0 0 1px var(--border) inset;
+  }
+  .issue-head {
+    padding: 20px;
+  }
+  .issue-head h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-weight: 510;
+  }
+  .issue-head p {
+    color: var(--text2);
+    max-width: 40ch;
+  }
+  .inline-code {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,0.06);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .issue-side {
+    padding: 16px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .side-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .side-value {
+    color: var(--text1);
+  }
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .subpanel {
+    padding: 14px;
+    min-height: 176px;
+  }
+  .subpanel h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--text1);
+    font-weight: 510;
+  }
+  .activity-item,
+  .code-line {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 10px;
+  }
+  .activity-avatar {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D0D6E0, #62666D);
+    flex: none;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .metric-panel {
+    padding: 16px;
+    min-height: 110px;
+  }
+  .metric-label {
+    color: var(--text3);
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  .metric-value {
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 510;
+  }
+  .sparkline {
+    margin-top: 14px;
+    height: 28px;
+    display: grid;
+    align-items: end;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+  }
+  .sparkline span {
+    display: block;
+    border-radius: 2px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 65%, white), color-mix(in srgb, var(--accent) 85%, black));
+    opacity: 0.9;
+  }
+
+  .logo-row {
+    padding: 18px 0 10px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  }
+  .logo-strip {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 18px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+  .logo-strip span {
+    white-space: nowrap;
+    opacity: 0.95;
+  }
+
+  .statement {
+    padding: 28px 0 96px;
+  }
+  .statement h2 {
+    max-width: 1080px;
+    margin: 0;
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 510;
+  }
+  .statement .muted {
+    color: var(--text3);
+  }
+
+  .lp-feature {
+    padding: 96px 0;
+    border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  }
+  .lp-feature-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .lp-feature.reverse .lp-feature-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+  .lp-feature.reverse .feature-copy {
+    order: 2;
+  }
+  .lp-feature.reverse .feature-visual {
+    order: 1;
+  }
+  .feature-kicker {
+    color: var(--text4);
+    font-size: 11px;
+    margin-bottom: 18px;
+  }
+  .feature-copy h3 {
+    margin: 0 0 18px;
+    font-size: 56px;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 510;
+  }
+  .feature-copy p {
+    max-width: 38ch;
+    color: var(--text2);
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .feature-link {
+    display: inline-block;
+    margin-top: 28px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+  .feature-visual {
+    min-height: 360px;
+    border-radius: var(--r-panel);
+    background: var(--surface1);
+    box-shadow: 0 0 0 1px var(--border) inset;
+    padding: 18px;
+  }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text3);
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+  .plan-surface,
+  .build-surface,
+  .monitor-surface {
+    height: 100%;
+    border-radius: var(--r-panel);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01)),
+      var(--bg);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--border) 88%, transparent) inset;
+    padding: 16px;
+  }
+  .plan-timeline {
+    position: relative;
+    height: 228px;
+    border-radius: var(--r-card);
+    background:
+      linear-gradient(180deg, transparent 0, transparent 27px, rgba(255,255,255,0.04) 27px, rgba(255,255,255,0.04) 28px, transparent 28px),
+      linear-gradient(90deg, transparent 0, transparent 75px, rgba(255,255,255,0.04) 75px, rgba(255,255,255,0.04) 76px, transparent 76px);
+    background-size: 100% 38px, 106px 100%;
+  }
+  .initiative {
+    position: absolute;
+    height: 18px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,0.04);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+  .initiative.a { top: 54px; left: 112px; width: 216px; }
+  .initiative.b { top: 102px; left: 168px; width: 264px; background: rgba(94,106,210,0.18); }
+  .initiative.c { top: 150px; left: 82px; width: 348px; }
+  .issue-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(94,106,210,0.5);
+  }
+  .issue-dot.a { top: 60px; left: 208px; }
+  .issue-dot.b { top: 108px; left: 294px; }
+  .issue-dot.c { top: 156px; left: 382px; background: var(--green); box-shadow: 0 0 8px rgba(39,166,68,0.45); }
+
+  .build-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 12px;
+    min-height: 280px;
+  }
+  .build-thread,
+  .build-assign {
+    border-radius: var(--r-panel);
+    background: var(--surface1);
+    box-shadow: 0 0 0 1px var(--border) inset;
+    padding: 16px;
+  }
+  .build-thread .line {
+    margin-bottom: 12px;
+    color: var(--text2);
+    font-size: 12px;
+  }
+  .build-thread .line strong {
+    color: var(--text1);
+    font-weight: 510;
+  }
+  .code-pill {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 6px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,0.04);
+    color: var(--text3);
+    font-size: 11px;
+  }
+  .assignee {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: var(--r-control);
+    color: var(--text2);
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .assignee.active {
+    background: rgba(255,255,255,0.04);
+    color: var(--text1);
+  }
+
+  .monitor-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 12px;
+    min-height: 290px;
+  }
+  .pulse-card,
+  .chart-card {
+    border-radius: var(--r-panel);
+    background: var(--surface1);
+    box-shadow: 0 0 0 1px var(--border) inset;
+    padding: 16px;
+  }
+  .pulse-row {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: var(--text2);
+    font-size: 12px;
+  }
+  .pulse-row .ok {
+    color: var(--green);
+  }
+  .pulse-row .risk {
+    color: var(--red);
+  }
+  .chart-grid {
+    height: 208px;
+    margin-top: 18px;
+    position: relative;
+    border-radius: var(--r-card);
+    background:
+      linear-gradient(180deg, transparent 0, transparent 39px, rgba(255,255,255,0.04) 39px, rgba(255,255,255,0.04) 40px, transparent 40px),
+      linear-gradient(90deg, transparent 0, transparent 59px, rgba(255,255,255,0.04) 59px, rgba(255,255,255,0.04) 60px, transparent 60px);
+    background-size: 100% 52px, 94px 100%;
+  }
+  .cluster {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+  }
+  .cluster.blue { background: #5E6AD2; }
+  .cluster.orange { background: #FC7840; }
+  .cluster.gray { background: #62666D; }
+
+  .quote-band {
+    padding: 32px 0 96px;
+  }
+  .quote-cards {
+    display: grid;
+    grid-template-columns: 1.2fr 0.68fr;
+    gap: 4px;
+  }
+  .quote-card {
+    min-height: 220px;
+    border-radius: var(--r-panel);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .quote-card.primary {
+    background: linear-gradient(135deg, #DFE9FF, #EDE3FF 62%, #E7F0FF);
+    color: #12141D;
+  }
+  .quote-card.secondary {
+    background: #EEFF00;
+    color: #0F1011;
+  }
+  .quote-text {
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    max-width: 22ch;
+  }
+  .quote-meta {
+    font-size: 12px;
+    color: rgba(15,16,17,0.7);
+  }
+
+  .final-cta {
+    padding: 120px 0 112px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+    text-align: center;
+  }
+  .final-cta h2 {
+    margin: 0 0 14px;
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 510;
+  }
+  .final-cta p {
+    margin: 0 auto 28px;
+    max-width: 34ch;
+    color: var(--text2);
+    font-size: 18px;
+  }
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .lp-footer {
+    border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+    padding: 48px 0 72px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 120px repeat(5, 1fr);
+    gap: 24px;
+  }
+  .footer-col h4 {
+    margin: 0 0 16px;
+    font-size: 13px;
+    font-weight: 510;
+    color: var(--text1);
+  }
+  .footer-col a {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+  .footer-bottom {
+    margin-top: 42px;
+    display: flex;
+    gap: 18px;
+    color: var(--text4);
+    font-size: 12px;
+  }
+
+  .theme-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px;
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--surface1) 88%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    backdrop-filter: blur(18px);
+  }
+  .theme-btn {
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--text3);
+    font-size: 12px;
+    font-weight: 510;
+  }
+  .theme-btn.active {
+    background: var(--text1);
+    color: var(--bg);
+  }
+
+  @media (max-width: 1100px) {
+    .hero-grid,
+    .lp-feature-grid,
+    .lp-feature.reverse .lp-feature-grid,
+    .build-layout,
+    .monitor-layout,
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-copy {
+      padding-top: 0;
+    }
+    .quote-cards,
+    .metrics,
+    .board,
+    .logo-strip {
+      grid-template-columns: 1fr 1fr;
+    }
+    .lp-nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .container {
+      padding: 0 16px;
+    }
+    .lp-header .container {
+      min-height: 64px;
+    }
+    .hero-actions,
+    .cta-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .quote-cards,
+    .metrics,
+    .board,
+    .logo-strip {
+      grid-template-columns: 1fr;
+    }
+    .feature-copy h3 {
+      font-size: 40px;
+    }
+    .device-shell {
+      grid-template-columns: 118px 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <header class="lp-header">
+    <div class="container">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Linear</span>
+      </div>
+      <nav class="lp-nav">
+        <a href="#">Product</a>
+        <a href="#">Resources</a>
+        <a href="#">Customers</a>
+        <a href="#">Pricing</a>
+        <a href="#">Now</a>
+        <a href="#">Contact</a>
+        <span class="divider"></span>
+        <a href="#">Log in</a>
+      </nav>
+      <div class="lp-actions">
+        <a class="btn btn-neutral" href="#">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="lp-hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>The operating layer for product teams and agents.</h1>
+          <p>Dense where the work is dense, quiet where the work needs focus. Planning, execution, and review stay inside one sharply controlled system.</p>
+          <div class="hero-actions">
+            <a class="btn btn-neutral" href="#">Get started</a>
+            <a class="btn btn-secondary" href="#">Contact sales</a>
+          </div>
+          <a class="hero-link" href="#"><span class="dot"></span><span>Agent work belongs next to product work, not around it.</span></a>
+        </div>
+
+        <div class="device" aria-label="Abstracted Linear product view">
+          <div class="device-shell">
+            <aside class="sidebar">
+              <div class="workspace"><span class="brand-mark" aria-hidden="true" style="width:14px;height:14px;"></span><span>Linear</span></div>
+              <div class="search mono">cmd+k</div>
+
+              <div class="nav-group">
+                <div class="nav-item active">Inbox</div>
+                <div class="nav-item">My issues</div>
+                <div class="nav-item">Reviews</div>
+                <div class="nav-item">Pulse</div>
+              </div>
+
+              <div class="nav-group">
+                <div class="nav-label">Workspace</div>
+                <div class="nav-item"><span class="status"></span>Initiatives</div>
+                <div class="nav-item">Projects</div>
+                <div class="nav-item">Agent tasks</div>
+                <div class="nav-item">Refresh</div>
+              </div>
+            </aside>
+
+            <section class="content">
+              <div class="content-bar mono">
+                <span>FASTER APP LAUNCH</span>
+                <span>02 / 145</span>
+              </div>
+
+              <div class="title-row">
+                <div class="issue-head">
+                  <h2>Reduce startup flicker before the first frame.</h2>
+                  <p>Render the shell before <span class="inline-code">vehicleState</span> resolves so the UI stops feeling blocked on app boot.</p>
+                </div>
+                <div class="issue-side">
+                  <div class="side-line"><span>Status</span><span class="side-value">In progress</span></div>
+                  <div class="side-line"><span>Priority</span><span class="side-value">High</span></div>
+                  <div class="side-line"><span>Owner</span><span class="side-value">jori</span></div>
+                  <div class="side-line"><span>Agent</span><span class="side-value">Cursor</span></div>
+                </div>
+              </div>
+
+              <div class="board">
+                <div class="subpanel">
+                  <h3>Activity</h3>
+                  <div class="activity-item"><span class="activity-avatar"></span><span>Slack intake converted into an issue for the iOS team.</span></div>
+                  <div class="activity-item"><span class="activity-avatar"></span><span>Agent run attached a patch against the startup renderer.</span></div>
+                  <div class="activity-item"><span class="activity-avatar"></span><span>Label set to <span class="inline-code">performance</span> and <span class="inline-code">ios</span>.</span></div>
+                </div>
+                <div class="subpanel">
+                  <h3>Diff preview</h3>
+                  <div class="code-line mono"><span style="color:var(--red)">-</span><span>const { isFullySynced } = useVehicleState()</span></div>
+                  <div class="code-line mono"><span style="color:var(--green)">+</span><span>const { syncStatus } = useVehicleState()</span></div>
+                  <div class="code-line mono"><span style="color:var(--green)">+</span><span>if (syncStatus === PENDING) return &lt;Spinner /&gt;</span></div>
+                </div>
+              </div>
+
+              <div class="metrics">
+                <div class="metric-panel">
+                  <div class="metric-label mono">Issue velocity</div>
+                  <div class="metric-value">18</div>
+                  <div class="sparkline">
+                    <span style="height:12px"></span><span style="height:18px"></span><span style="height:16px"></span><span style="height:22px"></span><span style="height:14px"></span><span style="height:20px"></span><span style="height:24px"></span><span style="height:18px"></span><span style="height:26px"></span><span style="height:20px"></span><span style="height:24px"></span><span style="height:28px"></span>
+                  </div>
+                </div>
+                <div class="metric-panel">
+                  <div class="metric-label mono">Cycle health</div>
+                  <div class="metric-value">92%</div>
+                  <div class="sparkline">
+                    <span style="height:10px"></span><span style="height:12px"></span><span style="height:16px"></span><span style="height:15px"></span><span style="height:18px"></span><span style="height:21px"></span><span style="height:20px"></span><span style="height:22px"></span><span style="height:24px"></span><span style="height:25px"></span><span style="height:26px"></span><span style="height:28px"></span>
+                  </div>
+                </div>
+                <div class="metric-panel">
+                  <div class="metric-label mono">Agent contribution</div>
+                  <div class="metric-value">31%</div>
+                  <div class="sparkline">
+                    <span style="height:7px"></span><span style="height:9px"></span><span style="height:12px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:16px"></span><span style="height:15px"></span><span style="height:18px"></span><span style="height:20px"></span><span style="height:21px"></span><span style="height:23px"></span><span style="height:24px"></span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="container logo-row">
+        <div class="logo-strip">
+          <span>Vercel</span>
+          <span>Cursor</span>
+          <span>OpenAI</span>
+          <span>Coinbase</span>
+          <span>Cash App</span>
+          <span>Ramp</span>
+          <span>Boom</span>
+          <span>Oscar</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="statement">
+      <div class="container">
+        <h2>A new product tool species. <span class="muted">Operationally sharp, agent-aware, and allergic to ornamental UI.</span></h2>
+      </div>
+    </section>
+
+    <section class="lp-feature">
+      <div class="container lp-feature-grid">
+        <div class="feature-copy">
+          <div class="feature-kicker mono">1.0 PLAN</div>
+          <h3>Define direction without losing the thread.</h3>
+          <p>Roadmaps, initiatives, and issue detail share the same visual language. Strategy never has to leave the system just to become execution.</p>
+          <a class="feature-link mono" href="#">Projects / Initiatives / Documents</a>
+        </div>
+        <div class="feature-visual">
+          <div class="panel-title mono"><span>Quarter plan</span><span>Q2</span></div>
+          <div class="plan-surface">
+            <div class="plan-timeline">
+              <div class="initiative a"></div>
+              <div class="initiative b"></div>
+              <div class="initiative c"></div>
+              <span class="issue-dot a"></span>
+              <span class="issue-dot b"></span>
+              <span class="issue-dot c"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-feature reverse">
+      <div class="container lp-feature-grid">
+        <div class="feature-copy">
+          <div class="feature-kicker mono">2.0 BUILD</div>
+          <h3>Move work with humans and agents in the same frame.</h3>
+          <p>Assignments, code context, issue history, and agent output stay adjacent. The interface treats automation like a participant, not an external integration panel.</p>
+          <a class="feature-link mono" href="#">Issues / Agents / MCP / Git automation</a>
+        </div>
+        <div class="feature-visual">
+          <div class="panel-title mono"><span>Agent task</span><span>ENG-2703</span></div>
+          <div class="build-surface">
+            <div class="build-layout">
+              <div class="build-thread">
+                <div class="line"><strong>Codex</strong> picked up the startup regression and opened the right workspace.</div>
+                <div class="line">Searching for initialization logic around the blocked first frame.</div>
+                <div class="line">Found the state gate that stalls the shell before content appears.</div>
+                <span class="code-pill mono">kinetic-ios/src/screens/Home/HomeScreen.tsx</span>
+              </div>
+              <div class="build-assign">
+                <div class="assignee active"><span>Codex</span><span>Agent</span></div>
+                <div class="assignee"><span>Steven</span><span></span></div>
+                <div class="assignee"><span>GitHub Copilot</span><span>Agent</span></div>
+                <div class="assignee"><span>Cursor</span><span>Agent</span></div>
+                <div class="assignee"><span>Meg</span><span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-feature">
+      <div class="container lp-feature-grid">
+        <div class="feature-copy">
+          <div class="feature-kicker mono">3.0 MONITOR</div>
+          <h3>See pressure early, not in the retrospective.</h3>
+          <p>The product language scales into dashboards, cycle summaries, and review surfaces without changing tone. Metrics stay legible because the surrounding UI stays quiet.</p>
+          <a class="feature-link mono" href="#">Pulse / Dashboards / Insights</a>
+        </div>
+        <div class="feature-visual">
+          <div class="panel-title mono"><span>Pulse</span><span>Apr 15</span></div>
+          <div class="monitor-surface">
+            <div class="monitor-layout">
+              <div class="pulse-card">
+                <div class="metric-label mono">Weekly pulse</div>
+                <div class="pulse-row"><span class="risk">At risk</span><br>Android updates are still blocked by unresolved UI timing work.</div>
+                <div class="pulse-row"><span class="ok">On track</span><br>Localization efforts completed ahead of the planned launch window.</div>
+              </div>
+              <div class="chart-card">
+                <div class="metric-label mono">Cycle time by agent</div>
+                <div class="chart-grid">
+                  <span class="cluster blue" style="left:44px;top:48px;"></span>
+                  <span class="cluster blue" style="left:52px;top:56px;"></span>
+                  <span class="cluster blue" style="left:60px;top:72px;"></span>
+                  <span class="cluster blue" style="left:56px;top:118px;"></span>
+                  <span class="cluster orange" style="left:174px;top:60px;"></span>
+                  <span class="cluster orange" style="left:182px;top:78px;"></span>
+                  <span class="cluster orange" style="left:188px;top:120px;"></span>
+                  <span class="cluster orange" style="left:172px;top:152px;"></span>
+                  <span class="cluster gray" style="left:308px;top:52px;"></span>
+                  <span class="cluster gray" style="left:316px;top:90px;"></span>
+                  <span class="cluster gray" style="left:320px;top:128px;"></span>
+                  <span class="cluster gray" style="left:304px;top:164px;"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote-band">
+      <div class="container">
+        <div class="quote-cards">
+          <div class="quote-card primary">
+            <div class="quote-text">The system disappears fast enough that the team can feel the work moving instead.</div>
+            <div class="quote-meta">Sample analysis card · modeled after Linear's customer-story treatment</div>
+          </div>
+          <div class="quote-card secondary">
+            <div class="quote-text">Speed is useful only when the interface stays out of the way.</div>
+            <div class="quote-meta">Color arrival used once, not everywhere</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="container">
+        <h2>Plan the present. Ship the next move.</h2>
+        <p>This page is not a full generated skill. It is a benchmark artifact: one YAML model and one landing-page rendering, built from a real brand analysis so you can compare it against the proof examples.</p>
+        <div class="cta-actions">
+          <a class="btn btn-neutral" href="#">Get started</a>
+          <a class="btn btn-secondary" href="#">Open design model</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lp-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#">Intake</a>
+          <a href="#">Plan</a>
+          <a href="#">Build</a>
+          <a href="#">Monitor</a>
+        </div>
+        <div class="footer-col">
+          <h4>Features</h4>
+          <a href="#">Asks</a>
+          <a href="#">Agents</a>
+          <a href="#">Insights</a>
+          <a href="#">Mobile</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Customers</a>
+          <a href="#">Careers</a>
+          <a href="#">Method</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="#">Documentation</a>
+          <a href="#">Developers</a>
+          <a href="#">Status</a>
+          <a href="#">Startups</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="#">Contact</a>
+          <a href="#">Community</a>
+          <a href="#">GitHub</a>
+          <a href="#">YouTube</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Privacy</span>
+        <span>Terms</span>
+        <span>DPA</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="theme-bar" aria-label="Theme switcher">
+    <button class="theme-btn active" data-theme-btn="dark">Dark</button>
+    <button class="theme-btn" data-theme-btn="light">Light</button>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const buttons = document.querySelectorAll('[data-theme-btn]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const mode = button.getAttribute('data-theme-btn');
+        root.setAttribute('data-theme', mode);
+        buttons.forEach((item) => item.classList.toggle('active', item === button));
+      });
+    });
+  </script>
+</body>
+</html>

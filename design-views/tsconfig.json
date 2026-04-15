@@ -1,0 +1,3 @@
+{
+  "extends": "@design-views/config/tsconfig.base.json"
+}

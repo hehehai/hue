@@ -1,26 +1,41 @@
 # hue
 
-an open-source claude code skill that learns any brand from a url, name, or screenshot and turns it into a complete design system. install it once, and every component claude builds after that matches your brand.
+an open-source Codex skill that learns any brand from a URL, name, screenshot, or local codebase and turns it into a complete design system skill. install it once, and every downstream brand skill it generates stays aligned with the source brand.
 
 see it in action: **[hueapp.io](https://hueapp.io)**
 
 ## what you get
 
-a full design language as a claude code skill — color tokens, typography, spacing, components, light + dark mode, hero stage recipes, icon kit selection. opinionated enough that two different claude sessions using the generated skill produce visually consistent output.
+a full design language as a Codex skill: color tokens, typography, spacing, components, light + dark mode, hero stage recipes, icon kit selection, and preview artifacts. opinionated enough that two different Codex sessions using the generated skill produce visually consistent output.
 
 ## install
 
+```bash
+git clone https://github.com/dominikmartn/hue "${CODEX_HOME:-$HOME/.codex}/skills/hue"
 ```
-git clone https://github.com/dominikmartn/hue ~/.claude/skills/hue
-```
 
-then in any claude code session say something like:
+`hue` is intended for explicit invocation. in a Codex session, say something like:
 
-- "make a design skill from cursor.com"
-- "create a design language inspired by raycast"
-- "generate a hue skill from this screenshot"
+- "use hue to create a design skill from cursor.com"
+- "$hue generate a brand design skill inspired by raycast"
+- "use hue with this screenshot to generate a brand design skill"
 
-claude picks up the trigger and walks through the analysis.
+the skill defaults to direct browser inspection via `agent-browser`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked.
+
+## output contract
+
+for each generated brand skill, `hue` keeps the same core artifact set:
+
+- `design-model.yaml`
+- `SKILL.md`
+- `agents/openai.yaml`
+- `references/tokens.md`
+- `references/components.md`
+- `references/platform-mapping.md`
+- `preview.html`
+- `component-library.html`
+- `landing-page.html`
+- `app-screen.html`
 
 ## examples
 
@@ -47,6 +62,13 @@ seventeen brands live in `examples/` showing the range of output hue produces. s
 | velvet | noir editorial fragrance house |
 
 each has a `design-model.yaml` + `landing-page.html`. ridge and stint also ship an `app-screen.html`. halcyon ships a full `component-library.html`. open them in a browser to see the system rendered.
+
+## runtime expectations
+
+- Codex-compatible skill loading via `SKILL.md` plus `agents/openai.yaml`
+- `agent-browser` available for best results on live sites
+- web access for public-source fallback
+- no Chrome DevTools MCP required
 
 ## license
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Hue"
+  short_description: "Generate brand-aligned design system skills"
+  default_prompt: "Use $hue to generate a brand-aligned Codex design skill from a URL, screenshot, or codebase."
+
+policy:
+  allow_implicit_invocation: false

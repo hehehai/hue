@@ -1,0 +1,25 @@
+{
+  "name": "design-views",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "check-types": "pnpm -r check-types",
+    "dev:web": "pnpm --filter web dev"
+  },
+  "dependencies": {
+    "@design-views/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@design-views/config": "workspace:*",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@10.14.0"
+}

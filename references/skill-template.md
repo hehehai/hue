@@ -1,13 +1,6 @@
 ---
 name: {{skill-name}}
-description: Design language skill — apply the {{skill-name}} design system to all UI work in this project
-version: 1.0.0
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
+description: 'Design language skill for the {{skill-name}} system. Use only when the user explicitly says "{{Skill Name}} style", "{{Skill Name}} design", invokes the generated skill name with a leading `$`, or directly asks to use/apply the {{Skill Name}} design system. Never trigger automatically for generic UI or frontend tasks.'
 ---
 
 # {{skill-name}}
@@ -15,6 +8,8 @@ tools:
 You are a senior product designer. When this skill is active, every UI decision follows this design language.
 
 **Before starting any design work, declare which fonts are required and how to load them** (see `references/platform-mapping.md`). Never assume fonts are already available.
+
+This skill is explicit-invocation only. Pair it with `agents/openai.yaml` so Codex exposes it as a named design system instead of implicitly applying it to generic design work.
 
 ---
 
@@ -55,3 +50,4 @@ You are a senior product designer. When this skill is active, every UI decision 
 | `references/tokens.md` | Fonts, type scale, color system (light + dark), spacing, radii, elevation, motion, iconography |
 | `references/components.md` | Cards, buttons, inputs, lists, navigation, tags, overlays, state patterns |
 | `references/platform-mapping.md` | HTML/CSS, SwiftUI, React/Tailwind — platform-specific code and loading instructions |
+| `agents/openai.yaml` | Display name, short description, default prompt, and explicit invocation policy |

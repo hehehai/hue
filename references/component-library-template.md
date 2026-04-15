@@ -176,6 +176,64 @@ When a component has multiple interactive states, render them **side-by-side** i
 
 **8. `div` inputs need flex centering.** When using `<div class="cl-input">` (for Select/Combobox mockups) instead of `<input>`, the div needs explicit `display: flex; align-items: center; height: 40px;` — unlike `<input>` which vertically centers text natively.
 
+**9. Status label consistency — same label, same variant, ALWAYS.** When a data table, list, or repeated component shows multiple rows with the same status label (e.g., five rows all labeled `Active`), every one of those rows MUST use the same badge variant (`cl-badge--success`, etc.). Don't vary badge colors across rows of the same label for "visual interest" — it reads as a bug to anyone looking at the table. The rule applies across the entire library: if `Active` is `--success` in the Data Table example, it must also be `--success` in the Badge example, the Tag example, the User List example, and any other component that surfaces the same label.
+
+✅ **Right** — five rows, label `Active` everywhere, all `cl-badge--success`:
+```html
+<tr><td>Sarah</td><td><span class="cl-badge cl-badge--success">Active</span></td><td>Engineer</td></tr>
+<tr><td>Marcus</td><td><span class="cl-badge cl-badge--success">Active</span></td><td>Designer</td></tr>
+<tr><td>Aiko</td><td><span class="cl-badge cl-badge--warning">Away</span></td><td>PM</td></tr>
+<tr><td>David</td><td><span class="cl-badge cl-badge--neutral">Offline</span></td><td>Engineer</td></tr>
+<tr><td>Elena</td><td><span class="cl-badge cl-badge--error">Suspended</span></td><td>Admin</td></tr>
+```
+
+❌ **Wrong** — same `Active` label, different colors per row:
+```html
+<tr><td>Sarah</td><td><span class="cl-badge cl-badge--success">Active</span></td><td>Admin</td></tr>
+<tr><td>Marcus</td><td><span class="cl-badge cl-badge--info">Active</span></td><td>Editor</td></tr>
+```
+
+Vary STATUS labels (`Active`, `Away`, `Offline`, `Suspended`), not the colors of the same label. Don't use badge color to encode role, plan tier, or any other secondary dimension that already has its own column. One label, one color, library-wide.
+
+**Same rule for tags, alerts, toasts, segmented controls, and any pill-shaped status indicator.** Lock the label-to-variant mapping in your head before writing the first row, then keep it consistent across every component group in the library.
+
+**10. Pill / badge box discipline.** Status pills look broken when their padding is asymmetric. Three specific traps:
+
+- **Vertical asymmetry from inherited `line-height`.** Body text typically has `line-height: 1.5`. A pill that inherits this gets a line-box ~16–18px tall around its 11–13px text, and the baseline sits in the bottom third of the box → visually the text floats up and "padding-bottom" looks bigger than padding-top. **Every pill MUST set `line-height: 1` explicitly.**
+- **Right-heavy padding from icon slots that aren't there.** Don't write `padding: 4px 14px 4px 8px` to "leave room for an optional icon" if the icon isn't rendered. Use the symmetric pair `padding: 4px 10px` (or whatever values), then if you actually add an icon, give it its own `gap` via `display: inline-flex; gap: 4px`.
+- **Trailing whitespace in text nodes.** `<span>Active </span>` (with a trailing space) renders the space as visible width on the right side of the pill. Always write `<span>Active</span>` with no trailing space.
+
+✅ **Right** — symmetric padding, locked line-height, no trailing space:
+```css
+.cl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;       /* shorthand pair, never 4-value */
+  line-height: 1;          /* override body's 1.5 inheritance */
+  font-size: 11px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+}
+```
+```html
+<span class="cl-badge cl-badge--success">Active</span>
+```
+
+❌ **Wrong** — line-height inherits, padding asymmetric, trailing space:
+```css
+.cl-badge {
+  padding: 4px 14px 6px 8px;  /* four values, both axes asymmetric */
+  font-size: 11px;
+  /* line-height not set → inherits body 1.5 → text floats up */
+  border-radius: var(--r-pill);
+}
+```
+```html
+<span class="cl-badge cl-badge--success">Active </span>  <!-- trailing space -->
+```
+
+**Same rule for tags, chips, segmented control segments, toggle pills, and any rounded label.** When in doubt: `display: inline-flex; align-items: center; line-height: 1; padding: Vpx Hpx;` and verify by inspecting the rendered box in a browser — if the text is not visually centered both horizontally and vertically, one of the three traps is hitting.
+
 ### Status colors
 
 Every component library needs status colors for alerts, badges, toasts, and input validation. Derive them from the brand's palette:

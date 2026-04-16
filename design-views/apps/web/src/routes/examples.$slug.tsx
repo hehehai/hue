@@ -1390,9 +1390,7 @@ function RawYamlSection({ example }: { example: (typeof examples)[number] }) {
       id="raw-yaml"
       title="Raw YAML"
     >
-      <pre className="overflow-x-auto rounded-[20px] border border-slate-200/80 bg-[#f7fafc] p-4 text-xs leading-6 text-slate-700 dark:border-white/10 dark:bg-[#08111b] dark:text-slate-200">
-        {example.raw.split("\n").slice(0, 180).join("\n")}
-      </pre>
+      <RawTextBlock text={example.raw} />
     </SectionPanel>
   );
 }
@@ -1412,10 +1410,20 @@ function RawDocumentSection({ example }: { example: (typeof examples)[number] })
       id="raw-document"
       title="Raw Markdown"
     >
-      <pre className="overflow-x-auto rounded-[20px] border border-slate-200/80 bg-[#f7fafc] p-4 text-xs leading-6 text-slate-700 dark:border-white/10 dark:bg-[#08111b] dark:text-slate-200">
-        {example.documentRaw.split("\n").slice(0, 220).join("\n")}
-      </pre>
+      <RawTextBlock text={example.documentRaw} />
     </SectionPanel>
+  );
+}
+
+function RawTextBlock({ text }: { text: string }) {
+  return (
+    <div className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-[#f7fafc] dark:border-white/10 dark:bg-[#08111b]">
+      <div className="max-h-[72vh] overflow-auto">
+        <pre className="min-w-full whitespace-pre p-4 text-xs leading-6 text-slate-700 dark:text-slate-200">
+          {text}
+        </pre>
+      </div>
+    </div>
   );
 }
 

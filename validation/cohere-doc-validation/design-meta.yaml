@@ -1,0 +1,46 @@
+generated_at: "2026-04-16"
+system:
+  name: "Ambient Trust Canvas"
+  slug: "ambient-trust-canvas"
+  summary: "A reusable light-first enterprise AI system with a near-white canvas, ink-dark pill CTAs, cobalt signal accents, and soft synthetic atmospheric gradients."
+  primary_mode: "light"
+  domain: "enterprise AI platform / workplace AI / model products"
+  system_type: "ui-rich"
+
+source:
+  input_type: "url"
+  label: "Cohere"
+  canonical_url: "https://cohere.com"
+  domain: "cohere.com"
+  entity_type: "software brand / marketing site"
+  primary_surface: "public marketing site"
+  analyzed_surfaces:
+    - "Homepage hero, primary CTA cluster, and below-fold atmospheric product module"
+    - "Products page with large synthetic gradient support panel and product framing"
+    - "Pricing page with flat tab navigation, neutral cards, and enterprise CTA hierarchy"
+    - "About page with sculptural coral-violet-cobalt objects used as brand atmosphere"
+
+capture_context:
+  inspected_at: "2026-04-16"
+  primary_mode_observed: "light"
+  evidence:
+    - kind: "computed-styles"
+      location: "hero CTA, pricing CTA, link CTA, tabs, and body text"
+      notes: "Primary CTAs are near-black pills with white text. Secondary link actions stay text-first. Tabs use a line-based selected state."
+    - kind: "typography-inspection"
+      location: "body and headings across homepage, products, pricing, and about"
+      notes: "Headlines use a proprietary display face that falls back toward Space Grotesk. Body/UI text uses a proprietary neo-grotesk that behaves similarly to Inter/Unica-like sans."
+    - kind: "visual-review"
+      location: "homepage, products, pricing, and about screenshots"
+      notes: "The site alternates between very blank white hero fields and soft synthetic atmosphere built from coral, violet, cobalt, and moss-toned gradient objects."
+
+translation:
+  abstraction_goal: "Separate source identity from reusable design language."
+  derivation_summary: "The source was abstracted into a generic enterprise AI system: blank white trust canvas, dark pill action geometry, cobalt-as-signal interaction accents, and modular sculptural gradient support fields."
+  excluded_source_markers:
+    - "Source brand name is kept in this file only."
+    - "Source URL is kept in this file only."
+    - "Source page names and product naming were removed from the reusable artifacts."
+  reuse_notes:
+    - "Apply this package when a product needs to feel both boardroom-safe and gently futuristic."
+    - "Treat the multihue sculptural gradients as optional support zones rather than a global page background."

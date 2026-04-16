@@ -1,0 +1,420 @@
+name: "Ambient Trust Canvas"
+description: "A light-first enterprise AI system built from a near-white canvas, ink-dark pill CTAs, cobalt signal accents, and soft synthetic atmospheric gradients."
+philosophy: "Enterprise trust delivered through restraint. The page stays open, quiet, and highly legible, then introduces soft synthetic atmosphere only in controlled modules. The result feels both boardroom-safe and gently futuristic."
+primary_mode: "light"
+domain: "enterprise AI platform / workplace AI / model products"
+system_type: "ui-rich"
+mono_for_code: false
+mono_for_metrics: false
+
+primitives:
+  colors:
+    neutral:
+      0: "#FFFFFF"
+      50: "#FCFCFB"
+      100: "#F7F7F6"
+      200: "#EFEFED"
+      300: "#E4E4E1"
+      400: "#D2D2D2"
+      500: "#BDBDC3"
+      600: "#93939F"
+      700: "#75758A"
+      800: "#212121"
+      900: "#17171C"
+      950: "#0D0E12"
+    accent:
+      50: "#EEF3FF"
+      100: "#DBE4FF"
+      200: "#B8C8FF"
+      300: "#8DA5F5"
+      400: "#5D7CDD"
+      500: "#2D4CB9"
+      600: "#203C9B"
+      700: "#1B2C73"
+      800: "#17204D"
+      900: "#11152E"
+    coral:
+      50: "#FFF1ED"
+      500: "#FF7A5C"
+      900: "#7B2C1B"
+    violet:
+      50: "#F7F0FF"
+      500: "#C68BFF"
+      900: "#4B2A6A"
+    mint:
+      50: "#EAF8F1"
+      500: "#5FAF92"
+      900: "#1F5647"
+    red:
+      50: "#FEF2F2"
+      500: "#D94D4D"
+      900: "#7F1D1D"
+    green:
+      50: "#EEF9F1"
+      500: "#3E9E6F"
+      900: "#14532D"
+    amber:
+      50: "#FFF8EA"
+      500: "#D79A2B"
+      900: "#7A4D10"
+  spacing: [0, 2, 4, 8, 12, 16, 24, 32, 48, 64, 96]
+  radii: [0, 4, 8, 10, 12, 999]
+
+tokens:
+  colors:
+    light:
+      background: "{neutral.0}"
+      surface1: "{neutral.50}"
+      surface2: "{neutral.100}"
+      surface3: "{neutral.200}"
+      border: "rgba(23,23,28,0.08)"
+      border_visible: "rgba(23,23,28,0.14)"
+      text1: "{neutral.900}"
+      text2: "{neutral.800}"
+      text3: "{neutral.700}"
+      text4: "{neutral.600}"
+      accent: "{accent.500}"
+      accent_subtle: "{accent.50}"
+    dark:
+      background: "{neutral.950}"
+      surface1: "{neutral.900}"
+      surface2: "{neutral.800}"
+      surface3: "{neutral.700}"
+      border: "rgba(255,255,255,0.08)"
+      border_visible: "rgba(255,255,255,0.14)"
+      text1: "{neutral.50}"
+      text2: "rgba(255,255,255,0.84)"
+      text3: "rgba(255,255,255,0.62)"
+      text4: "rgba(255,255,255,0.42)"
+      accent: "{accent.300}"
+      accent_subtle: "{accent.900}"
+    status:
+      success: "{green.500}"
+      warning: "{amber.500}"
+      error: "{red.500}"
+
+  spacing:
+    2xs: 2
+    xs: 4
+    sm: 8
+    md: 16
+    lg: 24
+    xl: 32
+    2xl: 48
+    3xl: 64
+    4xl: 96
+
+  radii:
+    element: 4
+    control: 10
+    component: 12
+    container: 12
+    pill: 999
+
+  typography:
+    display:
+      family: "Space Grotesk"
+      observed_character: "Soft-technical display sans with rounded geometry, wide apertures, and a calm enterprise futurism."
+      fallback: "Inter, system-ui, sans-serif"
+      size: "36px"
+      weight: 400
+      line_height: 1.06
+      letter_spacing: "-0.035em"
+      google_fonts: "Space+Grotesk:wght@400;500;600"
+    body:
+      family: "Inter"
+      observed_character: "Quiet neo-grotesk UI voice with minimal flourish and strong enterprise legibility."
+      fallback: "\"Helvetica Neue\", Arial, system-ui, sans-serif"
+      size: "16px"
+      weight: 400
+      line_height: 1.5
+      letter_spacing: "0em"
+      google_fonts: "Inter:wght@400;500;600"
+    mono:
+      family: "JetBrains Mono"
+      observed_character: "Optional technical fallback for implementation docs or machine-facing tables; not part of the primary marketing voice."
+      fallback: "\"SF Mono\", Menlo, Consolas, monospace"
+      size: "12px"
+      weight: 400
+      google_fonts: "JetBrains+Mono:wght@400;500"
+
+  type_scale:
+    display: { size: "72px", line_height: 1.05, letter_spacing: "-0.04em", weight: 400, use: "Oversized hero headlines" }
+    h1: { size: "56px", line_height: 1.08, letter_spacing: "-0.035em", weight: 400, use: "Primary page statements" }
+    h2: { size: "36px", line_height: 1.15, letter_spacing: "-0.025em", weight: 400, use: "Section anchors and major narratives" }
+    h3: { size: "24px", line_height: 1.2, letter_spacing: "-0.015em", weight: 400, use: "Feature leads and card titles" }
+    body: { size: "16px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Default body copy and CTA labels" }
+    body_sm: { size: "14px", line_height: 1.45, letter_spacing: "0em", weight: 400, use: "Navigation, metadata, and small controls" }
+    caption: { size: "12px", line_height: 1.4, letter_spacing: "0.01em", weight: 400, use: "Small helper text and legal copy" }
+    label: { size: "11px", line_height: 1.25, letter_spacing: "0.08em", weight: 400, use: "Overlines and tiny section labels" }
+
+  elevation:
+    strategy: "flat-atmospheric"
+    notes: "Most standard surfaces stay shadowless. Depth comes from scale contrast, white-on-white separation, and sculptural gradient fields rather than box-shadow."
+    shadows:
+      card_outline: "0 0 0 1px rgba(23,23,28,0.06)"
+      low: "0px 2px 8px rgba(23,23,28,0.04)"
+      atmospheric_media: "none"
+
+  motion:
+    personality: "smooth"
+    easing: "cubic-bezier(.4, 0, .2, 1)"
+    duration_fast: "140ms"
+    duration_normal: "180ms"
+    duration_slow: "260ms"
+    notes: "Motion should feel polished and corporate, never springy or playful."
+
+  hero_stage:
+    preset: null
+    observed_style:
+      description: "The core hero is mostly blank white space with oversized type and a dark pill CTA, while adjacent and supporting sections introduce soft synthetic blobs and blurred gradient slabs in coral, violet, cobalt, and moss tones."
+      where_used:
+        - "landing hero"
+        - "supporting product modules"
+        - "about-style atmospheric sections"
+      notes: "Atmosphere is modular, not always-on. The blank canvas is as important as the color objects."
+    background:
+      medium: "absent"
+      color_mode: "palette"
+      saturation: "muted"
+      light_source: "ambient"
+      falloff: "soft"
+      vignette: "off"
+      texture: "grain"
+      motion: "static"
+      intensity: "subtle"
+      safe_zone: "masked-for-text"
+      color_palette:
+        - "#FFFFFF"
+        - "#FF7A5C"
+        - "#C68BFF"
+        - "#2D4CB9"
+        - "#5FAF92"
+    hero:
+      subject: "composition"
+      placement: "edge-right"
+      scale: "supporting"
+      tint: "multihue"
+    relation:
+      type: "flat"
+      bleed: 0
+    disclaimer: "Rendered as an abstract atmospheric composition rather than a literal reproduction of any source imagery."
+
+  iconography:
+    observed_style:
+      description: "Small rounded utility glyphs with mixed outline/fill treatment, soft terminals, and low visual drama."
+      stroke_weight: "regular"
+      corner_treatment: "soft"
+      fill_style: "mixed"
+      form_language: "humanist"
+      visual_density: "minimal"
+    fallback_kit:
+      name: "Material Symbols Rounded"
+      weight: "400 fill"
+      match_score: "medium"
+      match_reasoning: "Material Symbols Rounded preserves the calm rounded terminals and compact enterprise utility tone. It is more generic than the observed set, but it avoids sharp mechanical iconography that would feel too infra-like."
+      cdn: "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,1,0"
+      icon_class_prefix: "material-symbols-rounded"
+    disclaimer: "The generated package uses an open rounded utility set instead of any proprietary icon font."
+
+components:
+  button_primary:
+    source: "observed"
+    background: "{tokens.colors.light.text1}"
+    color: "{tokens.colors.light.background}"
+    font_family: "{tokens.typography.body.family}"
+    font_size: "{tokens.type_scale.body.size}"
+    font_weight: 400
+    padding: "12px 24px"
+    height: "49px"
+    radius: "{tokens.radii.pill}"
+    border: "0px solid transparent"
+    shadow: "none"
+    hover:
+      background: "{primitives.colors.neutral.800}"
+    notes: "Primary actions are dark pills with no outline or shadow."
+
+  button_secondary_inverted:
+    source: "observed"
+    background: "{tokens.colors.light.background}"
+    color: "{tokens.colors.light.text1}"
+    font_size: "{tokens.type_scale.body.size}"
+    font_weight: 400
+    padding: "12px 24px"
+    height: "49px"
+    radius: "{tokens.radii.pill}"
+    border: "0px solid transparent"
+    shadow: "none"
+    notes: "Used inside darker or more atmospheric modules when the CTA must stay calm but visible."
+
+  text_link:
+    source: "observed"
+    background: "transparent"
+    color: "{tokens.colors.light.surface3}" # placeholder to keep structure readable
+    resolved_color: "{primitives.colors.neutral.800}"
+    font_size: "{tokens.type_scale.body.size}"
+    font_weight: 400
+    padding: "0px 0px 6px"
+    radius: "{primitives.radii.0}"
+    border: "0px solid transparent"
+    underline: "1px solid rgba(33,33,33,0.75)"
+    notes: "Secondary actions are text-first and often carry an underline or arrow suffix instead of a pill shell."
+
+  nav_link:
+    source: "observed"
+    background: "transparent"
+    color: "{tokens.colors.light.text1}"
+    font_size: "{tokens.type_scale.body.size}"
+    font_weight: 400
+    padding: "0px"
+    radius: "{primitives.radii.0}"
+    border: "0px solid transparent"
+
+  input_field:
+    source: "observed"
+    background: "{tokens.colors.light.background}"
+    color: "{tokens.colors.light.text1}"
+    placeholder: "{tokens.colors.light.text3}"
+    border_default: "1px solid rgba(23,23,28,0.12)"
+    border_focus: "1px solid {tokens.colors.light.accent}"
+    focus_ring: "0 0 0 1px rgba(45,76,185,0.14)"
+    radius: "{tokens.radii.control}"
+    padding: "12px 16px"
+    notes: "Form fields stay quiet, white, and enterprise-neutral."
+
+  tab_selector:
+    source: "observed"
+    background: "transparent"
+    color: "{tokens.colors.light.text2}"
+    font_size: "{tokens.type_scale.body.size}"
+    font_weight: 400
+    padding: "4px 0px"
+    height: "34px"
+    radius: "{primitives.radii.0}"
+    border: "0px solid transparent"
+    active_underline: "2px solid {tokens.colors.light.accent}"
+    notes: "Selection is expressed as a line, not as a pill shell."
+
+  feature_card:
+    source: "observed"
+    background: "{tokens.colors.light.background}"
+    radius: "{tokens.radii.component}"
+    padding: "24px"
+    border: "1px solid rgba(23,23,28,0.06)"
+    shadow: "none"
+
+  atmospheric_panel:
+    source: "observed"
+    background: "multihue sculptural gradient with grain"
+    radius: "{tokens.radii.component}"
+    padding: "0px"
+    border: "0px solid transparent"
+    shadow: "none"
+    color_palette:
+      - "{primitives.colors.coral.500}"
+      - "{primitives.colors.violet.500}"
+      - "{primitives.colors.accent.500}"
+      - "{primitives.colors.mint.500}"
+    notes: "Used as a supporting slab behind product stories or mission statements, never as a full-page wash."
+
+  overlay_drawer:
+    source: "derived"
+    background: "{tokens.colors.light.background}"
+    color: "{tokens.colors.light.text1}"
+    border: "1px solid rgba(23,23,28,0.08)"
+    radius: "{tokens.radii.component}"
+    padding: "20px 24px"
+    shadow: "none"
+    notes: "Derived from the flat navigation language and white card treatment."
+
+responsive_behavior:
+  breakpoints:
+    small_mobile:
+      width: "<479px"
+      key_changes:
+        - "Headline scales toward 30px"
+        - "Primary CTA stays pill-shaped but full-width when needed"
+        - "Atmospheric blobs crop to the edges"
+    mobile:
+      width: "479-640px"
+      key_changes:
+        - "Single-column layout"
+        - "Navigation collapses to a drawer"
+        - "Tabs wrap or become horizontally scrollable"
+    large_mobile:
+      width: "640-767px"
+      key_changes:
+        - "Single-column rail with wider media slabs"
+    tablet:
+      width: "768-991px"
+      key_changes:
+        - "Two-column feature layouts begin"
+        - "Atmospheric panels can re-expand"
+    desktop:
+      width: "992px+"
+      key_changes:
+        - "Wide hero copy"
+        - "Full navigation"
+        - "Large supporting atmospheric modules"
+
+  typography_scaling:
+    display: { desktop: "72px", tablet: "56px", mobile: "40px", small_mobile: "30px" }
+    h1: { desktop: "56px", tablet: "44px", mobile: "34px", small_mobile: "28px" }
+    h2: { desktop: "36px", tablet: "30px", mobile: "24px", small_mobile: "22px" }
+    body: { desktop: "16px", tablet: "16px", mobile: "15px", small_mobile: "15px" }
+
+  touch_targets:
+    minimum: "44x44px"
+    notes:
+      - "Primary pills preserve generous vertical padding."
+      - "Drawer items and tabs remain thumb-friendly."
+      - "Text links may stay visually compact only if the tap area is expanded."
+
+  collapsing_strategy:
+    navigation: "Full horizontal nav becomes a white drawer or sheet."
+    hero: "Oversized headline and CTA stack above supporting atmosphere."
+    feature_cards: "Multi-column feature stories stack into a single-column feed."
+    tabs: "Horizontal labels wrap or scroll before changing interaction style."
+    atmospheric_modules: "Large sculptural panels crop at the edges instead of shrinking into tiny centered art."
+
+  image_behavior:
+    atmospheric_panels: "Gradient objects crop proportionally and remain edge-anchored."
+    cards: "White cards preserve radius and spacing while shrinking proportionally."
+    art_direction_changes: false
+    prioritization: "Preserve headline clarity and CTA legibility before decorative atmosphere."
+
+dos_and_donts:
+  do:
+    - "Use a near-white canvas as the default environment."
+    - "Use ink-dark pill buttons for primary calls to action."
+    - "Use cobalt as a focused signal, not as a page-wide brand wash."
+    - "Keep sculptural gradients modular and edge-anchored."
+    - "Keep typography mostly regular-weight and let scale do the hierarchy work."
+    - "Keep cards shadowless and rely on clean separation instead."
+  dont:
+    - "Don't flood the whole page with gradients."
+    - "Don't turn every secondary action into an outlined pill."
+    - "Don't use saturated blue as the main fill color for CTAs."
+    - "Don't introduce sharp brutalist corners on the main card system."
+    - "Don't use heavy drop shadows to create depth."
+    - "Don't swap the calm body sans for an expressive editorial body face."
+
+anti_patterns:
+  - "No full-page aurora or mesh background behind all content."
+  - "No accent-colored primary button system."
+  - "No glassmorphism or translucent frosted panels."
+  - "No sharp 0px card corners on core content modules."
+  - "No ultra-bold display weights as the default hero style."
+  - "No dark-mode inversion as the primary expression."
+  - "No decorative gradients that outrank the headline and CTA."
+  - "No dense enterprise dashboard chrome on the marketing layer."
+
+iteration_heuristics:
+  safe_adjustments:
+    - "Tune the warmth of the white/gray ramp while keeping the page visually bright."
+    - "Shift the cobalt signal slightly warmer or cooler without changing CTA fill behavior."
+    - "Increase or decrease the visibility of the atmospheric panels while keeping them modular."
+  high_risk_changes:
+    - "Turning the blue accent into the default fill for primary actions."
+    - "Making the page globally atmospheric instead of mostly blank."
+    - "Replacing the pill CTA system with squared or heavily outlined buttons."

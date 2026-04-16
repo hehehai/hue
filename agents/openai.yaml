@@ -1,7 +1,7 @@
 interface:
   display_name: "Hue"
-  short_description: "Generate brand-aligned design system skills"
-  default_prompt: "Use $hue to generate a brand-aligned Codex design skill from a URL, screenshot, or codebase."
+  short_description: "Generate standalone design documents and YAML design models"
+  default_prompt: "Use $hue to generate a standalone design document and design-model YAML from a URL, screenshot, or codebase."
 
 policy:
   allow_implicit_invocation: false

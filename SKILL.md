@@ -1,11 +1,11 @@
 ---
 name: hue
-description: "Meta-skill that generates brand-aligned design language skills for Codex. Use when the user explicitly says 'use hue', '$hue', 'create a design skill', 'generate a brand design skill', 'design skill inspired by X', or 'design skill from this screenshot'. Also use when the user asks to remix an existing design skill. Do not trigger automatically for generic UI or frontend requests."
+description: "Meta-skill that generates brand-aligned design documents for Codex. Use when the user explicitly says 'use hue', '$hue', 'create a design document', 'generate a design-model yaml', 'generate a brand design system document', or asks for a design YAML plus Markdown document from a URL, screenshot, brand, or codebase. Also use when the user asks to remix an existing design document. Do not trigger automatically for generic UI or frontend requests."
 ---
 
-# Design Skill Generator
+# Design Document Generator
 
-You are a senior product designer who creates design language specifications for Codex. You don't design interfaces — you design the *system* that designs interfaces. Every skill you generate must be opinionated enough that two different Codex sessions using it would produce visually consistent output.
+You are a senior product designer who creates design language specifications for Codex. You don't design interfaces — you distill a brand into a reusable design document plus a machine-readable YAML model. Every output you generate must be opinionated enough that two different implementers reading the same document would build visually consistent results.
 
 Your reference material lives in `references/`. Use it.
 
@@ -169,7 +169,7 @@ Analyze every image the user provides. More screenshots = better understanding. 
 The user describes a vibe: "dark minimal with neon accents" or "warm and friendly like a coffee shop menu." Translate the emotional description into concrete design decisions. Every adjective must become a number: "warm" = warm-tinted grays. "Minimal" = high spacing, few elements. "Neon" = saturated accent on dark surface.
 
 ### Remix
-Read the existing skill files. Understand the current personality. Apply the requested modification *surgically* — if the user says "make it warmer," shift the gray palette toward warm tones, not rewrite the philosophy. Preserve everything that isn't explicitly being changed.
+Read the existing design files. Understand the current personality. Apply the requested modification *surgically* — if the user says "make it warmer," shift the gray palette toward warm tones, not rewrite the philosophy. Preserve everything that isn't explicitly being changed.
 
 ---
 
@@ -234,7 +234,7 @@ For each component the brand HAS, create a **Tear-Down Sheet** — extract CSS p
 > - **Hover:** `background: #4E4CD5` (slightly darker)
 > - **Conclusion:** Generated primary button will use these exact values as baseline.
 
-This creates a traceable link between what the brand actually does and what the skill generates.
+This creates a traceable link between what the brand actually does and what the generated package documents.
 
 For components the brand DOESN'T have, create a **Derived Design** with explicit justification:
 
@@ -247,7 +247,7 @@ Name the specific principles from the analysis that justify the derivation. No g
 
 ### Step 2.5: Icon Kit Selection
 
-**We cannot copy a brand's proprietary icons into generated skills.** Instead, we maintain a pool of freely-licensed icon kits in `references/icon-kits.md` and pick the closest fit as a best-match fallback.
+**We cannot copy a brand's proprietary icons into generated design packages.** Instead, we maintain a pool of freely-licensed icon kits in `references/icon-kits.md` and pick the closest fit as a best-match fallback.
 
 Follow this sequence exactly — no shortcuts, no defaulting to Phosphor because it's familiar.
 
@@ -266,7 +266,7 @@ Follow this sequence exactly — no shortcuts, no defaulting to Phosphor because
 
 5. **Write `match_reasoning`** — 2–3 sentences naming what matches, what doesn't, and why this kit beats the second-best option. If the gap is large (e.g. brand is hand-drawn but no kit is truly hand-drawn), say so explicitly.
 
-6. **Never claim the brand uses the kit.** The YAML fields are `observed_style` (what the brand actually does, as prose) and `fallback_kit` (what we rendered with). The `disclaimer` field makes this explicit for anyone reading the skill later.
+6. **Never claim the brand uses the kit.** The YAML fields are `observed_style` (what the brand actually does, as prose) and `fallback_kit` (what we rendered with). The `disclaimer` field makes this explicit for anyone reading the document later.
 
 This step gets its own YAML block — see Step 4 for the schema.
 
@@ -338,7 +338,7 @@ After the user approves the direction, present the core foundational tokens for 
 This gives the user a low-cost opportunity to correct a foundational value that would otherwise cascade incorrectly through all generated files.
 
 ### Step 4: Build Design Model
-Create a `design-model.yaml` in the skill folder as the **Single Source of Truth**. This file captures every design decision in a structured, machine-readable format. All subsequent files (tokens.md, components.md, platform-mapping.md, previews) are generated FROM this model.
+Create a `design-model.yaml` in the output folder as the structured, machine-readable artifact of the analysis. It must be complete enough for downstream tooling and exact enough for diffing and iteration, but it is not the only authoritative output. The Markdown document is a parallel, standalone artifact built from the same analysis and reconciled against this model for consistency.
 
 The YAML has two token layers: **Primitives** (raw ramps) and **Semantic** (role-based tokens referencing primitives).
 
@@ -493,10 +493,10 @@ tokens:
       bleed: 0                    # 0-100, how much subject light spills into background
       # Compat: see subject × relation matrix in references/hero-stage.md.
       # Disallowed pairs: luminous+shadow-only, object+emissive, device+emissive, composition+emissive.
-    disclaimer: "Approximated with SVG + CSS. The real brand uses commissioned illustrations not redistributed with this skill."
+    disclaimer: "Approximated with SVG + CSS. The real brand uses commissioned illustrations not redistributed with this document package."
 
   # Dual-track iconography — brand reality + our fallback.
-  # The skill renders `fallback_kit`; `observed_style` documents truth.
+  # The generated package renders `fallback_kit`; `observed_style` documents truth.
   iconography:
     observed_style:
       description: "Custom 1.75px outline icons with rounded terminals. Humanist with slight irregularity. Not from any standard kit."
@@ -512,7 +512,7 @@ tokens:
       match_reasoning: "Phosphor regular matches the observed stroke weight (~1.5px), rounded terminals, and humanist form language. Iconoir would be second choice for a closer hand-drawn feel, but Phosphor's broader glyph set wins."
       cdn: "https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css"
       icon_class_prefix: "ph ph-"
-    disclaimer: "Icons in the generated preview are a best-match fallback from the Phosphor kit. The brand's actual icons are proprietary and not redistributed with this skill."
+    disclaimer: "Icons in derived previews are a best-match fallback from the Phosphor kit. The brand's actual icons are proprietary and not redistributed with this document package."
 
 components:
   button_primary:
@@ -532,148 +532,68 @@ components:
 - **Status colors:** Minimal ramps (50, 500, 900) for red/green/amber. Enough for bg-tint + foreground + dark-mode.
 - **Spacing/radii primitives:** A superset scale. Semantic tokens pick from this scale.
 
-Write the YAML first. Then generate all other files by reading from it. This ensures tokens.md, components.md, platform-mapping.md, and preview.html all use the exact same values.
+Build the YAML and Markdown from the same analysis pass. You may draft one before the other, but finish by reconciling both files so they describe the same design language at comparable specificity.
 
-### Step 5: Generate Skill Files from Design Model
-Read the `design-model.yaml` and generate every required skill file. Fill every placeholder. No empty sections, no TODOs. Use the templates from `references/` as the exact structure:
+### Step 5: Generate Standalone Markdown Design Document
+Generate one Markdown document: `design-document.md`. Fill every placeholder. No empty sections, no TODOs. Use `references/design-document-template.md` as the exact structure.
 
-| File | Template | Purpose |
-|------|----------|---------|
-| `SKILL.md` | `references/skill-template.md` | Philosophy, craft rules, anti-patterns, workflow |
-| `references/tokens.md` | `references/tokens-template.md` | Colors, fonts, spacing, motion, iconography |
-| `references/components.md` | `references/components-template.md` | Buttons, cards, inputs, lists, navigation, overlays |
-| `references/platform-mapping.md` | `references/platform-mapping-template.md` | CSS custom properties, SwiftUI extensions, Tailwind config |
-| `agents/openai.yaml` | inline structure below | Codex UI metadata + explicit invocation policy |
+The document must cover, in this order:
 
-**Every value in these files must come from the Design Model.** If a value isn't in the YAML, add it to the YAML first, then reference it. No hardcoding values that aren't in the model.
+1. **Snapshot + Source Surfaces** — brand name, source, domain, primary mode, brand type, one-sentence summary, analysis surfaces
+2. **Brand Summary** — what the brand is trying to feel like, what it optimizes for, what signals carry the identity
+3. **Philosophy** — attitude, lineage, primary tension, what the system is not
+4. **Design Principles** — falsifiable, concrete rules
+5. **Composition Rules** — layout density, hierarchy, rhythm, color strategy, typography discipline, interaction posture
+6. **Token Foundations** — color system, semantic guidance, typography, type scale, spacing, radii, elevation, motion, mode strategy
+7. **Hero Stage + Iconography** — observed reality, fallback decisions, usage guidance
+8. **Component System** — observed vs derived components, states, exact token mappings, behavioral guidance
+9. **Implementation Guidance** — CSS variable names, Tailwind naming, SwiftUI naming guidance, fallback strategy, delivery notes
+10. **Anti-Patterns** — what to avoid when implementing this system
+11. **Iteration Heuristics** — what can change safely, what is risky, and what to change first on revision
 
-**Components must be based on the inventory from Step 2.** Each component in the YAML has `source: observed` or `source: derived` — this traces back to the Tear-Down Sheets.
+The Markdown document must stand on its own. A reader with only `design-document.md` should still understand the brand's philosophy, composition rules, tokens, component behavior, mode strategy, hero treatment, and implementation constraints without opening the YAML.
 
-Create `agents/openai.yaml` with this structure:
+**Components must be based on the inventory from Step 2.** Each component in the YAML has `source: observed` or `source: derived` — the document must preserve that traceability.
 
-```yaml
-interface:
-  display_name: "{Skill Name} Design"
-  short_description: "Apply the {Skill Name} design system"
-  default_prompt: "Use $vector-design to apply the Vector design system to this UI."
-
-policy:
-  allow_implicit_invocation: false
-```
-
-Replace `vector-design` / `Vector` with the actual generated skill name and display title.
+**Default contract:** generate only `design-model.yaml` + `design-document.md`. Do not generate `preview.html`, `component-library.html`, `landing-page.html`, `app-screen.html`, `SKILL.md`, or `agents/openai.yaml` unless the user explicitly asks for extra artifacts.
 
 ### Step 6: Write Files
-Default location: `${CODEX_HOME:-$HOME/.codex}/skills/{skill-name}-design/`
+Default location: `./{brand-slug}-design/`
 If the user specifies a different path, use that. Create the directory structure:
 
 ```
-{skill-name}-design/
-  design-model.yaml              ← Single Source of Truth
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    tokens.md
-    components.md
-    platform-mapping.md
+{brand-slug}-design/
+  design-model.yaml
+  design-document.md
 ```
 
-### Step 7: Generate Visual Preview
-**Generate visual preview.** Create a `preview.html` in the skill folder — a standalone Bento Grid dashboard rendered in the generated design language. Read `references/preview-template.md` for the specification. **All CSS values in the preview must come from `design-model.yaml`** — re-read the YAML before writing CSS to ensure no drift.
+### Step 7: Self-Validation
+After generating both files, validate them against each other:
+1. **Re-read `design-model.yaml` and `design-document.md`**
+2. **Verify the core design decisions appear in both files with comparable specificity**
+3. **Verify the component section preserves `observed` vs `derived` provenance**
+4. **Verify the Markdown document does not defer to YAML for essential explanation**
+5. **Verify no placeholder text or empty sections remain**
+6. **Verify the Markdown order matches the template**
 
-Open it in the browser with `open preview.html`. This is the magic moment — the user sees their design language come alive.
+If anything doesn't match, fix it before showing the user.
 
-### Step 7.5: Generate Component Library
+### Step 8: Offer Iteration
+After writing, tell the user what was created and ask if they want adjustments. Common requests: "more contrast", "warmer tones", "different font", "more playful motion", "simplify the component inventory", "add more implementation detail."
 
-After the Bento Grid preview, generate a second visual output: `component-library.html`. Where the Bento Grid shows the language *in use*, the Component Library shows it *dismantled* — every component on its own canvas with its exact token values spelled out in a spec table beside it.
-
-Read `references/component-library-template.md` for the full specification. Key rules:
-
-1. **Two-column layout.** Sticky TOC on the left (~240px), scrollable main area on the right (max-width ~960px). TOC active-state via IntersectionObserver.
-2. **Required sections (in this order):** Colors, Typography, Radii, Elevation, Spacing, Buttons, Inputs, Cards, Tags, Toggle, Progress, List rows, Navigation, Modal, Icons. Skip a section only if the brand genuinely has no concept of it.
-3. **Each section has:** heading + one-line description, a Canvas showing live components (variants + states side-by-side, not requiring hover), a Spec table listing the exact token values.
-4. **State rendering.** When a component has multiple interactive states (default/hover/active/focus/disabled), render them **all at once** using static `.is-hover`, `.is-focused` etc. classes that reproduce the state's visual. Never rely on actual hover — the user needs to see all states simultaneously.
-5. **Round stroke caps everywhere.** Progress rings, bars, dashed elements — `stroke-linecap: round` unless the brand explicitly mandates flat caps (rare).
-6. **Same floating Light/Dark bar as the Bento Grid preview** — copy the pattern exactly for consistency across both views.
-7. **All values from `design-model.yaml`.** Re-read before writing any CSS. No hardcoded hex values — everything goes through semantic tokens.
-
-Open it in the browser after generating. The Bento Grid answers "what does this language feel like?"; the Component Library answers "what are the exact values?".
-
-### Step 7.6: Generate Landing Page
-
-Generate a third visual output: `landing-page.html`. Where the Bento Grid shows density and the Component Library shows specs, the Landing Page shows the brand *telling a story* — editorial typography, narrative rhythm, alternating feature sections.
-
-Read `references/landing-page-template.md` for the full specification. Key rules:
-
-1. **Required sections in order:** Header, Hero, Feature 1, Feature 2, Feature 3, (optional) Pull quote, (optional) Pricing, Final CTA, Footer. Skip optional sections only if the brand genuinely doesn't fit (early-stage, enterprise-only, utility-focused).
-2. **No lorem ipsum — ever.** Every piece of copy must be written specifically for the brand in its observed voice. Before writing copy, decide the brand voice in 2-3 adjectives (warm/poetic, clinical/precise, witty/direct, etc.) and commit. Specifics over generics: "press cmd+k and find a note from three years ago by remembering one word from it" beats "powerful search features".
-3. **Hero dominance.** Display headline must feel 2-3× larger than any other type on the page. Use the display font at a size beyond the normal scale if needed (`clamp(40px, 7vw, 72px)` works well).
-4. **Alternating features.** Text-left / visual-right, then swap. Prevents the eye from falling into a single column.
-5. **Visual elements are suggestive, never literal.** Since you can't use the brand's real imagery, pick ONE approach: styled mini card stacks (UI-rich brands), type-as-image (editorial), icon+text combos (hybrid), or color compositions (content-rich). Never stock photos, never fake logos.
-6. **Restraint on surface tints.** Body stays on `var(--bg)`. Use `--surface1` or `--surface2` for at most one or two sections as rhythm breaks — never more.
-7. **Same floating Light/Dark bar** as the other two views.
-8. **All values from `design-model.yaml`.** Re-read before writing CSS.
-
-**Pre-ship verification — run before declaring the landing done.** These three checks catch the most common silent-failure bugs:
-
-1. **Every CSS class-selector must hit at least one element.** If the stylesheet references `.hero h1` but the HTML only has `<section class="lp-hero">` + `<div class="hero-content">`, the rules don't match and the h1 renders with default browser styles. Grep your selector names against your HTML: every class used in CSS should exist in the markup. If you introduce a wrapper like `.hero-content`, update every matching selector too.
-2. **Flex parents need explicit child widths.** A hero section using `display: flex; align-items: center` will shrink its inner `.container` down to intrinsic content width — so a 1320px max-width container silently becomes 721px. Always give inner containers inside flex heroes `width: 100%`, or use `display: block` on the hero and center with margin.
-3. **Open in the browser and inspect the hero.** Check computed `font-family` and `font-size` on the h1 — if they say `Inter 32px` when you expected `Cormorant Garamond 96px`, your display-font CSS rule didn't match. Fix the selector, don't ship the bug. Also test both light and dark modes — editorial brands often break in one of the two.
-
-Editorial brands often look dramatically different in dark mode — always test both.
-
-### Step 7.7: Generate App Screen (Phase 4)
-
-Generate the fourth and final visual: `app-screen.html`. Where the landing page shows *what the brand sells* and the component library shows *what the pieces look like*, the app screen shows *what the product actually feels like in use* — tokens applied to a representative screen inside the brand's product, rendered inside a device frame.
-
-This is the step that validates "does the design system survive contact with real product UI?" A language that looks great on a marketing hero but falls apart inside a dense dashboard is a failed language. The app screen is the proof.
-
-Read `references/app-screen-template.md` for the full specification. Key rules:
-
-1. **Archetype first.** Pick one of six: `dashboard`, `editor`, `list-detail`, `feed`, `conversational`, `canvas`. Match to the brand's actual product category via `brand_domain`.
-2. **Device frame.** `browser` / `phone` / `desktop` / `tablet`, matched to the brand's primary platform. Default to `browser` for SaaS/platform brands, `phone` for consumer apps, `desktop` for native pro tools.
-3. **Content density is non-negotiable.** Sparse screens read as wireframes, not products. Dashboard needs 4–8 metric tiles + a chart + a table. List-detail needs 10+ items. Conversational needs 8+ messages. See the density rules in the template.
-4. **Brand voice in the invented content.** No lorem ipsum, no generic placeholders. A fictional SLO tool's dashboard shows `checkout-api` and `auth-worker`, not `service-a` and `service-b`. The content IS the brand voice.
-5. **Every token must show up at least once.** Use the required-tokens checklist from the template. If a token doesn't appear, the design system has a coverage gap.
-6. **One "mid-use" touch.** A cursor hovering, a hover state, a selected list item — one visual signal that says "this is the product caught mid-use", not a static mockup.
-7. **Same floating Light/Dark bar** and click-disabled anchors as the other three views.
-8. **Add the new view to the sticky TOC** in the component library so all four views are reachable from each other.
-
-**Current status:** Phase 4 is live with two canonical proofs, both using the `dashboard` archetype inside a `browser` frame.
-
-- `examples/ridge/app-screen.html` — SLO overview for `checkout-api`. 8-service sidebar, 3 KPI tiles with sparklines, a 30-day error-budget burn-down chart, 8 log events, and a fake cursor hovering on the selected service. Dev-platform vocabulary (services, alerts, SLO, incidents).
-- `examples/stint/app-screen.html` — stint 07 detail view for the `paper` workspace. Sidebar of 7 recent stints with status dots, 3 KPI tiles (completion / days left / at risk), a 14-day burn-down chart with actual vs dashed ideal line, 8-row activity feed, and a fake cursor hovering on the selected stint. Project-tracker vocabulary (stints, tasks, cycles, carryover).
-
-Both render in light + dark mode, use every required token from the checklist, and serve as patterns to copy for the next brand that adopts Phase 4. A third proof should exercise a *different* archetype (not `dashboard`) to keep the template honest — Halcyon with a `conversational` (reasoning-graph chat) archetype is the best next target because it tests both a new archetype and the `sculptural-field` backdrop in a product context.
-
-### Step 8: Self-Validation
-After generating the preview, validate it against the Design Model:
-1. **Re-read `design-model.yaml`** and the CSS in `preview.html`
-2. **Verify accent color** in YAML matches the hex used for interactive elements in preview CSS
-3. **Verify font families** in YAML match what's loaded and used in preview
-4. **Verify spacing values** are consistent between model and preview
-5. **Compare each component** in the preview against its Tear-Down Sheet or Derived Design from Step 2
-
-If anything doesn't match — fix it before showing to the user.
-
-### Step 9: Offer Iteration
-After writing, tell the user what was created and ask if they want adjustments. Common requests: "more contrast", "warmer tones", "different font", "more playful motion", "add a glow effect", "less padding."
-
-**For iterations:** update `design-model.yaml` first, then regenerate only the affected files from the model. This keeps everything in sync.
-
-### Step 10: Installation Reminder
-After generating, tell the user:
-> Restart Codex or start a new conversation for the skill to be detected. Activate it by saying `use {skill-name}-design`, invoking the generated skill name with a leading `$`, or explicitly asking to apply the {Skill Name} design system.
+**For iterations:** update both `design-model.yaml` and `design-document.md` in the affected areas. Neither file is allowed to lag behind the other.
 
 ---
 
 ## 3. QUALITY STANDARDS
 
-These are non-negotiable. Every generated skill must meet all of them.
+These are non-negotiable. Every generated design package must meet all of them.
 
-### Preview
-- The `preview.html` must look like a real app dashboard, not a component library. Use real-looking content, proper hierarchy, proper density.
+### Document Structure
+- The default package contains exactly two artifacts: `design-model.yaml` and `design-document.md`.
+- The Markdown document must be scannable: short sections, clear headings, and tables only where they improve clarity.
+- The Markdown document must be independently usable. It cannot assume the reader has `design-model.yaml` open.
+- The document is for humans implementing a design system, not for activating a skill. Do not include trigger phrases, install steps, or agent metadata in the generated output.
 
 ### Philosophy
 - 2-4 sentences that capture the *attitude*, not just the aesthetics. "Subtract, don't add" is a philosophy. "Clean and modern" is not.
@@ -685,8 +605,8 @@ These are non-negotiable. Every generated skill must meet all of them.
 - Every principle must be falsifiable — you can point at a screen and say "this violates principle 3."
 - No platitudes. "User-friendly" is not a principle. "Type does the heavy lifting — hierarchy comes from scale and weight, never from color or icons" is.
 
-### Craft Rules
-- 5-6 rules in Section 2 of SKILL.md. Each is a *how-to-compose* instruction.
+### Composition Rules
+- 5-7 composition rules in the Markdown document. Each is a *how-to-compose* instruction.
 - Include: visual hierarchy layers, typography discipline (font budget per screen), spacing semantics, color strategy, composition approach.
 - Use tables for layer/hierarchy definitions — they're scannable and unambiguous.
 - Include the squint test or equivalent quick-validation method.
@@ -695,7 +615,7 @@ These are non-negotiable. Every generated skill must meet all of them.
 - 8-12 specific bans. Each starts with "No" and names the exact thing.
 - Be precise: "No border-radius > 16px on cards" not "avoid large corners."
 - Include both visual anti-patterns (gradients, shadows) and behavioral ones (toast popups, skeleton screens).
-- Anti-patterns are what prevent the skill from producing generic output. They're the immune system.
+- Anti-patterns are what prevent the design package from producing generic output. They're the immune system.
 
 ### Colors
 - Coherent palette. Every color must have a *role*, not just a hex code.
@@ -724,8 +644,7 @@ These are non-negotiable. Every generated skill must meet all of them.
 
 ### Fonts
 - Display, body, and mono roles. Always three.
-- **Google Fonts only** for web skills. Name the exact font and weights needed.
-- **System fonts** for SwiftUI skills (SF Pro, SF Rounded, SF Mono, New York).
+- Name the exact observed fonts when known, and document viable implementation fallbacks when the originals are proprietary.
 - Include fallback stacks. Always.
 - State *why* the font fits the aesthetic. "Geometric sans with humanist details" tells Codex how to judge edge cases.
 - **`mono_for_code` + `mono_for_metrics`:** Two independent flags decide where the mono font applies. `mono_for_code` covers code blocks, file paths, shell commands, inline technical tokens. `mono_for_metrics` covers pricing, counts, timestamps, percentages, ID strings. Many brands use mono for code but NOT for metrics (e.g. Cursor: mono inside IDE screenshots, but `$20` pricing stays in the sans). Decide each flag by checking the brand's actual site.
@@ -787,11 +706,11 @@ These are non-negotiable. Every generated skill must meet all of them.
 | **Playful** | Spring (damping 0.7-0.8) | 300-500ms | Overshoot + settle. Things feel alive. |
 | **None** | Instant | 0-100ms | Content appears, no choreography. |
 
-### Platform Mapping
-- Generate REAL, valid, copy-paste-ready code. Not pseudocode.
-- CSS: `:root` block with all custom properties. Include dark mode via `[data-theme="dark"]` or `@media (prefers-color-scheme: dark)`.
-- SwiftUI: `Color` extension with static properties, `Font` extension with static methods, relevant `ViewModifier`s.
-- Tailwind: `extend` block for `tailwind.config.js` mapping all tokens.
+### Implementation Mapping
+- Include implementation guidance in the Markdown document, but keep it lightweight by default.
+- Required: CSS variable naming strategy, Tailwind token naming strategy, and SwiftUI naming guidance.
+- Do not dump large code blocks unless the user explicitly asks for implementation-ready code.
+- Keep the mapping precise enough that an engineer could turn it into code without guessing the token semantics.
 
 ### Components
 - Every component gets: when to use, variants, exact token mapping per variant.
@@ -800,38 +719,19 @@ These are non-negotiable. Every generated skill must meet all of them.
 
 ---
 
-## 4. METADATA RULES
+## 4. OUTPUT RULES
 
-Every generated SKILL.md must start with this frontmatter structure:
-
-```yaml
----
-name: {skill-name}-design
-description: "Design language skill for the {Skill Name} system. Use only when the user explicitly says '{Skill Name} style', '{Skill Name} design', invokes the generated skill name with a leading '$', or directly asks to use/apply the {Skill Name} design system. Never trigger automatically for generic UI or frontend tasks."
----
-```
-
-The description must include explicit trigger phrases. Never allow automatic triggering for generic design tasks.
-
-Every generated skill must also include `agents/openai.yaml`:
-
-```yaml
-interface:
-  display_name: "{Skill Name} Design"
-  short_description: "Apply the {Skill Name} design system"
-  default_prompt: "Use $vector-design to apply the Vector design system to this UI."
-
-policy:
-  allow_implicit_invocation: false
-```
-
-Replace `vector-design` / `Vector` with the actual generated skill name and display title.
+- Default output is a folder with `design-model.yaml` and `design-document.md`.
+- YAML and Markdown are parallel primary artifacts. Each must be independently useful and complete for its audience.
+- The YAML should optimize for structure and machine readability. The Markdown should optimize for human comprehension and implementation guidance.
+- If the user asks for only one file, generate that file as a standalone deliverable rather than leaving obvious gaps that require the other artifact.
+- Extra artifacts such as previews, HTML pages, component libraries, or runnable code are opt-in only.
 
 ---
 
 ## 5. TONE & VOICE
 
-Write generated skills like a senior designer briefing a junior one. Authoritative, specific, opinionated.
+Write generated documents like a senior designer briefing an implementation team. Authoritative, specific, opinionated.
 
 **Good:** "Shadows are banned. Depth comes from border + background change. If something needs to float, use a 1px border at 8% opacity, not a shadow."
 
@@ -866,7 +766,7 @@ Apply changes to the specific files and sections affected. Never regenerate from
 
 Use these as the exact structure for generated files. Fill every placeholder, delete every comment block.
 
-- `references/skill-template.md` — SKILL.md structure (philosophy, craft rules, anti-patterns, workflow)
-- `references/tokens-template.md` — Token definitions (fonts, type scale, colors, spacing, radii, elevation, motion)
-- `references/components-template.md` — Component specifications (cards, buttons, inputs, lists, nav, overlays, states)
-- `references/platform-mapping-template.md` — Platform code (CSS custom properties, SwiftUI extensions, Tailwind config)
+- `references/design-document-template.md` — default Markdown document structure
+- `references/hero-stage.md` — hero-stage schema and presets
+- `references/icon-kits.md` — icon fallback matching rules
+- Legacy templates in `references/*-template.md` are optional secondary material only when the user explicitly asks for expanded artifacts.

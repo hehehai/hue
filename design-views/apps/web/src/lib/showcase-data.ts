@@ -6,6 +6,10 @@ export type ExampleData = {
   name: string;
   description: string;
   raw: string;
+  source: "examples" | "validation";
+  sourcePath: string;
+  documentRaw?: string;
+  documentPath?: string;
   model: Record<string, unknown>;
   parseError?: string;
   links: {
@@ -56,11 +60,45 @@ export type ColorEntry = {
   swatch: string | null;
 };
 
-const yamlModules = import.meta.glob("../../../../../examples/*/design-model.yaml", {
+export type DocumentSection = {
+  id: string;
+  title: string;
+  body: string;
+};
+
+const exampleYamlModules = import.meta.glob("../../../../../examples/*/design-model.yaml", {
   query: "?raw",
   import: "default",
   eager: true,
 }) as Record<string, string>;
+
+const validationYamlModules = import.meta.glob("../../../../../validation/*/design-model.yaml", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const yamlModules = {
+  ...exampleYamlModules,
+  ...validationYamlModules,
+} satisfies Record<string, string>;
+
+const exampleMarkdownModules = import.meta.glob("../../../../../examples/*/design-document.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const validationMarkdownModules = import.meta.glob("../../../../../validation/*/design-document.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const markdownModules = {
+  ...exampleMarkdownModules,
+  ...validationMarkdownModules,
+} satisfies Record<string, string>;
 
 const htmlModules = import.meta.glob("../../../../../examples/*/{landing-page.html,app-screen.html,component-library.html}", {
   query: "?url",
@@ -94,21 +132,29 @@ export function getExampleBySlug(slug: string) {
 
 function buildExamples(): ExampleData[] {
   const groupedLinks = new Map<string, ExampleData["links"]>();
+  const groupedDocuments = new Map<string, string>();
 
   for (const [path, url] of Object.entries(htmlModules)) {
-    const slug = extractSlug(path);
-    const links = groupedLinks.get(slug) ?? {};
+    const { slug, source } = extractSourceInfo(path);
+    const entryKey = `${source}:${slug}`;
+    const links = groupedLinks.get(entryKey) ?? {};
 
     if (path.endsWith("landing-page.html")) links.landing = url;
     if (path.endsWith("app-screen.html")) links.app = url;
     if (path.endsWith("component-library.html")) links.library = url;
 
-    groupedLinks.set(slug, links);
+    groupedLinks.set(entryKey, links);
+  }
+
+  for (const [path, raw] of Object.entries(markdownModules)) {
+    const { slug, source } = extractSourceInfo(path);
+    groupedDocuments.set(`${source}:${slug}`, raw);
   }
 
   return Object.entries(yamlModules)
     .map(([path, raw]) => {
-      const slug = extractSlug(path);
+      const { slug, source } = extractSourceInfo(path);
+      const entryKey = `${source}:${slug}`;
       const { model, parseError } = parseExampleModel(raw);
       const name = asText(model.name) ?? humanizeSlug(slug);
       const description =
@@ -117,16 +163,23 @@ function buildExamples(): ExampleData[] {
 
       return {
         slug,
-        id: `example-${slug}`,
+        id: `${source}-${slug}`,
         name,
         description,
         raw,
+        source,
+        sourcePath: `${source}/${slug}/design-model.yaml`,
+        documentRaw: groupedDocuments.get(entryKey),
+        documentPath: groupedDocuments.has(entryKey) ? `${source}/${slug}/design-document.md` : undefined,
         model,
         parseError,
-        links: groupedLinks.get(slug) ?? {},
+        links: groupedLinks.get(entryKey) ?? {},
       };
     })
-    .sort((a, b) => a.slug.localeCompare(b.slug));
+    .sort((a, b) => {
+      if (a.source !== b.source) return a.source.localeCompare(b.source);
+      return a.slug.localeCompare(b.slug);
+    });
 }
 
 function parseExampleModel(raw: string): { model: Record<string, unknown>; parseError?: string } {
@@ -144,9 +197,13 @@ function parseExampleModel(raw: string): { model: Record<string, unknown>; parse
   }
 }
 
-function extractSlug(path: string): string {
-  const match = path.match(/examples\/([^/]+)\//);
-  return match?.[1] ?? path;
+function extractSourceInfo(path: string): { source: "examples" | "validation"; slug: string } {
+  const match = path.match(/(examples|validation)\/([^/]+)\//);
+  const source = (match?.[1] === "validation" ? "validation" : "examples") satisfies "examples" | "validation";
+  return {
+    source,
+    slug: match?.[2] ?? path,
+  };
 }
 
 export function humanizeSlug(slug: string) {
@@ -325,6 +382,37 @@ export function getVoice(example: ExampleData) {
   return asRecord(example.model.voice);
 }
 
+export function getDocumentSections(example: ExampleData): DocumentSection[] {
+  if (!example.documentRaw) return [];
+
+  const lines = example.documentRaw.split(/\r?\n/);
+  const sections: Array<{ title: string; lines: string[] }> = [];
+  let current: { title: string; lines: string[] } | null = null;
+
+  for (const line of lines) {
+    if (line.startsWith("## ")) {
+      if (current) sections.push(current);
+      current = {
+        title: line.replace(/^##\s+/, "").trim(),
+        lines: [],
+      };
+      continue;
+    }
+
+    if (current) current.lines.push(line);
+  }
+
+  if (current) sections.push(current);
+
+  return sections
+    .map((section) => ({
+      id: `document-${slugify(section.title)}`,
+      title: section.title,
+      body: section.lines.join("\n").replace(/\n{3,}/g, "\n\n").trim(),
+    }))
+    .filter((section) => section.body);
+}
+
 export function getTypeScale(example: ExampleData) {
   return asRecord(asRecord(example.model.tokens)?.type_scale);
 }
@@ -425,6 +513,7 @@ export function getExampleToc(example: ExampleData): TocGroup[] {
           { id: "overview", label: "Overview" },
           { id: "parse-error", label: "Parse Error" },
           { id: "raw-yaml", label: "Raw YAML" },
+          ...(example.documentRaw ? [{ id: "raw-document", label: "Raw Markdown" }] : []),
         ],
       },
     ];
@@ -452,8 +541,15 @@ export function getExampleToc(example: ExampleData): TocGroup[] {
 
   return [
     { title: "Foundations", items: foundationItems },
+    ...(example.documentRaw ? [{ title: "Document", items: [{ id: "document-preview", label: "Design Document" }] }] : []),
     ...(componentGroups.length ? [{ title: "Components", items: componentGroups }] : []),
-    { title: "Source", items: [{ id: "raw-yaml", label: "Raw YAML" }] },
+    {
+      title: "Source",
+      items: [
+        { id: "raw-yaml", label: "Raw YAML" },
+        ...(example.documentRaw ? [{ id: "raw-document", label: "Raw Markdown" }] : []),
+      ],
+    },
   ];
 }
 
@@ -474,4 +570,11 @@ export function clampTypography(size: string) {
   if (!size || size === "—") return "1.2rem";
   if (size.startsWith("clamp(")) return size;
   return formatDimension(size);
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }

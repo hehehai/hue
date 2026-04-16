@@ -8,7 +8,10 @@ import {
   Bell,
   Boxes,
   BrushCleaning,
+  Check,
   Compass,
+  Copy,
+  FileText,
   Layers3,
   LayoutGrid,
   LayoutPanelTop,
@@ -28,6 +31,7 @@ import {
   examples,
   flattenColorGroups,
   formatDimension,
+  getDocumentSections,
   getComponentNarrativeFields,
   getComponentStateEntries,
   getExampleBySlug,
@@ -145,6 +149,7 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
   const elevation = getElevation(example);
   const motion = getMotion(example);
   const voice = getVoice(example);
+  const documentSections = getDocumentSections(example);
 
   return (
     <main className="min-h-full bg-[linear-gradient(180deg,#f5f7fb_0%,#edf2f8_100%)] text-slate-950 transition-colors dark:bg-[radial-gradient(circle_at_top,#101d30_0%,#071018_54%,#04080f_100%)] dark:text-white">
@@ -225,6 +230,7 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 </div>
 
                 <div className="grid gap-3">
+                  <InfoCard title="Package" value={example.source} help={example.slug} />
                   <InfoCard title="Source" value={asText(example.model.brand_source) ?? "—"} />
                   <InfoCard title="Domain" value={asText(example.model.brand_domain) ?? "—"} />
                   <InfoCard
@@ -258,13 +264,14 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                       这个 example 已经保留在目录里，但 YAML 语法不合法，所以 foundations 和 components 预览都不会渲染。下面保留错误信息和原始片段，方便你自己修。
                     </p>
                     <dl className="mt-5 grid grid-cols-[max-content_1fr] gap-x-3 gap-y-2 text-sm text-slate-600 dark:text-slate-300">
-                      <dt>File</dt><dd>{`examples/${example.slug}/design-model.yaml`}</dd>
+                      <dt>File</dt><dd>{example.sourcePath}</dd>
                       <dt>Error</dt><dd className="break-words text-amber-700 dark:text-amber-200">{example.parseError}</dd>
                     </dl>
                   </div>
                 </SectionPanel>
 
                 <RawYamlSection example={example} />
+                {example.documentRaw ? <RawDocumentSection example={example} /> : null}
               </>
             ) : (
               <>
@@ -547,6 +554,17 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                   </SectionPanel>
                 ) : null}
 
+                {example.documentRaw ? (
+                  <SectionPanel
+                    description="Standalone Markdown design documents are summarized here so validation packages can be inspected without leaving the preview app."
+                    icon={<FileText className="size-4" />}
+                    id="document-preview"
+                    title="Design Document"
+                  >
+                    <DocumentPreview sections={documentSections} />
+                  </SectionPanel>
+                ) : null}
+
                 {componentGroups.map((group) => (
                   <SectionPanel
                     key={`${example.slug}-${group.id}`}
@@ -568,6 +586,7 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 ))}
 
                 <RawYamlSection example={example} />
+                {example.documentRaw ? <RawDocumentSection example={example} /> : null}
               </>
             )}
           </div>
@@ -1239,12 +1258,14 @@ function IconographyPreview({
 }
 
 function SectionPanel({
+  actions,
   id,
   title,
   description,
   icon,
   children,
 }: {
+  actions?: React.ReactNode;
   id: string;
   title: string;
   description: string;
@@ -1266,6 +1287,7 @@ function SectionPanel({
           <h2 className="text-[30px] font-semibold tracking-[-0.05em]">{title}</h2>
           <p className="mt-2 text-[15px] leading-7 text-slate-600 dark:text-slate-300">{description}</p>
         </div>
+        {actions ? <div className="shrink-0">{actions}</div> : null}
       </div>
       {children}
     </section>
@@ -1321,6 +1343,7 @@ function ColorCollection({
 function RawYamlSection({ example }: { example: (typeof examples)[number] }) {
   return (
     <SectionPanel
+      actions={<CopyTextButton text={example.raw} />}
       description="The raw source is kept on the page so you can compare the rendered preview against the YAML itself."
       icon={<BrushCleaning className="size-4" />}
       id="raw-yaml"
@@ -1330,6 +1353,120 @@ function RawYamlSection({ example }: { example: (typeof examples)[number] }) {
         {example.raw.split("\n").slice(0, 180).join("\n")}
       </pre>
     </SectionPanel>
+  );
+}
+
+function RawDocumentSection({ example }: { example: (typeof examples)[number] }) {
+  if (!example.documentRaw) return null;
+
+  return (
+    <SectionPanel
+      actions={<CopyTextButton text={example.documentRaw} />}
+      description="The raw Markdown document is kept alongside the YAML so you can compare the human-readable brief with the structured model."
+      icon={<FileText className="size-4" />}
+      id="raw-document"
+      title="Raw Markdown"
+    >
+      <pre className="overflow-x-auto rounded-[20px] border border-slate-200/80 bg-[#f7fafc] p-4 text-xs leading-6 text-slate-700 dark:border-white/10 dark:bg-[#08111b] dark:text-slate-200">
+        {example.documentRaw.split("\n").slice(0, 220).join("\n")}
+      </pre>
+    </SectionPanel>
+  );
+}
+
+function CopyTextButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button
+      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100/90 px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:border-slate-300 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-white/20 dark:hover:text-white"
+      onClick={handleCopy}
+      type="button"
+    >
+      {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+function DocumentPreview({
+  sections,
+}: {
+  sections: Array<{ id: string; title: string; body: string }>;
+}) {
+  if (!sections.length) {
+    return <EmptyState text="No document sections were found in the Markdown file." />;
+  }
+
+  return (
+    <div className="grid gap-3 xl:grid-cols-2">
+      {sections.map((section) => (
+        <article
+          key={section.id}
+          className="rounded-[22px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.03]"
+        >
+          <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Section</div>
+          <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-slate-950 dark:text-white">
+            {section.title}
+          </h3>
+          <div className="mt-3 space-y-2">
+            {getDocumentPreviewLines(section.body).map((line, index) => {
+              if (line.startsWith("|")) {
+                return (
+                  <div
+                    key={`${section.id}-table-${index}`}
+                    className="overflow-x-auto rounded-[14px] border border-slate-200/80 bg-white/80 p-2 font-mono text-[11px] leading-5 text-slate-600 dark:border-white/10 dark:bg-[#0d1722] dark:text-slate-300"
+                  >
+                    {line}
+                  </div>
+                );
+              }
+
+              if (line.startsWith("- ")) {
+                return (
+                  <div
+                    key={`${section.id}-bullet-${index}`}
+                    className="text-sm leading-6 text-slate-700 dark:text-slate-200"
+                  >
+                    {line}
+                  </div>
+                );
+              }
+
+              if (line.startsWith("### ")) {
+                return (
+                  <div
+                    key={`${section.id}-subheading-${index}`}
+                    className="pt-1 text-sm font-medium text-slate-900 dark:text-white"
+                  >
+                    {line.replace(/^###\s+/, "")}
+                  </div>
+                );
+              }
+
+              return (
+                <p
+                  key={`${section.id}-paragraph-${index}`}
+                  className="text-sm leading-6 text-slate-700 dark:text-slate-200"
+                >
+                  {line}
+                </p>
+              );
+            })}
+          </div>
+        </article>
+      ))}
+    </div>
   );
 }
 
@@ -1435,6 +1572,14 @@ function EmptyState({ text }: { text: string }) {
       {text}
     </div>
   );
+}
+
+function getDocumentPreviewLines(body: string) {
+  return body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 8);
 }
 
 function DocTable({

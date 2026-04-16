@@ -1,12 +1,19 @@
 # hue
 
-an open-source Codex skill that learns any brand from a URL, name, screenshot, or local codebase and turns it into a complete design system skill. install it once, and every downstream brand skill it generates stays aligned with the source brand.
+an open-source Codex skill that learns any brand from a URL, name, screenshot, or local codebase and turns it into a structured design package: one Markdown design document plus one `design-model.yaml`.
 
 see it in action: **[hueapp.io](https://hueapp.io)**
 
 ## what you get
 
-a full design language as a Codex skill: color tokens, typography, spacing, components, light + dark mode, hero stage recipes, icon kit selection, and preview artifacts. opinionated enough that two different Codex sessions using the generated skill produce visually consistent output.
+a reusable design package with two parallel primary artifacts:
+
+- `design-model.yaml` as the structured machine-readable design model
+- `design-document.md` as the standalone human-readable design brief
+
+both files should be independently usable. the yaml is optimized for tooling and structured reuse; the markdown is optimized for human implementation and review. neither should rely on the other to explain the core design language.
+
+the package still covers color tokens, typography, spacing, components, light + dark mode, hero stage decisions, icon fallback selection, composition rules, and implementation guidance. the difference is that hue now defaults to documentation, not to generating another installable skill.
 
 ## install
 
@@ -16,30 +23,24 @@ git clone https://github.com/dominikmartn/hue "${CODEX_HOME:-$HOME/.codex}/skill
 
 `hue` is intended for explicit invocation. in a Codex session, say something like:
 
-- "use hue to create a design skill from cursor.com"
-- "$hue generate a brand design skill inspired by raycast"
-- "use hue with this screenshot to generate a brand design skill"
+- "use hue to create a design document from cursor.com"
+- "$hue generate a design-model yaml and markdown document inspired by raycast"
+- "use hue with this screenshot to generate a design system document"
 
 the skill defaults to direct browser inspection via `agent-browser`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked.
 
 ## output contract
 
-for each generated brand skill, `hue` keeps the same core artifact set:
+by default, `hue` writes exactly these two files:
 
 - `design-model.yaml`
-- `SKILL.md`
-- `agents/openai.yaml`
-- `references/tokens.md`
-- `references/components.md`
-- `references/platform-mapping.md`
-- `preview.html`
-- `component-library.html`
-- `landing-page.html`
-- `app-screen.html`
+- `design-document.md`
+
+html previews, component libraries, landing pages, app screens, or code snippets are optional follow-up artifacts only when explicitly requested.
 
 ## examples
 
-seventeen brands live in `examples/` showing the range of output hue produces. sixteen are fictional one-shots, one is real (meadow ↦ the mymind-design skill).
+seventeen brands live in `examples/` showing the range of analysis hue can support. sixteen are fictional one-shots, one is real (meadow ↦ mymind.com).
 
 | brand | character |
 |---|---|
@@ -61,11 +62,10 @@ seventeen brands live in `examples/` showing the range of output hue produces. s
 | thrive | sage green wellness, light mode |
 | velvet | noir editorial fragrance house |
 
-each has a `design-model.yaml` + `landing-page.html`. ridge and stint also ship an `app-screen.html`. halcyon ships a full `component-library.html`. open them in a browser to see the system rendered.
+many examples still include older html artifacts such as `landing-page.html`, `component-library.html`, and `app-screen.html`. treat those as reference builds and exploration surfaces, not as the default output contract for the current skill.
 
 ## runtime expectations
 
-- Codex-compatible skill loading via `SKILL.md` plus `agents/openai.yaml`
 - `agent-browser` available for best results on live sites
 - web access for public-source fallback
 - no Chrome DevTools MCP required

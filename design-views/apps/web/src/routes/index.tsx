@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const parseErrors = examples.filter((example) => example.parseError).length;
-  const detailPages = examples.filter((example) => example.links.landing || example.links.library || example.links.app).length;
+  const documentPackages = examples.filter((example) => example.documentRaw).length;
 
   return (
     <main className="min-h-full bg-[linear-gradient(180deg,#f4f7fb_0%,#ecf1f7_100%)] text-slate-950 transition-colors dark:bg-[radial-gradient(circle_at_top,#122034_0%,#071018_58%,#050a12_100%)] dark:text-white">
@@ -32,10 +32,10 @@ function HomeComponent() {
                 Hue showcase
               </div>
               <h1 className="mt-5 max-w-[14ch] text-4xl font-semibold tracking-[-0.06em] md:text-6xl">
-                Browse every example, then open a spec-like detail page.
+                Browse every package, then open a spec-like detail page.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-300">
-                入口页只负责列出 examples。点进单个 item 后，会进入一个更接近{" "}
+                入口页现在同时列出 `examples/` 和 `validation/`。点进单个 item 后，会进入一个更接近{" "}
                 <a
                   className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 transition hover:decoration-slate-950 dark:text-white dark:decoration-white/25 dark:hover:decoration-white"
                   href="https://hueapp.io/showcase/halcyon/component-library.html"
@@ -44,14 +44,14 @@ function HomeComponent() {
                 >
                   Halcyon component library
                 </a>
-                {" "}的详情页结构: 左侧是 section 菜单，右侧是内容，菜单本身就是锚点导航。
+                {" "}的详情页结构: 左侧是 section 菜单，右侧是内容，菜单本身就是锚点导航。validation 目录里的新 YAML 和 Markdown 也会在这里预览。
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-              <StatCard label="Examples" value={String(examples.length)} help="All folders with design-model.yaml" />
+              <StatCard label="Packages" value={String(examples.length)} help="All folders with design-model.yaml across examples and validation" />
               <StatCard label="Parse Errors" value={String(parseErrors)} help="Broken YAML stays visible instead of crashing the app" />
-              <StatCard label="Linked Assets" value={String(detailPages)} help="Landing, app screen, or component library HTML" />
+              <StatCard label="Documents" value={String(documentPackages)} help="Packages that also include a standalone design-document.md preview" />
             </div>
           </div>
         </section>
@@ -72,6 +72,9 @@ function HomeComponent() {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100/80 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                      {example.source}
+                    </div>
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100/80 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                       {example.slug}
                     </div>
                     <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em]">{example.name}</h2>
@@ -98,6 +101,7 @@ function HomeComponent() {
                   ) : (
                     <Pill>{example.parseError ? "Parse Error" : "No Components"}</Pill>
                   )}
+                  {example.documentRaw ? <Pill>Markdown Doc</Pill> : null}
                   {example.links.library ? <Pill>Library HTML</Pill> : null}
                   {example.links.app ? <Pill>App Screen</Pill> : null}
                 </div>

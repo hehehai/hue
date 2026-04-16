@@ -1,0 +1,45 @@
+generated_at: "2026-04-16"
+system:
+  name: "Warm Engineering Canvas"
+  slug: "warm-engineering-canvas"
+  summary: "A reusable light-first design system with warm paper neutrals, ink-dark actions, sparse orange signaling, and polished product-window demos."
+  primary_mode: "light"
+  domain: "AI development tooling / agent workspace"
+  system_type: "ui-rich"
+
+source:
+  input_type: "url"
+  label: "Cursor"
+  canonical_url: "https://cursor.com"
+  domain: "cursor.com"
+  entity_type: "software brand / marketing site"
+  primary_surface: "public marketing site"
+  analyzed_surfaces:
+    - "Homepage hero, CTA cluster, and primary product showcase"
+    - "Product page with deeper capability framing and product windows"
+    - "Pricing page with plan cards and billing toggle"
+
+capture_context:
+  inspected_at: "2026-04-16"
+  primary_mode_observed: "light"
+  evidence:
+    - kind: "computed-styles"
+      location: "buttons, page canvas, product windows"
+      notes: "Warm off-white neutrals, ink-dark CTA fill, pill controls, sparse orange signal."
+    - kind: "layout-inspection"
+      location: "hero and pricing surfaces"
+      notes: "Large blank paper field at page level, compact internals inside product and pricing modules."
+    - kind: "visual-review"
+      location: "hero atmosphere"
+      notes: "Painterly support field sits behind the product window rather than becoming the hero itself."
+
+translation:
+  abstraction_goal: "Separate source identity from reusable design language."
+  derivation_summary: "The source was abstracted into a generic warm developer-tool system: paper-toned neutrals, pill-based action geometry, restrained accent usage, and product-window-first credibility."
+  excluded_source_markers:
+    - "Source brand name is kept in this file only."
+    - "Source URL is kept in this file only."
+    - "Source page labels and campaign phrasing were removed from the reusable artifacts."
+  reuse_notes:
+    - "Apply this package when a project needs calm editorial warmth without losing technical credibility."
+    - "Treat the painterly field as optional support; the product window remains the primary trust object."

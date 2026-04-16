@@ -1,18 +1,17 @@
-name: "Cursor"
-description: "Validation package generated from live inspection of cursor.com, /product, and /pricing. Warm off-white canvas, ink-dark typography, scarce orange signaling, oversized pill CTAs, paper-toned cards, and product-window demos that sit on soft painterly backdrops."
-philosophy: "Cursor's marketing language is developer-native but not cyberpunk. It trades dark futurism for warm editorial calm: cream backgrounds, quiet shadows, almost monoweight typography, and just enough orange to mark emphasis. The tension is between research-lab restraint and product velocity."
+name: "Warm Engineering Canvas"
+description: "A light-first design system built from warm paper neutrals, ink-dark typography, oversized pill actions, sparse orange signaling, and polished product-window demos."
+philosophy: "Warm editorial calm wrapped around high-leverage technical capability. The system stays restrained at the page level, then concentrates detail inside product windows, code-facing chrome, and a few high-signal action pills."
 primary_mode: "light"
-brand_source: "https://cursor.com plus live inspection of /product and /pricing"
-brand_domain: "AI coding assistant / agentic IDE / developer tooling"
-brand_type: "ui-rich"
+domain: "AI development tooling / agent workspace"
+system_type: "ui-rich"
 mono_for_code: true
 mono_for_metrics: false
 
 primitives:
   colors:
     neutral:
-      0:   "#FFFFFF"
-      50:  "#FBFAF7"
+      0: "#FFFFFF"
+      50: "#FBFAF7"
       100: "#F7F7F4"
       200: "#F2F1ED"
       300: "#EBEAE5"
@@ -23,8 +22,8 @@ primitives:
       800: "#3D392F"
       900: "#26251E"
       950: "#171611"
-    brand:
-      50:  "#FFF2EB"
+    accent:
+      50: "#FFF2EB"
       100: "#FFE3D6"
       200: "#FFC5A9"
       300: "#FFA67C"
@@ -35,58 +34,54 @@ primitives:
       800: "#7E2F10"
       900: "#4E2314"
     green:
-      50:  "#EAF8F2"
+      50: "#EAF8F2"
       500: "#1F8A65"
       900: "#134F3D"
     amber:
-      50:  "#FAF2E4"
+      50: "#FAF2E4"
       500: "#C08532"
       900: "#6A4922"
     red:
-      50:  "#FCE9EE"
+      50: "#FCE9EE"
       500: "#CF2D56"
       900: "#6E1E34"
-    blue:
-      500: "#3A6A9F"
-    purple:
-      500: "#9E94D5"
-  spacing: [0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120]
-  radii: [0, 2, 4, 8, 10, 16, 999]
+  spacing: [0, 2, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96]
+  radii: [0, 4, 8, 10, 16, 999]
 
 tokens:
   colors:
     light:
-      background:     "{neutral.100}"
-      surface1:       "{neutral.200}"
-      surface2:       "{neutral.300}"
-      surface3:       "{neutral.400}"
-      border:         "rgba(38,37,30,0.10)"
+      background: "{neutral.100}"
+      surface1: "{neutral.200}"
+      surface2: "{neutral.300}"
+      surface3: "{neutral.400}"
+      border: "rgba(38,37,30,0.10)"
       border_visible: "rgba(38,37,30,0.20)"
-      text1:          "{neutral.900}"
-      text2:          "rgba(38,37,30,0.60)"
-      text3:          "rgba(38,37,30,0.55)"
-      text4:          "rgba(38,37,30,0.40)"
-      accent:         "{brand.500}"
-      accent_hover:   "{brand.600}"
-      accent_subtle:  "{brand.50}"
+      text1: "{neutral.900}"
+      text2: "rgba(38,37,30,0.60)"
+      text3: "rgba(38,37,30,0.55)"
+      text4: "rgba(38,37,30,0.40)"
+      accent: "{accent.500}"
+      accent_hover: "{accent.600}"
+      accent_subtle: "{accent.50}"
     dark:
-      background:     "{neutral.950}"
-      surface1:       "{neutral.900}"
-      surface2:       "{neutral.800}"
-      surface3:       "{neutral.700}"
-      border:         "rgba(247,247,244,0.10)"
+      background: "{neutral.950}"
+      surface1: "{neutral.900}"
+      surface2: "{neutral.800}"
+      surface3: "{neutral.700}"
+      border: "rgba(247,247,244,0.10)"
       border_visible: "rgba(247,247,244,0.16)"
-      text1:          "{neutral.100}"
-      text2:          "rgba(247,247,244,0.72)"
-      text3:          "rgba(247,247,244,0.55)"
-      text4:          "rgba(247,247,244,0.35)"
-      accent:         "{brand.400}"
-      accent_hover:   "{brand.300}"
-      accent_subtle:  "{brand.900}"
+      text1: "{neutral.100}"
+      text2: "rgba(247,247,244,0.72)"
+      text3: "rgba(247,247,244,0.55)"
+      text4: "rgba(247,247,244,0.35)"
+      accent: "{accent.400}"
+      accent_hover: "{accent.300}"
+      accent_subtle: "{accent.900}"
     status:
       success: "{green.500}"
       warning: "{amber.500}"
-      error:   "{red.500}"
+      error: "{red.500}"
 
   spacing:
     2xs: 2
@@ -109,8 +104,7 @@ tokens:
   typography:
     display:
       family: "Geist"
-      real_font: "CursorGothic"
-      approximation_note: "CursorGothic is the brand-defining grotesk. Geist is a practical open substitute that preserves the modern developer-tool tone without adding softness."
+      observed_character: "Restrained proprietary grotesk with very little weight drama and a calm editorial posture."
       fallback: "\"Helvetica Neue\", Helvetica, Arial, system-ui, sans-serif"
       size: "36px"
       weight: 400
@@ -119,7 +113,7 @@ tokens:
       google_fonts: "Geist:wght@400;500;600"
     body:
       family: "Geist"
-      real_font: "CursorGothic"
+      observed_character: "Same voice as the display face so the whole system reads as one measured tone."
       fallback: "\"Helvetica Neue\", Helvetica, Arial, system-ui, sans-serif"
       size: "16px"
       weight: 400
@@ -128,26 +122,25 @@ tokens:
       google_fonts: "Geist:wght@400;500;600"
     mono:
       family: "JetBrains Mono"
-      real_font: "Berkeley Mono"
-      approximation_note: "Cursor uses Berkeley Mono for code-adjacent surfaces. JetBrains Mono is a practical open fallback with a similarly crisp engineering voice."
+      observed_character: "Compact engineering mono reserved for code, technical chrome, and product-adjacent detail."
       fallback: "\"SF Mono\", Menlo, Consolas, monospace"
       size: "12px"
       weight: 400
       google_fonts: "JetBrains+Mono:wght@400;500"
 
   type_scale:
-    display:  { size: "72px", line_height: 1.1, letter_spacing: "-0.03em", weight: 400, use: "Large conversion headlines and terminal CTA moments" }
-    h1:       { size: "52px", line_height: 1.15, letter_spacing: "-0.025em", weight: 400, use: "Primary page titles such as pricing" }
-    h2:       { size: "36px", line_height: 1.2, letter_spacing: "-0.02em", weight: 400, use: "Key product and section statements" }
-    h3:       { size: "26px", line_height: 1.25, letter_spacing: "-0.012em", weight: 400, use: "Homepage lead statements and feature titles" }
-    body:     { size: "16px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Paragraphs, buttons, and plan details" }
-    body_sm:  { size: "14px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Navigation, metadata, and utility labels" }
-    caption:  { size: "12px", line_height: 1.45, letter_spacing: "0em", weight: 400, use: "Inline product chrome and small helper text" }
-    label:    { size: "11px", line_height: 1.3, letter_spacing: "0.02em", weight: 400, use: "Overlines, tiny utility states, and compact controls" }
+    display: { size: "72px", line_height: 1.1, letter_spacing: "-0.03em", weight: 400, use: "Large conversion headlines" }
+    h1: { size: "52px", line_height: 1.15, letter_spacing: "-0.025em", weight: 400, use: "Primary page titles" }
+    h2: { size: "36px", line_height: 1.2, letter_spacing: "-0.02em", weight: 400, use: "Main section statements" }
+    h3: { size: "26px", line_height: 1.25, letter_spacing: "-0.012em", weight: 400, use: "Feature leads and module titles" }
+    body: { size: "16px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Paragraphs, buttons, plan details" }
+    body_sm: { size: "14px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Navigation and secondary controls" }
+    caption: { size: "12px", line_height: 1.45, letter_spacing: "0em", weight: 400, use: "Code-adjacent helper text" }
+    label: { size: "11px", line_height: 1.3, letter_spacing: "0.02em", weight: 400, use: "Tiny UI labels and overlines" }
 
   elevation:
     strategy: "subtle-product-window"
-    notes: "Most marketing cards stay flat. Depth appears mainly in product-window demos through layered soft shadows and hairline edges."
+    notes: "Page-level surfaces stay almost flat. Layered shadows are reserved for product windows and only when credibility needs to be concentrated."
     shadows:
       hero_window: "0px 28px 70px 0px rgba(0,0,0,0.14), 0px 14px 32px 0px rgba(0,0,0,0.10), 0px 0px 0px 1px rgba(38,37,30,0.10)"
       nested_window: "0px 25px 50px -12px rgba(0,0,0,0.25), 0px 12px 24px -8px rgba(0,0,0,0.15), 0px 0px 0px 0.5px rgba(38,37,30,0.10)"
@@ -159,16 +152,16 @@ tokens:
     duration_fast: "140ms"
     duration_normal: "150ms"
     duration_slow: "240ms"
-    notes: "Transitions are short and controlled. Cursor hints at spring curves in the token layer, but the visible marketing feel stays restrained."
+    notes: "The marketing layer should feel composed and frictionless rather than lively."
 
   hero_stage:
     preset: null
     observed_style:
-      description: "Cursor uses a split hero. The page itself stays almost blank and cream, then a large product window lands on top of a washed painterly landscape. The scenic field is muted and acts as atmosphere behind the interface rather than becoming the whole composition."
+      description: "A split hero composed of blank cream space, a soft painterly field, and a polished product window as the main object of trust."
       where_used:
-        - "homepage hero"
-        - "homepage product demo band"
-      notes: "The product window is the real hero subject. The painted field exists to warm the scene and keep the demo from feeling like sterile SaaS chrome."
+        - "landing hero"
+        - "primary product showcase"
+      notes: "Atmosphere supports the interface but never replaces it."
     background:
       medium: "painterly"
       color_mode: "brand-tinted-neutral"
@@ -194,11 +187,11 @@ tokens:
     relation:
       type: "shadow-only"
       bleed: 0
-    disclaimer: "Rendered as an abstract product-window composition with painterly support. Cursor's real screenshots and imagery remain proprietary."
+    disclaimer: "Rendered as an abstract product-window composition with a painterly support field."
 
   iconography:
     observed_style:
-      description: "Cursor uses compact geometric symbols and a proprietary icon font inside product demos. Strokes are regular, corners are soft, and the overall feel is utilitarian rather than illustrative."
+      description: "Compact geometric utility icons with regular strokes, soft corners, and minimal decorative variation."
       stroke_weight: "regular"
       corner_treatment: "soft"
       fill_style: "mixed"
@@ -208,37 +201,35 @@ tokens:
       name: "Tabler Icons"
       weight: "outline"
       match_score: "high"
-      match_reasoning: "Tabler gets close to Cursor's light geometric strokes, compact utility posture, and developer-tool neutrality. Lucide is a close second, but Tabler's denser system feel better matches the product demos."
+      match_reasoning: "Tabler preserves the compact, utility-first posture and quiet geometric stroke logic needed for product chrome and supporting UI."
       cdn: "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
       icon_class_prefix: "ti ti-"
-    disclaimer: "The generated package uses Tabler as a best-match fallback. Cursor's actual icon assets are proprietary."
+    disclaimer: "The generated package uses a best-match open icon kit rather than any proprietary source set."
 
 components:
   button_primary:
     source: "observed"
-    teardown: "Homepage and product-page main download CTA"
     background: "{tokens.colors.light.text1}"
     color: "{tokens.colors.light.background}"
     font_family: "{tokens.typography.body.family}"
     font_size: "{tokens.type_scale.body.size}"
     font_weight: 400
-    padding: "12.48px 21.6px 12.8px"
+    padding: "12px 22px"
     height: "43px"
     radius: "{tokens.radii.pill}"
     border: "1px solid {tokens.colors.light.text1}"
     shadow: "none"
     hover:
       background: "{primitives.colors.neutral.800}"
-    notes: "Primary CTAs are dark ink pills, not orange fills."
+    notes: "Primary actions are ink-dark pills rather than accent-filled buttons."
 
   button_secondary:
     source: "observed"
-    teardown: "Homepage secondary CTA and light pricing CTAs"
     background: "{tokens.colors.light.surface3}"
     color: "{tokens.colors.light.text1}"
     font_size: "{tokens.type_scale.body.size}"
     font_weight: 400
-    padding: "12.48px 21.6px 12.8px"
+    padding: "12px 22px"
     height: "43px"
     radius: "{tokens.radii.pill}"
     border: "1px solid rgba(38,37,30,0.025)"
@@ -246,48 +237,40 @@ components:
     hover:
       background: "{tokens.colors.light.surface2}"
 
-  button_nav_pill:
+  nav_pill:
     source: "observed"
-    teardown: "Header-level contact and download actions"
     background: "transparent"
     color: "{tokens.colors.light.text1}"
     font_size: "{tokens.type_scale.body_sm.size}"
     font_weight: 400
-    padding: "5.6px 10.5px 5.88px"
+    padding: "6px 10px"
     height: "32px"
     radius: "{tokens.radii.pill}"
     border: "1px solid rgba(38,37,30,0.20)"
 
-  pricing_card:
-    source: "observed"
-    teardown: "Pricing plan cards on /pricing"
-    background: "{tokens.colors.light.surface1}"
-    radius: "{tokens.radii.element}"
-    padding: "13.4px 15px 15px"
-    height: "369px"
-    border: "none"
-    shadow: "none"
-
   segmented_toggle:
     source: "observed"
-    teardown: "Monthly / Yearly pricing switcher"
     background: "{tokens.colors.light.surface1}"
     radius: "{tokens.radii.pill}"
     padding: "2px"
-    width: "192px"
     height: "42px"
     active_track:
       background: "{tokens.colors.light.surface3}"
       border: "1px solid rgba(38,37,30,0.025)"
-      width: "101px"
-      height: "38px"
     label:
       font_size: "{tokens.type_scale.body.size}"
-      padding: "9.6px 20px 9.92px"
+      padding: "10px 20px"
+
+  pricing_card:
+    source: "observed"
+    background: "{tokens.colors.light.surface1}"
+    radius: "{tokens.radii.element}"
+    padding: "14px 15px 15px"
+    border: "none"
+    shadow: "none"
 
   demo_window:
     source: "observed"
-    teardown: "Homepage and product-page main product windows"
     background: "{tokens.colors.light.surface1}"
     radius: "{tokens.radii.component}"
     border: "1px solid rgba(38,37,30,0.10)"
@@ -297,7 +280,6 @@ components:
 
   code_chip:
     source: "observed"
-    teardown: "Small in-demo utility pills such as Get Cursor"
     background: "transparent"
     color: "{tokens.colors.light.text2}"
     font_size: "{tokens.type_scale.caption.size}"
@@ -308,7 +290,6 @@ components:
 
   input_field:
     source: "derived"
-    teardown: "Not directly exposed as a standalone marketing form field; derived from pricing cards, segmented control, and product-window chrome"
     background: "{tokens.colors.light.surface1}"
     color: "{tokens.colors.light.text1}"
     placeholder: "{tokens.colors.light.text3}"
@@ -317,4 +298,95 @@ components:
     focus_ring: "0 0 0 1px {tokens.colors.light.accent_subtle}"
     radius: "{tokens.radii.control}"
     padding: "12px 14px"
-    notes: "Derived to preserve Cursor's warm paper surface and sharp-but-not-brutal geometry."
+    notes: "Derived from pricing cards, segmented controls, and product-window chrome."
+
+responsive_behavior:
+  breakpoints:
+    small_mobile:
+      width: "<479px"
+      key_changes:
+        - "Fully stacked layout"
+        - "Hero copy caps near 28px"
+        - "Product windows crop to the essential viewport"
+    mobile:
+      width: "479-640px"
+      key_changes:
+        - "Single-column layout"
+        - "Collapsed navigation"
+        - "Hero actions stack vertically"
+        - "Pricing cards stack vertically"
+    large_mobile:
+      width: "640-767px"
+      key_changes:
+        - "Single-column layout with wider content rail"
+    tablet:
+      width: "768-991px"
+      key_changes:
+        - "Selective 2-column sections"
+        - "Navigation remains condensed"
+    desktop:
+      width: "992px+"
+      key_changes:
+        - "Full multi-column layout"
+        - "Expanded top navigation"
+        - "Split hero composition"
+
+  typography_scaling:
+    display: { desktop: "72px", tablet: "56px", mobile: "40px", small_mobile: "28px" }
+    h1: { desktop: "52px", tablet: "40px", mobile: "32px", small_mobile: "26px" }
+    h2: { desktop: "36px", tablet: "30px", mobile: "24px", small_mobile: "22px" }
+    body: { desktop: "16px", tablet: "16px", mobile: "15px", small_mobile: "15px" }
+
+  touch_targets:
+    minimum: "44x44px"
+    notes:
+      - "Primary pills keep generous horizontal padding."
+      - "Mobile navigation rows stay thumb-friendly."
+      - "Clickable cards may act as large touch targets."
+
+  collapsing_strategy:
+    navigation: "Horizontal navigation becomes a compact menu trigger or drawer."
+    hero: "Copy and product demo stack vertically while preserving generous blank space."
+    feature_sections: "Side-by-side copy and demo modules become a single-column stack."
+    pricing_cards: "Side-by-side plans become vertically stacked cards."
+    section_padding: "Top-level white space reduces, but the calm paper rhythm stays intact."
+
+  image_behavior:
+    screenshots: "Product windows scale proportionally inside rounded 10px containers."
+    support_backgrounds: "Painterly backdrops may crop slightly but keep the same warm direction."
+    prioritization: "Preserve interface legibility before atmosphere on narrow screens."
+    art_direction_changes: false
+
+dos_and_donts:
+  do:
+    - "Use warm paper neutrals like #F7F7F4 as the default page canvas."
+    - "Use ink-dark pills for primary CTAs instead of accent-filled buttons."
+    - "Keep hierarchy in scale and spacing before weight."
+    - "Reserve layered shadows for prestige product-window demos."
+    - "Use mono only for code and technical chrome."
+    - "Let the product window be the most detailed object on the page."
+  dont:
+    - "Don't fill primary CTAs with orange by default."
+    - "Don't switch the system into a dark sci-fi AI aesthetic."
+    - "Don't use bright white page backgrounds."
+    - "Don't build hierarchy through repeated heavy bold weights."
+    - "Don't turn every navigation item into a pill."
+    - "Don't replace product demos with abstract shapes when capability must be shown."
+
+anti_patterns:
+  - "No cold blue-white background canvas."
+  - "No full-surface accent fills on core marketing sections."
+  - "No heavy bold display typography."
+  - "No plush consumer-style card radius on structural surfaces."
+  - "No cinematic glow or glassmorphism on standard modules."
+  - "No decorative hero object that outranks the product window."
+
+iteration_heuristics:
+  safe_adjustments:
+    - "Warm or cool the neutral ramp slightly while preserving the paper family."
+    - "Increase or decrease accent visibility without changing the dark-CTA rule."
+    - "Tune product-window shadow strength while keeping page-level surfaces flat."
+  high_risk_changes:
+    - "Changing the page background to pure white or dark mode as the primary expression."
+    - "Turning the accent into the main fill color for buttons and cards."
+    - "Removing the pill geometry from the action system."

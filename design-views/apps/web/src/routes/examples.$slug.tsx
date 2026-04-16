@@ -34,6 +34,7 @@ import {
   getDocumentSections,
   getComponentNarrativeFields,
   getComponentStateEntries,
+  getDosAndDonts,
   getExampleBySlug,
   getExampleToc,
   getElevation,
@@ -42,6 +43,7 @@ import {
   getImportantFields,
   getMotion,
   getPhilosophy,
+  getResponsiveBehavior,
   getRadiiEntries,
   getSpacingEntries,
   getTypeScale,
@@ -148,6 +150,8 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
   const typeScale = getTypeScale(example);
   const elevation = getElevation(example);
   const motion = getMotion(example);
+  const responsiveBehavior = getResponsiveBehavior(example);
+  const dosAndDonts = getDosAndDonts(example);
   const voice = getVoice(example);
   const documentSections = getDocumentSections(example);
 
@@ -155,8 +159,8 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
     <main className="min-h-full bg-[linear-gradient(180deg,#f5f7fb_0%,#edf2f8_100%)] text-slate-950 transition-colors dark:bg-[radial-gradient(circle_at_top,#101d30_0%,#071018_54%,#04080f_100%)] dark:text-white">
       <div className="mx-auto max-w-[1560px] px-4 py-5 md:px-7 md:py-6">
         <div className="grid gap-6 xl:grid-cols-[268px_minmax(0,1fr)]">
-          <aside className="xl:sticky xl:top-[96px] xl:self-start">
-            <div className="rounded-[28px] border border-slate-200/80 bg-white/88 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur dark:border-white/10 dark:bg-white/[0.045] dark:shadow-[0_36px_100px_rgba(0,0,0,0.38)]">
+          <aside className="xl:sticky xl:top-0 xl:self-start xl:pt-4">
+            <div className="rounded-[28px] border border-slate-200/80 bg-white/88 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur dark:border-white/10 dark:bg-white/[0.045] dark:shadow-[0_36px_100px_rgba(0,0,0,0.38)] xl:flex xl:max-h-[calc(100vh-1rem)] xl:flex-col xl:overflow-hidden">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <Link
                   className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-white/20 dark:hover:text-white"
@@ -175,7 +179,7 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 </p>
               </div>
 
-              <nav className="mt-5 space-y-4">
+              <nav className="mt-5 space-y-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto xl:pr-1">
                 {toc.map((group) => (
                   <div key={`${example.slug}-${group.title}`}>
                     <div className="mb-2 px-2 text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
@@ -250,7 +254,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
             {example.parseError ? (
               <>
                 <SectionPanel
-                  description="The file stays visible in navigation so a broken example does not blank the entire app."
                   icon={<AlertTriangle className="size-4" />}
                   id="parse-error"
                   title="Parse Error"
@@ -277,7 +280,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
               <>
                 {philosophy ? (
                   <SectionPanel
-                    description="The philosophy block captures the governing attitude behind the system, not just the visual tokens."
                     icon={<Compass className="size-4" />}
                     id="philosophy"
                     title="Philosophy"
@@ -289,7 +291,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 ) : null}
 
                 <SectionPanel
-                  description="Primitive swatches stay visual, while semantic tokens are also flattened into a CSS-variable style table for faster inspection."
                   icon={<Palette className="size-4" />}
                   id="colors"
                   title="Colors"
@@ -306,14 +307,13 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                       title="Semantic Colors"
                     />
                     <DocTable
-                      columns={["Token", "Reference", "Resolved", "Role"]}
+                      columns={["Path", "Reference", "Resolved"]}
                       rows={buildSemanticColorRows(example, semanticColors)}
                     />
                   </div>
                 </SectionPanel>
 
                 <SectionPanel
-                  description="Specimens stay visual, but the scale is also summarized as a proper type table so font constants can be read at a glance."
                   icon={<Type className="size-4" />}
                   id="typography"
                   title="Typography"
@@ -369,7 +369,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {typeScale ? (
                   <SectionPanel
-                    description="Type scale is shown separately from font families so generated UI can follow the intended hierarchy, not just the stack."
                     icon={<Type className="size-4" />}
                     id="type-scale"
                     title="Type Scale"
@@ -382,7 +381,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 ) : null}
 
                 <SectionPanel
-                  description="The radius scale is shown as both visual samples and a token table, closer to a design-system documentation surface."
                   icon={<Boxes className="size-4" />}
                   id="radii"
                   title="Radii"
@@ -394,19 +392,16 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                       ))}
                     </div>
                     <DocTable
-                      columns={["Token", "Value", "Suggested CSS Var", "Use"]}
+                      columns={["Token", "Value"]}
                       rows={radii.map((item) => [
                         item.name,
                         formatDimension(item.value),
-                        `--r-${item.name}`,
-                        describeRadiusUse(item.name),
                       ])}
                     />
                   </div>
                 </SectionPanel>
 
                 <SectionPanel
-                  description="Spacing tokens keep a rhythm preview, but now also include a compact constants table for CSS-variable style reading."
                   icon={<Rows3 className="size-4" />}
                   id="spacing"
                   title="Spacing"
@@ -418,12 +413,10 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                       ))}
                     </div>
                     <DocTable
-                      columns={["Token", "Value", "Suggested CSS Var", "Use"]}
+                      columns={["Token", "Value"]}
                       rows={spacing.map((item) => [
                         item.name,
                         formatDimension(item.value),
-                        `--space-${item.name}`,
-                        describeSpacingUse(item.name, item.value),
                       ])}
                     />
                   </div>
@@ -431,7 +424,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {elevation ? (
                   <SectionPanel
-                    description="Surface depth is previewed as sample shells plus a shadow table, so the elevation strategy is explicit instead of implied."
                     icon={<Layers3 className="size-4" />}
                     id="elevation"
                     title="Elevation"
@@ -448,7 +440,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {motion ? (
                   <SectionPanel
-                    description="Motion settings are normalized into timing and easing references so generated previews can respect the same interaction personality."
                     icon={<Workflow className="size-4" />}
                     id="motion"
                     title="Motion"
@@ -463,8 +454,63 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                   </SectionPanel>
                 ) : null}
 
+                {responsiveBehavior ? (
+                  <SectionPanel
+                    icon={<LayoutGrid className="size-4" />}
+                    id="responsive-behavior"
+                    title="Responsive Behavior"
+                  >
+                    <div className="space-y-4">
+                      <DocTable
+                        columns={["Name", "Width", "Key Changes"]}
+                        rows={buildResponsiveBreakpointRows(responsiveBehavior)}
+                      />
+                      <div className="grid gap-4 xl:grid-cols-3">
+                        <GuidanceListCard
+                          items={getResponsiveListEntries(asRecord(responsiveBehavior.touch_targets), "notes")}
+                          title="Touch Targets"
+                        />
+                        <GuidanceListCard
+                          items={buildKeyValueLines(asRecord(responsiveBehavior.collapsing_strategy))}
+                          title="Collapsing Strategy"
+                        />
+                        <GuidanceListCard
+                          items={buildKeyValueLines(asRecord(responsiveBehavior.image_behavior))}
+                          title="Image Behavior"
+                        />
+                      </div>
+                      {asRecord(responsiveBehavior.typography_scaling) ? (
+                        <DocTable
+                          columns={["Token", "Desktop", "Tablet", "Mobile", "Small Mobile"]}
+                          rows={buildResponsiveTypeRows(asRecord(responsiveBehavior.typography_scaling)!)}
+                        />
+                      ) : null}
+                    </div>
+                  </SectionPanel>
+                ) : null}
+
+                {dosAndDonts ? (
+                  <SectionPanel
+                    icon={<Check className="size-4" />}
+                    id="dos-and-donts"
+                    title="Do's And Don'ts"
+                  >
+                    <div className="grid gap-4 xl:grid-cols-2">
+                      <GuidanceListCard
+                        items={toStringList(dosAndDonts.do)}
+                        title="Do"
+                        tone="positive"
+                      />
+                      <GuidanceListCard
+                        items={toStringList(dosAndDonts.dont)}
+                        title="Don't"
+                        tone="caution"
+                      />
+                    </div>
+                  </SectionPanel>
+                ) : null}
+
                 <SectionPanel
-                  description="Hero stage information stays in foundations because it acts like the narrative shell for the landing page."
                   icon={<LayoutPanelTop className="size-4" />}
                   id="hero-stage"
                   title="Hero Stage"
@@ -500,7 +546,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {iconography ? (
                   <SectionPanel
-                    description="Iconography is rendered as a style preview plus a compact table of the observed and fallback system."
                     icon={<Sparkles className="size-4" />}
                     id="iconography"
                     title="Iconography"
@@ -524,7 +569,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {voice ? (
                   <SectionPanel
-                    description="Voice samples make the generated preview more faithful by exposing the tone and actual sentence patterns the system expects."
                     icon={<Bell className="size-4" />}
                     id="voice"
                     title="Voice"
@@ -556,7 +600,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
                 {example.documentRaw ? (
                   <SectionPanel
-                    description="Standalone Markdown design documents are summarized here so validation packages can be inspected without leaving the preview app."
                     icon={<FileText className="size-4" />}
                     id="document-preview"
                     title="Design Document"
@@ -568,7 +611,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                 {componentGroups.map((group) => (
                   <SectionPanel
                     key={`${example.slug}-${group.id}`}
-                    description={`Component previews for the ${group.label.toLowerCase()} section.`}
                     icon={<Boxes className="size-4" />}
                     id={`components-${group.id}`}
                     title={group.label}
@@ -1268,7 +1310,7 @@ function SectionPanel({
   actions?: React.ReactNode;
   id: string;
   title: string;
-  description: string;
+  description?: string;
   icon: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -1285,7 +1327,7 @@ function SectionPanel({
             {title}
           </div>
           <h2 className="text-[30px] font-semibold tracking-[-0.05em]">{title}</h2>
-          <p className="mt-2 text-[15px] leading-7 text-slate-600 dark:text-slate-300">{description}</p>
+          {description ? <p className="mt-2 text-[15px] leading-7 text-slate-600 dark:text-slate-300">{description}</p> : null}
         </div>
         {actions ? <div className="shrink-0">{actions}</div> : null}
       </div>
@@ -1344,7 +1386,6 @@ function RawYamlSection({ example }: { example: (typeof examples)[number] }) {
   return (
     <SectionPanel
       actions={<CopyTextButton text={example.raw} />}
-      description="The raw source is kept on the page so you can compare the rendered preview against the YAML itself."
       icon={<BrushCleaning className="size-4" />}
       id="raw-yaml"
       title="Raw YAML"
@@ -1361,8 +1402,12 @@ function RawDocumentSection({ example }: { example: (typeof examples)[number] })
 
   return (
     <SectionPanel
-      actions={<CopyTextButton text={example.documentRaw} />}
-      description="The raw Markdown document is kept alongside the YAML so you can compare the human-readable brief with the structured model."
+      actions={
+        <div className="flex items-center gap-2">
+          <DocumentWordCount text={example.documentRaw} />
+          <CopyTextButton text={example.documentRaw} />
+        </div>
+      }
       icon={<FileText className="size-4" />}
       id="raw-document"
       title="Raw Markdown"
@@ -1371,6 +1416,17 @@ function RawDocumentSection({ example }: { example: (typeof examples)[number] })
         {example.documentRaw.split("\n").slice(0, 220).join("\n")}
       </pre>
     </SectionPanel>
+  );
+}
+
+function DocumentWordCount({ text }: { text: string }) {
+  const count = countDocumentWords(text);
+
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100/90 px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
+      <span>Words</span>
+      <span className="font-mono text-[11px] text-slate-800 dark:text-slate-100">{count.toLocaleString()}</span>
+    </div>
   );
 }
 
@@ -1420,36 +1476,79 @@ function DocumentPreview({
             {section.title}
           </h3>
           <div className="mt-3 space-y-2">
-            {getDocumentPreviewLines(section.body).map((line, index) => {
-              if (line.startsWith("|")) {
+            {getDocumentPreviewBlocks(section.body).map((block, index) => {
+              if (block.type === "table") {
                 return (
                   <div
                     key={`${section.id}-table-${index}`}
-                    className="overflow-x-auto rounded-[14px] border border-slate-200/80 bg-white/80 p-2 font-mono text-[11px] leading-5 text-slate-600 dark:border-white/10 dark:bg-[#0d1722] dark:text-slate-300"
+                    className="overflow-hidden rounded-[16px] border border-slate-200/80 bg-white/88 dark:border-white/10 dark:bg-[#0d1722]"
                   >
-                    {line}
+                    <div className="max-h-[300px] overflow-auto">
+                      <table className="min-w-full border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-200/80 bg-slate-50/90 dark:border-white/10 dark:bg-white/[0.03]">
+                            {block.headers.map((header) => (
+                              <th
+                                key={`${section.id}-header-${header}`}
+                                className="px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {block.rows.map((row, rowIndex) => (
+                            <tr
+                              key={`${section.id}-row-${rowIndex}`}
+                              className="border-b border-slate-200/70 last:border-b-0 dark:border-white/8"
+                            >
+                              {row.map((cell, cellIndex) => (
+                                <td
+                                  key={`${section.id}-cell-${rowIndex}-${cellIndex}`}
+                                  className={[
+                                    "px-3 py-2.5 align-top text-[13px] text-slate-700 dark:text-slate-200",
+                                    cellIndex < row.length - 1 ? "border-r border-slate-200/60 dark:border-white/8" : "",
+                                    looksMonospaced(cell) ? "font-mono text-[12px]" : "",
+                                  ].join(" ")}
+                                >
+                                  <span className="break-words">{cell}</span>
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 );
               }
 
-              if (line.startsWith("- ")) {
+              if (block.type === "list") {
                 return (
                   <div
-                    key={`${section.id}-bullet-${index}`}
-                    className="text-sm leading-6 text-slate-700 dark:text-slate-200"
+                    key={`${section.id}-list-${index}`}
+                    className="space-y-1.5"
                   >
-                    {line}
+                    {block.items.map((item, itemIndex) => (
+                      <div
+                        key={`${section.id}-list-item-${itemIndex}`}
+                        className="text-sm leading-6 text-slate-700 dark:text-slate-200"
+                      >
+                        - {item}
+                      </div>
+                    ))}
                   </div>
                 );
               }
 
-              if (line.startsWith("### ")) {
+              if (block.type === "subheading") {
                 return (
                   <div
                     key={`${section.id}-subheading-${index}`}
                     className="pt-1 text-sm font-medium text-slate-900 dark:text-white"
                   >
-                    {line.replace(/^###\s+/, "")}
+                    {block.text}
                   </div>
                 );
               }
@@ -1459,7 +1558,7 @@ function DocumentPreview({
                   key={`${section.id}-paragraph-${index}`}
                   className="text-sm leading-6 text-slate-700 dark:text-slate-200"
                 >
-                  {line}
+                  {block.text}
                 </p>
               );
             })}
@@ -1574,12 +1673,143 @@ function EmptyState({ text }: { text: string }) {
   );
 }
 
-function getDocumentPreviewLines(body: string) {
-  return body
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .slice(0, 8);
+function GuidanceListCard({
+  title,
+  items,
+  tone = "neutral",
+}: {
+  title: string;
+  items: string[];
+  tone?: "neutral" | "positive" | "caution";
+}) {
+  const toneClasses =
+    tone === "positive"
+      ? "border-emerald-200/80 bg-emerald-50/70 dark:border-emerald-400/15 dark:bg-emerald-500/[0.06]"
+      : tone === "caution"
+        ? "border-amber-200/80 bg-amber-50/70 dark:border-amber-400/15 dark:bg-amber-500/[0.06]"
+        : "border-slate-200/80 bg-slate-50/80 dark:border-white/10 dark:bg-[#161f29]";
+
+  return (
+    <div className={`rounded-[22px] border p-4 ${toneClasses}`}>
+      <div className="mb-3 text-base font-semibold tracking-[-0.03em] text-slate-900 dark:text-white">{title}</div>
+      {items.length ? (
+        <div className="space-y-2">
+          {items.map((item, index) => (
+            <div
+              key={`${title}-${index}`}
+              className="rounded-[14px] border border-white/60 bg-white/80 px-3 py-2.5 text-sm leading-6 text-slate-700 dark:border-white/10 dark:bg-[#0d1722] dark:text-slate-200"
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState text={`No ${title.toLowerCase()} guidance found.`} />
+      )}
+    </div>
+  );
+}
+
+type DocumentPreviewBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "subheading"; text: string }
+  | { type: "list"; items: string[] }
+  | { type: "table"; headers: string[]; rows: string[][] };
+
+function getDocumentPreviewBlocks(body: string): DocumentPreviewBlock[] {
+  const lines = body.split("\n").map((line) => line.trim()).filter(Boolean);
+  const blocks: DocumentPreviewBlock[] = [];
+
+  let index = 0;
+
+  while (index < lines.length && blocks.length < 8) {
+    const line = lines[index]!;
+
+    if (line.startsWith("### ")) {
+      blocks.push({
+        type: "subheading",
+        text: line.replace(/^###\s+/, ""),
+      });
+      index += 1;
+      continue;
+    }
+
+    if (line.startsWith("|")) {
+      const tableLines: string[] = [];
+
+      while (index < lines.length && lines[index]!.startsWith("|")) {
+        tableLines.push(lines[index]!);
+        index += 1;
+      }
+
+      const tableBlock = parseMarkdownTable(tableLines);
+      if (tableBlock) blocks.push(tableBlock);
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      const items: string[] = [];
+
+      while (index < lines.length && lines[index]!.startsWith("- ")) {
+        items.push(lines[index]!.replace(/^- /, ""));
+        index += 1;
+      }
+
+      blocks.push({ type: "list", items });
+      continue;
+    }
+
+    const paragraphLines = [line];
+    index += 1;
+
+    while (
+      index < lines.length &&
+      !lines[index]!.startsWith("### ") &&
+      !lines[index]!.startsWith("|") &&
+      !lines[index]!.startsWith("- ")
+    ) {
+      paragraphLines.push(lines[index]!);
+      index += 1;
+    }
+
+    blocks.push({
+      type: "paragraph",
+      text: paragraphLines.join(" "),
+    });
+  }
+
+  return blocks;
+}
+
+function parseMarkdownTable(lines: string[]): Extract<DocumentPreviewBlock, { type: "table" }> | null {
+  if (!lines.length) return null;
+
+  const rows = lines
+    .map((line) => parseMarkdownTableRow(line))
+    .filter((row) => row.length > 0);
+
+  if (!rows.length) return null;
+
+  const headers = rows[0]!;
+  const bodyRows = rows.slice(1).filter((row) => !isMarkdownSeparatorRow(row));
+
+  return {
+    type: "table",
+    headers,
+    rows: bodyRows,
+  };
+}
+
+function parseMarkdownTableRow(line: string) {
+  return line
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function isMarkdownSeparatorRow(row: string[]) {
+  return row.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s+/g, "")));
 }
 
 function DocTable({
@@ -1642,10 +1872,9 @@ function buildSemanticColorRows(
 ) {
   return Object.entries(semanticColors ?? {}).flatMap(([mode, groupValue]) => {
     return flattenColorGroups(groupValue, example).map((entry) => [
-      `--${mode}-${entry.name}`,
+      `${mode}.${entry.name}`,
       entry.value,
       entry.swatch ?? resolveValue(example, entry.value),
-      describeColorRole(entry.name),
     ]);
   });
 }
@@ -1824,44 +2053,64 @@ function MotionPreview({
   );
 }
 
-function describeColorRole(token: string) {
-  if (token.includes("background")) return "Page background";
-  if (token.includes("surface1")) return "Primary container surface";
-  if (token.includes("surface2")) return "Grouped backgrounds";
-  if (token.includes("surface3")) return "Inset or nested panels";
-  if (token.includes("text1")) return "Primary text";
-  if (token.includes("text2")) return "Secondary text";
-  if (token.includes("text3")) return "Tertiary text or placeholders";
-  if (token.includes("text4")) return "Muted helper text";
-  if (token.includes("accent")) return "Primary accent or emphasis";
-  if (token.includes("success")) return "Positive state";
-  if (token.includes("warning")) return "Warning state";
-  if (token.includes("error")) return "Destructive state";
-  if (token.includes("border")) return "Border or divider";
-  return "Semantic color token";
-}
-
-function describeRadiusUse(token: string) {
-  if (token.includes("element")) return "Small controls and list items";
-  if (token.includes("control")) return "Buttons, inputs, toggles";
-  if (token.includes("component")) return "Cards and panels";
-  if (token.includes("container")) return "Sheets, modals, large shells";
-  if (token.includes("pill")) return "Tags, badges, nav pills";
-  return "Radius token";
-}
-
-function describeSpacingUse(token: string, value: string) {
-  const numeric = Number.parseFloat(formatDimension(value));
-  if (token.includes("2xs") || numeric <= 4) return "Hairline gaps and tight nudges";
-  if (token.includes("xs") || numeric <= 8) return "Inline spacing and compact padding";
-  if (token.includes("sm") || numeric <= 12) return "Base small gap";
-  if (token.includes("md") || numeric <= 20) return "Control padding and form gaps";
-  if (token.includes("lg") || numeric <= 24) return "Card padding and list spacing";
-  if (token.includes("xl") || numeric <= 32) return "Section spacing";
-  if (numeric <= 64) return "Group separation";
-  return "Page-level spacing";
-}
-
 function looksMonospaced(value: string) {
   return value.startsWith("--") || value.startsWith("{") || value.includes("px") || value.includes("rem") || value.includes("#");
+}
+
+function countDocumentWords(text: string) {
+  const matches = text.match(/[\p{Script=Han}]|[A-Za-z0-9]+(?:[._/#-][A-Za-z0-9]+)*/gu);
+  return matches?.length ?? 0;
+}
+
+function buildResponsiveBreakpointRows(responsiveBehavior: Record<string, unknown>) {
+  const breakpoints = asRecord(responsiveBehavior.breakpoints);
+
+  return Object.entries(breakpoints ?? {}).map(([name, value]) => {
+    const record = asRecord(value);
+    const keyChanges = toStringList(record?.key_changes).join(" | ");
+
+    return [
+      name,
+      asText(record?.width) ?? "—",
+      keyChanges || "—",
+    ];
+  });
+}
+
+function buildResponsiveTypeRows(typeScaling: Record<string, unknown>) {
+  return Object.entries(typeScaling).map(([token, value]) => {
+    const record = asRecord(value);
+
+    return [
+      token,
+      asText(record?.desktop) ?? "—",
+      asText(record?.tablet) ?? "—",
+      asText(record?.mobile) ?? "—",
+      asText(record?.small_mobile) ?? "—",
+    ];
+  });
+}
+
+function getResponsiveListEntries(record: Record<string, unknown> | null, listKey: string) {
+  if (!record) return [];
+
+  const header = asText(record.minimum);
+  const items = toStringList(record[listKey]);
+
+  return header ? [`minimum: ${header}`, ...items] : items;
+}
+
+function buildKeyValueLines(record: Record<string, unknown> | null) {
+  if (!record) return [];
+
+  return Object.entries(record).map(([key, value]) => {
+    const text = Array.isArray(value) ? toStringList(value).join(" | ") : asText(value) ?? "—";
+    return `${key}: ${text}`;
+  });
+}
+
+function toStringList(value: unknown) {
+  return (Array.isArray(value) ? value : [])
+    .map((entry) => asText(entry))
+    .filter(Boolean) as string[];
 }

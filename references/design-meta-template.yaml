@@ -1,0 +1,39 @@
+generated_at: "{{generated-at}}"
+system:
+  name: "{{system-name}}"
+  slug: "{{system-slug}}"
+  summary: "{{system-summary}}"
+  primary_mode: "{{primary-mode}}"
+  domain: "{{domain}}"
+  system_type: "{{system-type}}"
+
+source:
+  input_type: "{{input-type}}"
+  label: "{{source-label}}"
+  canonical_url: "{{source-url}}"
+  domain: "{{source-domain}}"
+  entity_type: "{{source-entity-type}}"
+  primary_surface: "{{primary-surface}}"
+  analyzed_surfaces:
+    - "{{surface-1}}"
+    - "{{surface-2}}"
+    - "{{surface-3}}"
+
+capture_context:
+  inspected_at: "{{inspected-at}}"
+  primary_mode_observed: "{{primary-mode-observed}}"
+  evidence:
+    - kind: "{{evidence-kind}}"
+      location: "{{evidence-location}}"
+      notes: "{{evidence-notes}}"
+
+translation:
+  abstraction_goal: "Separate source identity from reusable design language."
+  derivation_summary: "{{derivation-summary}}"
+  excluded_source_markers:
+    - "Source brand names stay in this file only."
+    - "Source URLs stay in this file only."
+    - "Source-specific marketing copy is rewritten into generic design language."
+  reuse_notes:
+    - "{{reuse-note-1}}"
+    - "{{reuse-note-2}}"

@@ -1,0 +1,45 @@
+generated_at: "2026-04-16"
+system:
+  name: "Operational Midnight Grid"
+  slug: "operational-midnight-grid"
+  summary: "A reusable dark-first design system with near-black neutrals, compact control geometry, restrained indigo signaling, and product-shell-first composition."
+  primary_mode: "dark"
+  domain: "product planning / issue tracking / team operations"
+  system_type: "ui-rich"
+
+source:
+  input_type: "url"
+  label: "Linear"
+  canonical_url: "https://linear.app"
+  domain: "linear.app"
+  entity_type: "software brand / marketing site"
+  primary_surface: "public marketing site"
+  analyzed_surfaces:
+    - "Homepage hero and centered product shell"
+    - "Editorial narrative surfaces with serif interruption"
+    - "Customer and proof surfaces with pill filters and dense cards"
+
+capture_context:
+  inspected_at: "2026-04-16"
+  primary_mode_observed: "dark"
+  evidence:
+    - kind: "computed-styles"
+      location: "hero shell, buttons, and support cards"
+      notes: "Near-black neutrals, compact 4px to 6px control radii, restrained indigo signals, border-led depth."
+    - kind: "layout-inspection"
+      location: "hero and proof surfaces"
+      notes: "Background treatment is nearly absent; product shell remains the primary trust object."
+    - kind: "visual-review"
+      location: "editorial surfaces"
+      notes: "A serif voice appears as an intentional narrative interrupt rather than a global typography switch."
+
+translation:
+  abstraction_goal: "Separate source identity from reusable design language."
+  derivation_summary: "The source was abstracted into a generic dark operational system: near-black canvas, compact geometry, indigo-as-signal, border-led depth, and a contextual editorial serif side-channel."
+  excluded_source_markers:
+    - "Source brand name is kept in this file only."
+    - "Source URL is kept in this file only."
+    - "Source page names and product positioning copy were removed from the reusable artifacts."
+  reuse_notes:
+    - "Apply this package when a product needs to feel already under control before the user interacts."
+    - "Treat editorial serif usage as optional and contextual, never as the default system voice."

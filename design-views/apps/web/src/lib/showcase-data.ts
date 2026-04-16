@@ -382,6 +382,14 @@ export function getVoice(example: ExampleData) {
   return asRecord(example.model.voice);
 }
 
+export function getResponsiveBehavior(example: ExampleData) {
+  return asRecord(example.model.responsive_behavior);
+}
+
+export function getDosAndDonts(example: ExampleData) {
+  return asRecord(example.model.dos_and_donts);
+}
+
 export function getDocumentSections(example: ExampleData): DocumentSection[] {
   if (!example.documentRaw) return [];
 
@@ -529,6 +537,8 @@ export function getExampleToc(example: ExampleData): TocGroup[] {
     { id: "spacing", label: "Spacing" },
     ...(getElevation(example) ? [{ id: "elevation", label: "Elevation" }] : []),
     ...(getMotion(example) ? [{ id: "motion", label: "Motion" }] : []),
+    ...(getResponsiveBehavior(example) ? [{ id: "responsive-behavior", label: "Responsive Behavior" }] : []),
+    ...(getDosAndDonts(example) ? [{ id: "dos-and-donts", label: "Do's And Don'ts" }] : []),
     { id: "hero-stage", label: "Hero Stage" },
     ...(getIconography(example) ? [{ id: "iconography", label: "Iconography" }] : []),
     ...(getVoice(example) ? [{ id: "voice", label: "Voice" }] : []),

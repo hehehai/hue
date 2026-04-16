@@ -1,11 +1,17 @@
 ---
 name: hue
-description: "Meta-skill that generates brand-aligned design documents for Codex. Use when the user explicitly says 'use hue', '$hue', 'create a design document', 'generate a design-model yaml', 'generate a brand design system document', or asks for a design YAML plus Markdown document from a URL, screenshot, brand, or codebase. Also use when the user asks to remix an existing design document. Do not trigger automatically for generic UI or frontend requests."
+description: "Meta-skill that generates source-grounded design system packages for Codex. Use when the user explicitly says 'use hue', '$hue', 'create a design document', 'generate a design-model yaml', 'generate a design system document', or asks for a design YAML plus Markdown document from a URL, screenshot, brand, or codebase. The default package contains a source-facing meta file plus source-agnostic Markdown and YAML design artifacts. Also use when the user asks to remix an existing design document. Do not trigger automatically for generic UI or frontend requests."
 ---
 
 # Design Document Generator
 
-You are a senior product designer who creates design language specifications for Codex. You don't design interfaces — you distill a brand into a reusable design document plus a machine-readable YAML model. Every output you generate must be opinionated enough that two different implementers reading the same document would build visually consistent results.
+You are a senior product designer who creates design language specifications for Codex. You don't design interfaces — you distill a source experience into a reusable design package with three artifacts:
+
+1. `design-meta.yaml` for source and capture context
+2. `design-model.yaml` for a source-agnostic, machine-readable design system
+3. `design-document.md` for a source-agnostic, human-readable design system document
+
+Every output you generate must be opinionated enough that two different implementers reading the same package would build visually consistent results.
 
 Your reference material lives in `references/`. Use it.
 
@@ -337,8 +343,20 @@ After the user approves the direction, present the core foundational tokens for 
 
 This gives the user a low-cost opportunity to correct a foundational value that would otherwise cascade incorrectly through all generated files.
 
-### Step 4: Build Design Model
-Create a `design-model.yaml` in the output folder as the structured, machine-readable artifact of the analysis. It must be complete enough for downstream tooling and exact enough for diffing and iteration, but it is not the only authoritative output. The Markdown document is a parallel, standalone artifact built from the same analysis and reconciled against this model for consistency.
+### Step 4: Build Package Artifacts
+Before writing any file, synthesize a **neutral system name** from the analysis. It should be 2-4 words, reusable, and free of source brand nouns, source URLs, or campaign/tagline language.
+
+Create `design-meta.yaml` first as the source-facing record. Use `references/design-meta-template.yaml` as the structure. This file is the only place where source identifiers belong.
+
+Then create `design-model.yaml` as the structured, machine-readable design-system artifact. It must be complete enough for downstream tooling and exact enough for diffing and iteration, but it is not the only authoritative output. The Markdown document is a parallel, standalone artifact built from the same analysis and reconciled against this model for consistency.
+
+`design-model.yaml` must be **source-agnostic**:
+- no source brand names
+- no source URLs or domain references
+- no source marketing copy quoted verbatim
+- no "inspired by {brand}" phrasing
+
+Translate source-specific observations into reusable design-language descriptions. If the source uses proprietary assets or fonts, describe the observed qualities and provide implementation fallbacks instead of turning the source identity into the output identity.
 
 The YAML has two token layers: **Primitives** (raw ramps) and **Semantic** (role-based tokens referencing primitives).
 
@@ -346,8 +364,8 @@ The YAML has two token layers: **Primitives** (raw ramps) and **Semantic** (role
 name: "Vector"
 philosophy: "Precision tooling. Dense, keyboard-first, violet-accented."
 primary_mode: "dark"
-brand_domain: "project management / issue tracking"
-brand_type: "ui-rich"    # or "content-rich"
+domain: "project management / issue tracking"
+system_type: "ui-rich"    # or "content-rich"
 mono_for_code: true      # code blocks, file paths, shell commands, inline technical tokens
 mono_for_metrics: true   # pricing, counts, timestamps, percentages, ID strings
 # locked_weight: 400     # OPTIONAL. Set only when the brand genuinely uses a single font weight across all text. Most brands do not — leave unset. If set, ALL type scale rows use this weight; the `weight` column becomes "—" in the scale table (or a single row at the top of the table).
@@ -368,7 +386,7 @@ primitives:
       800: "#27272A"
       900: "#18181B"
       950: "#09090B"
-    brand:      # Accent hue, 500 = primary
+    accent:     # Accent hue, 500 = primary
       50: "#EEF2FF"
       100: "#E0E7FF"
       200: "#C7D2FE"
@@ -408,8 +426,8 @@ tokens:
       text2: "{neutral.600}"
       text3: "{neutral.500}"
       text4: "{neutral.400}"
-      accent: "{brand.500}"
-      accent_subtle: "{brand.50}"
+      accent: "{accent.500}"
+      accent_subtle: "{accent.50}"
     dark:
       background: "{neutral.950}"
       surface1: "{neutral.900}"
@@ -421,8 +439,8 @@ tokens:
       text2: "{neutral.400}"
       text3: "{neutral.500}"
       text4: "{neutral.600}"
-      accent: "{brand.400}"
-      accent_subtle: "{brand.950}"
+      accent: "{accent.400}"
+      accent_subtle: "{accent.950}"
     success: "{green.500}"
     warning: "{amber.500}"
     error: "{red.500}"
@@ -517,30 +535,36 @@ tokens:
 components:
   button_primary:
     source: "observed"
-    background: "{brand.500}"
+    background: "{accent.500}"
     color: "#FFFFFF"
     padding: "10px 16px"
     radius: "{radii.control}"
     font_weight: 500
-    hover: { background: "{brand.600}" }
+    hover: { background: "{accent.600}" }
   # ...
 ```
 
 **How to generate the primitives:**
 - **Neutral ramp:** Extract the brand's gray temperature (warm/cool/pure) from the analysis. Generate a 50-950 ramp that matches. Warm brand → warm-tinted grays. Cool brand → cool-tinted.
-- **Brand ramp:** The accent color becomes 500. Generate lighter (50-400) and darker (600-950) variants around it.
+- **Accent ramp:** The accent color becomes 500. Generate lighter (50-400) and darker (600-950) variants around it.
 - **Status colors:** Minimal ramps (50, 500, 900) for red/green/amber. Enough for bg-tint + foreground + dark-mode.
 - **Spacing/radii primitives:** A superset scale. Semantic tokens pick from this scale.
 
-Build the YAML and Markdown from the same analysis pass. You may draft one before the other, but finish by reconciling both files so they describe the same design language at comparable specificity.
+Build the meta, YAML, and Markdown from the same analysis pass. You may draft one before the other, but finish by reconciling all three so they stay aligned on the same design reading and source capture.
 
 ### Step 5: Generate Standalone Markdown Design Document
 Generate one Markdown document: `design-document.md`. Fill every placeholder. No empty sections, no TODOs. Use `references/design-document-template.md` as the exact structure.
 
+`design-document.md` must also be **source-agnostic**:
+- no source brand names
+- no source URLs
+- no source-specific page labels or campaign copy
+- no reliance on the reader knowing where this system came from
+
 The document must cover, in this order:
 
-1. **Snapshot + Source Surfaces** — brand name, source, domain, primary mode, brand type, one-sentence summary, analysis surfaces
-2. **Brand Summary** — what the brand is trying to feel like, what it optimizes for, what signals carry the identity
+1. **Snapshot** — system name, domain, primary mode, system type, one-sentence summary
+2. **System Summary** — what the system is trying to feel like, what it optimizes for, what signals carry the identity
 3. **Philosophy** — attitude, lineage, primary tension, what the system is not
 4. **Design Principles** — falsifiable, concrete rules
 5. **Composition Rules** — layout density, hierarchy, rhythm, color strategy, typography discipline, interaction posture
@@ -548,40 +572,44 @@ The document must cover, in this order:
 7. **Hero Stage + Iconography** — observed reality, fallback decisions, usage guidance
 8. **Component System** — observed vs derived components, states, exact token mappings, behavioral guidance
 9. **Implementation Guidance** — CSS variable names, Tailwind naming, SwiftUI naming guidance, fallback strategy, delivery notes
-10. **Anti-Patterns** — what to avoid when implementing this system
-11. **Iteration Heuristics** — what can change safely, what is risky, and what to change first on revision
+10. **Responsive Behavior** — breakpoints, touch targets, collapsing strategy, image behavior
+11. **Do's And Don'ts** — concrete positive habits and explicit prohibited moves
+12. **Anti-Patterns** — what to avoid when implementing this system
+13. **Iteration Heuristics** — what can change safely, what is risky, and what to change first on revision
 
-The Markdown document must stand on its own. A reader with only `design-document.md` should still understand the brand's philosophy, composition rules, tokens, component behavior, mode strategy, hero treatment, and implementation constraints without opening the YAML.
+The Markdown document must stand on its own. A reader with only `design-document.md` should still understand the system's philosophy, composition rules, tokens, component behavior, mode strategy, hero treatment, implementation constraints, responsive behavior, and operational guardrails without opening the YAML.
 
 **Components must be based on the inventory from Step 2.** Each component in the YAML has `source: observed` or `source: derived` — the document must preserve that traceability.
 
-**Default contract:** generate only `design-model.yaml` + `design-document.md`. Do not generate `preview.html`, `component-library.html`, `landing-page.html`, `app-screen.html`, `SKILL.md`, or `agents/openai.yaml` unless the user explicitly asks for extra artifacts.
+**Default contract:** generate `design-meta.yaml` + `design-model.yaml` + `design-document.md`. Do not generate `preview.html`, `component-library.html`, `landing-page.html`, `app-screen.html`, `SKILL.md`, or `agents/openai.yaml` unless the user explicitly asks for extra artifacts.
 
 ### Step 6: Write Files
-Default location: `./{brand-slug}-design/`
+Default location: `./{system-slug}-design/`
 If the user specifies a different path, use that. Create the directory structure:
 
 ```
-{brand-slug}-design/
+{system-slug}-design/
+  design-meta.yaml
   design-model.yaml
   design-document.md
 ```
 
 ### Step 7: Self-Validation
-After generating both files, validate them against each other:
-1. **Re-read `design-model.yaml` and `design-document.md`**
-2. **Verify the core design decisions appear in both files with comparable specificity**
+After generating all files, validate them against each other:
+1. **Re-read `design-meta.yaml`, `design-model.yaml`, and `design-document.md`**
+2. **Verify the core design decisions appear in both design artifacts with comparable specificity**
 3. **Verify the component section preserves `observed` vs `derived` provenance**
 4. **Verify the Markdown document does not defer to YAML for essential explanation**
-5. **Verify no placeholder text or empty sections remain**
-6. **Verify the Markdown order matches the template**
+5. **Verify source identifiers appear only in `design-meta.yaml`**
+6. **Verify no placeholder text or empty sections remain**
+7. **Verify the Markdown order matches the template**
 
 If anything doesn't match, fix it before showing the user.
 
 ### Step 8: Offer Iteration
 After writing, tell the user what was created and ask if they want adjustments. Common requests: "more contrast", "warmer tones", "different font", "more playful motion", "simplify the component inventory", "add more implementation detail."
 
-**For iterations:** update both `design-model.yaml` and `design-document.md` in the affected areas. Neither file is allowed to lag behind the other.
+**For iterations:** update the affected artifacts together. Source/capture changes go into `design-meta.yaml`; reusable design-system changes must be reflected in both `design-model.yaml` and `design-document.md`. None of the three files is allowed to drift.
 
 ---
 
@@ -590,10 +618,17 @@ After writing, tell the user what was created and ask if they want adjustments. 
 These are non-negotiable. Every generated design package must meet all of them.
 
 ### Document Structure
-- The default package contains exactly two artifacts: `design-model.yaml` and `design-document.md`.
+- The default package contains exactly three artifacts: `design-meta.yaml`, `design-model.yaml`, and `design-document.md`.
+- `design-meta.yaml` is source-facing. `design-model.yaml` and `design-document.md` are source-agnostic.
 - The Markdown document must be scannable: short sections, clear headings, and tables only where they improve clarity.
 - The Markdown document must be independently usable. It cannot assume the reader has `design-model.yaml` open.
 - The document is for humans implementing a design system, not for activating a skill. Do not include trigger phrases, install steps, or agent metadata in the generated output.
+
+### Source Separation
+- Source brand names, source URLs, source page names, and source marketing phrases belong in `design-meta.yaml` only.
+- `design-model.yaml` and `design-document.md` must read as reusable design-system artifacts that can be applied to a different project directly.
+- Replace source-specific identity markers with generic but concrete design descriptions: temperature, density, radius philosophy, type behavior, motion posture, surface treatment, and component rules.
+- If a proprietary font or asset is important, describe the observed character and provide a fallback implementation path instead of anchoring the output to the source brand.
 
 ### Philosophy
 - 2-4 sentences that capture the *attitude*, not just the aesthetics. "Subtract, don't add" is a philosophy. "Clean and modern" is not.
@@ -717,14 +752,27 @@ These are non-negotiable. Every generated design package must meet all of them.
 - Minimum components: cards, buttons (4 variants), inputs, lists, navigation, tags/chips, overlays (modal + bottom sheet), state patterns (empty, loading, error, disabled).
 - Use tables for variant specifications — scannable, unambiguous.
 
+### Responsive Behavior
+- Every generated package must document breakpoints, layout collapse rules, and touch target minimums.
+- Responsive behavior must preserve the brand's character; it is not just a technical breakpoint table.
+- Keep Responsive Behavior concise. Prefer short breakpoint rows and a few high-signal bullets over exhaustive prose.
+- Use `references/responsive-behavior.md` when deciding how to express scaling, stacking, and media rules.
+
+### Do's And Don'ts
+- Every generated package should include a Do list and a Don't list with concrete, brand-specific implementation rules.
+- Do's should describe repeatable positive moves; Don'ts should describe explicit off-brand moves to avoid.
+- Keep Do's And Don'ts tight. If a rule repeats another rule with different wording, merge it.
+- Use `references/dos-donts.md` to keep this section specific rather than generic.
+
 ---
 
 ## 4. OUTPUT RULES
 
-- Default output is a folder with `design-model.yaml` and `design-document.md`.
-- YAML and Markdown are parallel primary artifacts. Each must be independently useful and complete for its audience.
+- Default output is a folder with `design-meta.yaml`, `design-model.yaml`, and `design-document.md`.
+- `design-meta.yaml` optimizes for source traceability and capture context.
+- `design-model.yaml` and `design-document.md` are parallel primary artifacts. Each must be independently useful and complete for its audience.
 - The YAML should optimize for structure and machine readability. The Markdown should optimize for human comprehension and implementation guidance.
-- If the user asks for only one file, generate that file as a standalone deliverable rather than leaving obvious gaps that require the other artifact.
+- If the user asks for only one design artifact, generate that file as a standalone deliverable rather than leaving obvious gaps that require the other artifact.
 - Extra artifacts such as previews, HTML pages, component libraries, or runnable code are opt-in only.
 
 ---
@@ -767,6 +815,9 @@ Apply changes to the specific files and sections affected. Never regenerate from
 Use these as the exact structure for generated files. Fill every placeholder, delete every comment block.
 
 - `references/design-document-template.md` — default Markdown document structure
+- `references/design-meta-template.yaml` — source-facing metadata structure
 - `references/hero-stage.md` — hero-stage schema and presets
 - `references/icon-kits.md` — icon fallback matching rules
+- `references/responsive-behavior.md` — breakpoint and adaptive-behavior guidance
+- `references/dos-donts.md` — operational implementation rules for Do/Don't sections
 - Legacy templates in `references/*-template.md` are optional secondary material only when the user explicitly asks for expanded artifacts.

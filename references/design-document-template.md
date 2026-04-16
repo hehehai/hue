@@ -1,27 +1,22 @@
-# {{brand-name}} Design Document
+# {{system-name}} Design Document
 
 ## 1. Snapshot
 
 | Field | Value |
 |------|-------|
-| Brand | {{brand-name}} |
-| Source | {{brand-source}} |
-| Domain | {{brand-domain}} |
-| Brand Type | {{brand-type}} |
+| System | {{system-name}} |
+| Domain | {{system-domain}} |
+| System Type | {{system-type}} |
 | Primary Mode | {{primary-mode}} |
 | Summary | {{one-line-summary}} |
-
-### Source Surfaces
-
-{{source-surfaces}}
 
 ### Design Readout
 
 {{design-readout}}
 
-## 2. Brand Summary
+## 2. System Summary
 
-{{brand-summary}}
+{{system-summary}}
 
 ### Experience Goals
 
@@ -201,11 +196,39 @@ Document observed components first, then derived components. Every section shoul
 
 {{implementation-notes}}
 
-## 11. Anti-Patterns
+## 11. Responsive Behavior
+
+### Breakpoints
+
+{{responsive-breakpoints-table}}
+
+### Touch Targets
+
+{{touch-target-rules}}
+
+### Collapsing Strategy
+
+{{collapsing-strategy-rules}}
+
+### Image Behavior
+
+{{image-behavior-rules}}
+
+## 12. Do's And Don'ts
+
+### Do
+
+{{dos-list}}
+
+### Don't
+
+{{donts-list}}
+
+## 13. Anti-Patterns
 
 {{anti-patterns}}
 
-## 12. Iteration Heuristics
+## 14. Iteration Heuristics
 
 ### Safe Adjustments
 

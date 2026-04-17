@@ -134,6 +134,8 @@ Recommended counts for generated packages:
 Fewer than that usually means the rules are too abstract.
 More than that usually means the section has become repetitive.
 
+At least 3 rules across the full section should mention a concrete token, threshold, component context, or measurable constraint. This keeps the section operational instead of decorative.
+
 ---
 
 ## Tone And Format
@@ -158,6 +160,8 @@ Preferred format:
 
 Each line should stand on its own.
 Keep each line short. Prefer one strong rule over a long sentence with multiple clauses.
+Prefer one action per line.
+Do not repeat the same guardrail across Principles, Do's, Don'ts, and Anti-Patterns with only wording changes.
 
 ---
 
@@ -220,6 +224,18 @@ The point is not to copy this content literally. The point is to match its densi
 
 ---
 
+## Redundancy Rules
+
+Do's And Don'ts often get bloated when the model tries to sound complete. Avoid that.
+
+- Do not restate a Design Principle unless it becomes a more operational implementation instruction.
+- Do not mirror the same idea twice unless the positive and negative forms carry genuinely different guidance.
+- Do not turn Anti-Patterns into softer Don't bullets. If a ban already exists there, use this section only when the implementation move itself needs emphasis.
+- Prefer the most actionable wording. `Use ring shadows for focus states` is stronger than `Keep interactive depth subtle`.
+- If two lines share the same noun and same action, merge them.
+
+---
+
 ## YAML Schema
 
 Generated packages may include a compact block like this:
@@ -269,5 +285,7 @@ Before considering Do's and Don'ts complete, verify:
 - [ ] The rules cover more than one category (not just color)
 - [ ] The language is directive, not inspirational
 - [ ] The section is specific to the observed brand, not generic design advice
+- [ ] At least 3 rules mention a token, value, threshold, or component context
+- [ ] No line feels like a restated Principle or duplicated Anti-Pattern
 
 If the section could apply equally well to almost any brand, it is too vague.

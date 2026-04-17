@@ -579,6 +579,35 @@ The document must cover, in this order:
 
 The Markdown document must stand on its own. A reader with only `design-document.md` should still understand the system's philosophy, composition rules, tokens, component behavior, mode strategy, hero treatment, implementation constraints, responsive behavior, and operational guardrails without opening the YAML.
 
+`design-document.md` is not a prose summary of `design-model.yaml`. The two files are parallel primary artifacts for different readers:
+- `design-model.yaml` optimizes for structure and machine readability
+- `design-document.md` optimizes for human readability without losing system completeness
+
+The Markdown document must therefore preserve comparable specificity. If a token family, variant family, or behavior family exists in YAML, Markdown must expose the same family in a scannable format instead of collapsing it into vague prose.
+
+**Markdown normalization contract:**
+
+- Keep the section order exactly as defined in `references/design-document-template.md`.
+- Use a **table-first** format for structured, repeatable, or parameterized content. If a subsection contains 3 or more peer items that share the same fields, render a table instead of bullets.
+- Use prose for interpretation, rationale, and synthesis. Do not use long prose paragraphs to store token values, breakpoint data, component variants, or other comparable parameter sets.
+- The following Markdown subsections are required to use tables:
+  - Snapshot
+  - Hierarchy Layers
+  - Color System
+  - Semantic Color Guidance
+  - Typography Stacks
+  - Type Scale
+  - Spacing
+  - Radii
+  - Elevation
+  - Motion
+  - Hero Dial Summary
+  - Iconography Fallback Kit
+  - Component Inventory Overview
+  - Responsive Breakpoints
+- Responsive Behavior and Do's And Don'ts must stay concise and operational. Do not pad them with philosophy restatements or duplicate bans already covered by Anti-Patterns.
+- Prefer one strong rule once over the same rule repeated with different wording. Redundancy reads as instability.
+
 **Components must be based on the inventory from Step 2.** Each component in the YAML has `source: observed` or `source: derived` — the document must preserve that traceability.
 
 **Default contract:** generate `design-meta.yaml` + `design-model.yaml` + `design-document.md`. Do not generate `preview.html`, `component-library.html`, `landing-page.html`, `app-screen.html`, `SKILL.md`, or `agents/openai.yaml` unless the user explicitly asks for extra artifacts.
@@ -603,6 +632,9 @@ After generating all files, validate them against each other:
 5. **Verify source identifiers appear only in `design-meta.yaml`**
 6. **Verify no placeholder text or empty sections remain**
 7. **Verify the Markdown order matches the template**
+8. **Verify required table-first sections are actually rendered as tables, not downgraded into bullets or prose**
+9. **Verify `design-document.md` is not materially less specific than `design-model.yaml` for tokens, hero-stage dials, and component inventory**
+10. **Verify Responsive Behavior and Do's And Don'ts are concise, non-redundant, and do not simply restate Philosophy / Principles / Anti-Patterns**
 
 If anything doesn't match, fix it before showing the user.
 
@@ -620,9 +652,20 @@ These are non-negotiable. Every generated design package must meet all of them.
 ### Document Structure
 - The default package contains exactly three artifacts: `design-meta.yaml`, `design-model.yaml`, and `design-document.md`.
 - `design-meta.yaml` is source-facing. `design-model.yaml` and `design-document.md` are source-agnostic.
-- The Markdown document must be scannable: short sections, clear headings, and tables only where they improve clarity.
+- The Markdown document must be scannable: short sections, clear headings, and stable formatting from one generation to the next.
+- Tables are mandatory for structured, repeatable, or parameterized content. Prose is for rationale, interpretation, and synthesis.
 - The Markdown document must be independently usable. It cannot assume the reader has `design-model.yaml` open.
 - The document is for humans implementing a design system, not for activating a skill. Do not include trigger phrases, install steps, or agent metadata in the generated output.
+
+### Markdown Normalization
+- `design-document.md` and `design-model.yaml` are independent deliverables. Markdown is not allowed to be a lossy summary of the YAML.
+- Keep the section order fixed. Do not reorder, merge, or skip template sections unless the user explicitly asks for a different artifact shape.
+- Use a table whenever the reader is comparing tokens, layers, variants, roles, breakpoints, or other repeated structures.
+- Required Markdown tables: Snapshot, Hierarchy Layers, Color System, Semantic Color Guidance, Typography Stacks, Type Scale, Spacing, Radii, Elevation, Motion, Hero Dial Summary, Iconography Fallback Kit, Component Inventory Overview, Responsive Breakpoints.
+- If a section contains dense values but not enough rows for a large table, still prefer a compact 2-4 column table over prose.
+- Responsive Behavior and Do's And Don'ts should be among the shortest sections in the file. They must be specific, but they must not become padded mini-essays.
+- Avoid mirrored wording. If a Do and a Don't say the same thing from opposite directions, keep the stronger one.
+- Prefer concrete numbers, tokens, thresholds, or component contexts over adjectives.
 
 ### Source Separation
 - Source brand names, source URLs, source page names, and source marketing phrases belong in `design-meta.yaml` only.
@@ -755,13 +798,15 @@ These are non-negotiable. Every generated design package must meet all of them.
 ### Responsive Behavior
 - Every generated package must document breakpoints, layout collapse rules, and touch target minimums.
 - Responsive behavior must preserve the brand's character; it is not just a technical breakpoint table.
-- Keep Responsive Behavior concise. Prefer short breakpoint rows and a few high-signal bullets over exhaustive prose.
+- Keep Responsive Behavior concise. Breakpoints must be a table; touch targets, collapse rules, and image behavior should be short operational bullets rather than long prose.
+- Do not restate Composition Rules here unless the behavior changes at a breakpoint.
 - Use `references/responsive-behavior.md` when deciding how to express scaling, stacking, and media rules.
 
 ### Do's And Don'ts
 - Every generated package should include a Do list and a Don't list with concrete, brand-specific implementation rules.
 - Do's should describe repeatable positive moves; Don'ts should describe explicit off-brand moves to avoid.
 - Keep Do's And Don'ts tight. If a rule repeats another rule with different wording, merge it.
+- Do's And Don'ts are implementation guardrails, not a second Philosophy section. Keep each line direct, concrete, and low on rhetorical filler.
 - Use `references/dos-donts.md` to keep this section specific rather than generic.
 
 ---

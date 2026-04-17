@@ -52,6 +52,14 @@ Neither file should assume responsive behavior is "standard" or "obvious." It mu
    Responsive behavior changes layout and sizing first.
    It should not introduce a completely different visual language at smaller sizes.
 
+7. **Keep the section operational, not rhetorical.**
+   Responsive Behavior should describe breakpoint-triggered changes only.
+   Do not restate general philosophy, spacing doctrine, or anti-patterns unless they materially change by breakpoint.
+
+8. **Use stable formatting.**
+   `Breakpoints` must be a table.
+   `Touch Targets`, `Collapsing Strategy`, and `Image Behavior` should be short bullet lists, not paragraphs.
+
 ---
 
 ## Breakpoint Framework
@@ -292,15 +300,19 @@ Recommended structure:
 ```
 
 Use tables for breakpoint names and widths.
-Use bullets for collapse and image/media rules.
+Use bullets for touch-target, collapse, and image/media rules.
 Keep this section compact. Prefer:
 
 - `Breakpoints`: one concise row per breakpoint
 - `Touch Targets`: 2 to 4 bullets
 - `Collapsing Strategy`: 3 to 6 bullets
 - `Image Behavior`: 2 to 4 bullets
+- Avoid repeating the same breakpoint behavior in multiple bullets.
+- Start collapse bullets with the subject they affect when possible, for example `Navigation:` or `Hero:`.
 
 If two bullets say nearly the same thing, merge them.
+
+If the source does not expose a distinctive responsive behavior in one area, keep that area brief instead of inventing extra detail for completeness theater.
 
 When the source material already provides a structure, mirror it closely. The preferred section order is:
 
@@ -320,6 +332,8 @@ The breakpoint subsection should usually use a 3-column table:
 | `desktop` | `992px+` | Full multi-column layout, expanded nav, maximum hero typography |
 
 This is the target level of formatting fidelity when the user supplies a concrete responsive reference.
+
+Responsive Behavior should usually fit in one compact section without becoming a mini-spec. If it starts reading like a second Composition Rules chapter, it is too long.
 
 ---
 

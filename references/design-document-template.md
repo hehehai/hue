@@ -80,7 +80,7 @@
 
 ### Semantic Color Guidance
 
-{{semantic-color-guidance}}
+{{semantic-color-guidance-table}}
 
 ### Typography Stacks
 
@@ -116,6 +116,10 @@
 
 {{hero-stage-summary}}
 
+### Hero Dial Summary
+
+{{hero-stage-dial-table}}
+
 ### Background Behavior
 
 {{hero-background-guidance}}
@@ -136,7 +140,7 @@
 
 ### Fallback Kit
 
-{{iconography-fallback}}
+{{iconography-fallback-table}}
 
 ### Usage Guidance
 
@@ -144,7 +148,11 @@
 
 ## 9. Component System
 
-Document observed components first, then derived components. Every section should preserve the `source: observed` or `source: derived` provenance from the YAML, but the prose and tables here must still be sufficient for a reader who only has this Markdown file.
+Document observed components first, then derived components. Start with one compact inventory table, then expand by category. Every section should preserve the `source: observed` or `source: derived` provenance from the YAML, but the prose and tables here must still be sufficient for a reader who only has this Markdown file.
+
+### Inventory Overview
+
+{{component-inventory-table}}
 
 ### Buttons
 

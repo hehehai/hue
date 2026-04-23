@@ -258,7 +258,7 @@ Keep these lines concise and implementation-facing.
 
 ## Markdown Section Guidance
 
-In `design-document.md`, Do's and Don'ts should sit as their own explicit section rather than being buried inside Anti-Patterns.
+In `DESIGN.md`, Do's and Don'ts should sit as their own explicit section rather than being buried inside Anti-Patterns.
 
 Recommended structure:
 

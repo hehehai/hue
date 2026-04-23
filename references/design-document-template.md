@@ -1,249 +1,106 @@
-# {{system-name}} Design Document
+---
+version: alpha
+name: {{system-name}}
+description: {{system-description}}
+colors:
+  primary: "{{color-primary}}"
+  secondary: "{{color-secondary}}"
+  tertiary: "{{color-tertiary}}"
+  neutral: "{{color-neutral}}"
+  surface: "{{color-surface}}"
+  border: "{{color-border}}"
+  on-surface: "{{color-on-surface}}"
+typography:
+  headline-display:
+    fontFamily: {{font-display}}
+    fontSize: {{font-size-display}}
+    fontWeight: {{font-weight-display}}
+    lineHeight: {{line-height-display}}
+    letterSpacing: {{letter-spacing-display}}
+  headline-md:
+    fontFamily: {{font-display}}
+    fontSize: {{font-size-headline-md}}
+    fontWeight: {{font-weight-headline-md}}
+    lineHeight: {{line-height-headline-md}}
+  body-md:
+    fontFamily: {{font-body}}
+    fontSize: {{font-size-body}}
+    fontWeight: {{font-weight-body}}
+    lineHeight: {{line-height-body}}
+  label-sm:
+    fontFamily: {{font-label}}
+    fontSize: {{font-size-label}}
+    fontWeight: {{font-weight-label}}
+    lineHeight: {{line-height-label}}
+rounded:
+  sm: {{radius-sm}}
+  md: {{radius-md}}
+  lg: {{radius-lg}}
+  full: {{radius-full}}
+spacing:
+  xs: {{spacing-xs}}
+  sm: {{spacing-sm}}
+  md: {{spacing-md}}
+  lg: {{spacing-lg}}
+  xl: {{spacing-xl}}
+  section: {{spacing-section}}
+components:
+  page-shell:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.on-surface}"
+    padding: "{spacing.md}"
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.neutral}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.sm}"
+  button-secondary:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.on-surface}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.sm}"
+  card-surface:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.lg}"
+  input-default:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    rounded: "{rounded.sm}"
+    padding: "{spacing.sm}"
+---
+
+# {{system-name}}
+
+## Overview
+
+{{overview}}
+
+## Colors
+
+{{colors}}
+
+## Typography
+
+{{typography}}
+
+## Layout
+
+{{layout}}
+
+## Elevation & Depth
+
+{{elevation-and-depth}}
+
+## Shapes
+
+{{shapes}}
+
+## Components
+
+{{components}}
 
-## 1. Snapshot
+## Do's and Don'ts
 
-| Field | Value |
-|------|-------|
-| System | {{system-name}} |
-| Domain | {{system-domain}} |
-| System Type | {{system-type}} |
-| Primary Mode | {{primary-mode}} |
-| Summary | {{one-line-summary}} |
-
-### Design Readout
-
-{{design-readout}}
-
-## 2. System Summary
-
-{{system-summary}}
-
-### Experience Goals
-
-{{experience-goals}}
-
-### Signature Signals
-
-{{signature-signals}}
-
-## 3. Philosophy
-
-{{philosophy-text}}
-
-### Primary Tension
-
-{{primary-tension}}
-
-### Design Lineage
-
-{{design-lineage}}
-
-### What This System Is Not
-
-{{what-this-system-is-not}}
-
-## 4. Design Principles
-
-{{design-principles}}
-
-## 5. Composition Rules
-
-### Layout Density
-
-{{layout-density-rules}}
-
-### Hierarchy Layers
-
-{{hierarchy-layers-table}}
-
-### Rhythm And Spacing Behavior
-
-{{rhythm-rules}}
-
-### Color Strategy
-
-{{color-strategy-rules}}
-
-### Typography Discipline
-
-{{typography-discipline-rules}}
-
-### Interaction Posture
-
-{{interaction-posture-rules}}
-
-## 6. Token Foundations
-
-### Color System
-
-{{color-system-table}}
-
-### Semantic Color Guidance
-
-{{semantic-color-guidance-table}}
-
-### Typography Stacks
-
-{{font-stack-table}}
-
-### Type Scale
-
-{{type-scale-table}}
-
-### Spacing
-
-{{spacing-table}}
-
-### Radii
-
-{{radii-table}}
-
-### Elevation
-
-{{elevation-table}}
-
-### Motion
-
-{{motion-table}}
-
-### Mode Strategy
-
-{{mode-strategy}}
-
-## 7. Hero Stage And Atmosphere
-
-### Observed Hero Stage
-
-{{hero-stage-summary}}
-
-### Hero Dial Summary
-
-{{hero-stage-dial-table}}
-
-### Background Behavior
-
-{{hero-background-guidance}}
-
-### Subject Strategy
-
-{{hero-subject-guidance}}
-
-### Hero Restrictions
-
-{{hero-anti-patterns}}
-
-## 8. Iconography
-
-### Observed Style
-
-{{iconography-observed}}
-
-### Fallback Kit
-
-{{iconography-fallback-table}}
-
-### Usage Guidance
-
-{{iconography-usage}}
-
-## 9. Component System
-
-Document observed components first, then derived components. Start with one compact inventory table, then expand by category. Every section should preserve the `source: observed` or `source: derived` provenance from the YAML, but the prose and tables here must still be sufficient for a reader who only has this Markdown file.
-
-### Inventory Overview
-
-{{component-inventory-table}}
-
-### Buttons
-
-{{buttons-section}}
-
-### Inputs
-
-{{inputs-section}}
-
-### Cards And Surfaces
-
-{{cards-section}}
-
-### Lists And Navigation
-
-{{lists-and-navigation-section}}
-
-### Tags, Toggles, Progress, And Status Patterns
-
-{{stateful-components-section}}
-
-### Overlays And Transient UI
-
-{{overlays-section}}
-
-### Empty, Loading, Error, And Disabled States
-
-{{state-patterns-section}}
-
-## 10. Implementation Guidance
-
-### CSS Variables
-
-{{css-variable-mapping}}
-
-### Tailwind Mapping
-
-{{tailwind-mapping}}
-
-### SwiftUI Mapping
-
-{{swiftui-mapping}}
-
-### Asset And Fallback Strategy
-
-{{asset-fallback-strategy}}
-
-### Delivery Notes
-
-{{implementation-notes}}
-
-## 11. Responsive Behavior
-
-### Breakpoints
-
-{{responsive-breakpoints-table}}
-
-### Touch Targets
-
-{{touch-target-rules}}
-
-### Collapsing Strategy
-
-{{collapsing-strategy-rules}}
-
-### Image Behavior
-
-{{image-behavior-rules}}
-
-## 12. Do's And Don'ts
-
-### Do
-
-{{dos-list}}
-
-### Don't
-
-{{donts-list}}
-
-## 13. Anti-Patterns
-
-{{anti-patterns}}
-
-## 14. Iteration Heuristics
-
-### Safe Adjustments
-
-{{safe-adjustments}}
-
-### High-Risk Changes
-
-{{high-risk-changes}}
-
-{{iteration-notes}}
+{{dos-and-donts}}

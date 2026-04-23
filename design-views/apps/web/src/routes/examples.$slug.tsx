@@ -40,7 +40,6 @@ import {
   getElevation,
   getHeroStage,
   getIconography,
-  getImportantFields,
   getMotion,
   getPhilosophy,
   getResponsiveBehavior,
@@ -140,6 +139,13 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
 
   const heroStage = getHeroStage(example);
   const typography = getTypographyEntries(example);
+  const typographyModel = asRecord(example.model.typography);
+  const typographyFamilies = asRecord(typographyModel?.families);
+  const typographyLineHeights = asRecord(typographyModel?.line_heights);
+  const typographyWeights = asRecord(typographyModel?.weights);
+  const typographyRules = toStringList(typographyModel?.rules);
+  const hasTypographyDetails = Boolean(typographyFamilies || typographyLineHeights || typographyWeights || typographyRules.length);
+  const showTypographyFields = typography.length > 0 && !typographyFamilies;
   const spacing = getSpacingEntries(example);
   const radii = getRadiiEntries(example);
   const primitiveColors = asRecord(asRecord(example.model.primitives)?.colors);
@@ -319,9 +325,15 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                   title="Typography"
                 >
                   <div className="space-y-4">
-                    <div className="grid gap-3 lg:grid-cols-2">
-                      {typography.length ? (
-                        typography.map((entry) => (
+                    {typographyFamilies ? (
+                      <GuidanceListCard
+                        items={buildTypographyFamilyLines(typographyFamilies)}
+                        title="Typography Families"
+                      />
+                    ) : null}
+                    {showTypographyFields ? (
+                      <div className="grid gap-3 lg:grid-cols-2">
+                        {typography.map((entry) => (
                           <article
                             key={entry.key}
                             className="rounded-[22px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.03]"
@@ -335,7 +347,6 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                               style={{
                                 fontFamily: entry.family === "null" ? undefined : entry.family,
                                 fontSize: clampTypography(entry.size),
-                                fontWeight: Number(entry.weight) || 500,
                                 lineHeight: Number(entry.lineHeight) || 1.2,
                                 letterSpacing: entry.letterSpacing,
                               }}
@@ -343,25 +354,42 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                               {entry.family === "null" ? "No dedicated mono font" : `${example.name} type specimen`}
                             </div>
                             <div className="font-mono text-xs text-slate-500 dark:text-slate-400">
-                              {entry.family} · {entry.weight} · {entry.size}/{entry.lineHeight}
+                              {entry.family} · {entry.size}/{entry.lineHeight}
                             </div>
                           </article>
-                        ))
-                      ) : (
-                        <EmptyState text="No typography tokens found in this example." />
-                      )}
-                    </div>
-                    {typography.length ? (
+                        ))}
+                      </div>
+                    ) : !hasTypographyDetails ? (
+                      <EmptyState text="No typography tokens found in this example." />
+                    ) : null}
+                    {showTypographyFields ? (
                       <DocTable
-                        columns={["Token", "Font", "Size", "Line Height", "Weight", "Letter Spacing"]}
+                        columns={["Token", "Font", "Size", "Line Height", "Letter Spacing"]}
                         rows={typography.map((entry) => [
                           entry.key,
                           entry.realFont ?? entry.family,
                           formatDimension(entry.size),
                           entry.lineHeight,
-                          entry.weight,
                           entry.letterSpacing,
                         ])}
+                      />
+                    ) : null}
+                    {typographyLineHeights || typographyWeights ? (
+                      <div className="grid gap-4 xl:grid-cols-2">
+                        <GuidanceListCard
+                          items={buildKeyValueLines(typographyLineHeights ?? null)}
+                          title="Typography Line Heights"
+                        />
+                        <GuidanceListCard
+                          items={buildKeyValueLines(typographyWeights ?? null)}
+                          title="Typography Weights"
+                        />
+                      </div>
+                    ) : null}
+                    {typographyRules.length ? (
+                      <GuidanceListCard
+                        items={typographyRules}
+                        title="Typography Rules"
                       />
                     ) : null}
                   </div>
@@ -374,7 +402,7 @@ function ExampleDetailPage({ example }: { example: (typeof examples)[number] }) 
                     title="Type Scale"
                   >
                     <DocTable
-                      columns={["Token", "Size", "Line Height", "Weight", "Letter Spacing", "Use"]}
+                      columns={["Token", "Size", "Line Height", "Letter Spacing", "Use"]}
                       rows={buildTypeScaleRows(typeScale)}
                     />
                   </SectionPanel>
@@ -648,6 +676,7 @@ function ComponentShowcaseCard({
   const narratives = getComponentNarrativeFields(component.record);
   const states = getComponentStateEntries(component.record);
   const previews = buildComponentPreviewStates(component.record, states);
+  const interactionLines = buildComponentInteractionLines(component.record, states);
 
   return (
     <article className="rounded-[20px] border border-slate-200/80 bg-slate-50/80 p-3.5 dark:border-white/10 dark:bg-white/[0.03]">
@@ -679,8 +708,8 @@ function ComponentShowcaseCard({
 
       <div className="mb-3 rounded-[16px] border border-slate-200/80 bg-white/85 p-2.5 dark:border-white/10 dark:bg-[#0d1722]">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Canvas</div>
-          {states.length ? <Tag>{`${states.length + (previews.some((preview) => preview.key === "default") ? 1 : 0)} states`}</Tag> : null}
+          <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Component Preview</div>
+          {previews.length ? <Tag>{`${previews.length} states`}</Tag> : null}
         </div>
         <div className="grid gap-2">
           {previews.map((preview) => (
@@ -697,23 +726,26 @@ function ComponentShowcaseCard({
               <div className="rounded-[12px] border border-slate-200/80 bg-white/88 p-2.5 dark:border-white/10 dark:bg-[#0d1722]">
                 {renderComponentPreview(example, component.key, preview.record, preview.key)}
               </div>
-              {preview.key !== "default" ? (
-                <div className="mt-2">
-                  <DocTable
-                    columns={["Override", "Value"]}
-                    rows={Object.entries(preview.overrides).map(([key, value]) => [key, asText(value) ?? "—"])}
-                  />
-                </div>
-              ) : null}
             </div>
           ))}
         </div>
       </div>
 
-      <DocTable
-        columns={["Property", "Value"]}
-        rows={getImportantFields(component.record).map((field) => [field.key, field.value])}
-      />
+      {interactionLines.length ? (
+        <div className="rounded-[16px] border border-slate-200/80 bg-white/75 p-3 dark:border-white/10 dark:bg-[#111b26]">
+          <div className="mb-2 text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Interaction</div>
+          <div className="grid gap-1.5">
+            {interactionLines.map((line) => (
+              <div
+                key={`${component.key}-${line}`}
+                className="rounded-[12px] border border-slate-200/70 bg-slate-50/80 px-3 py-2 text-xs leading-5 text-slate-600 dark:border-white/10 dark:bg-[#0d1722] dark:text-slate-300"
+              >
+                {line}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -808,6 +840,42 @@ function buildComponentPreviewStates(
         ...previews,
       ]
     : previews;
+}
+
+function buildComponentInteractionLines(
+  record: Record<string, unknown>,
+  states: Array<{ key: string; label: string; record: Record<string, unknown> }>,
+) {
+  const lines = states.flatMap((state) => {
+    const values = Object.entries(state.record)
+      .map(([key, value]) => {
+        const text = asText(value);
+        return text ? `${key} ${text}` : null;
+      })
+      .filter(Boolean);
+
+    return values.length ? [`${state.label}: ${values.join(" · ")}`] : [];
+  });
+
+  if (!states.some((state) => state.key === "hover") && record.hover_bg) {
+    lines.push(`Hover: background ${asText(record.hover_bg)}`);
+  }
+
+  if (!states.some((state) => state.key === "focus") && (record.border_focus || record.focus_ring)) {
+    lines.push(
+      [
+        "Focus:",
+        asText(record.border_focus) ? `border ${asText(record.border_focus)}` : null,
+        asText(record.focus_ring) ? `ring ${asText(record.focus_ring)}` : null,
+      ].filter(Boolean).join(" "),
+    );
+  }
+
+  if (!states.some((state) => state.key === "active") && record.active_background) {
+    lines.push(`Active: background ${asText(record.active_background)}`);
+  }
+
+  return lines;
 }
 
 function renderComponentPreview(
@@ -1917,7 +1985,6 @@ function buildTypeScaleRows(typeScale: Record<string, unknown>) {
       token,
       formatDimension(asText(record.size) ?? "—"),
       asText(record.line_height) ?? "—",
-      asText(record.weight) ?? "—",
       asText(record.letter_spacing) ?? "—",
       asText(record.use) ?? "—",
     ]];
@@ -2114,6 +2181,19 @@ function buildKeyValueLines(record: Record<string, unknown> | null) {
   return Object.entries(record).map(([key, value]) => {
     const text = Array.isArray(value) ? toStringList(value).join(" | ") : asText(value) ?? "—";
     return `${key}: ${text}`;
+  });
+}
+
+function buildTypographyFamilyLines(record: Record<string, unknown>) {
+  return Object.entries(record).map(([key, value]) => {
+    const family = asRecord(value);
+    if (!family) return `${key}: ${asText(value) ?? "—"}`;
+
+    const name = asText(family.name) ?? "—";
+    const fallback = asText(family.fallback);
+    const character = asText(family.character);
+    const details = [character, fallback ? `fallback ${fallback}` : null].filter(Boolean).join(" · ");
+    return details ? `${key}: ${name} · ${details}` : `${key}: ${name}`;
   });
 }
 

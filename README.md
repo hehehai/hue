@@ -1,20 +1,33 @@
 # hue
 
-an open-source Codex skill that learns any brand from a URL, name, screenshot, reference image, vibe description, or local codebase and turns it into a structured design package.
+an open-source Codex skill that learns a brand from a URL, name, screenshot, vibe description, or local codebase and turns it into a lightweight design package for AI-assisted generation.
 
 see it in action: **[hueapp.io](https://hueapp.io)**
 
 ## what you get
 
-a reusable design package with three artifacts:
+hue writes three artifacts:
 
 - `design-meta.yaml` as the source-facing capture and provenance record
-- `design-model.yaml` as the structured machine-readable design model
-- `design-document.md` as the standalone human-readable design brief
+- `design-model.yaml` as the lightweight machine-readable design model
+- `DESIGN.md` as the main human-readable design brief
 
-`design-model.yaml` and `design-document.md` are parallel primary artifacts and should be independently usable. the yaml is optimized for tooling and structured reuse; the markdown is optimized for human implementation and review. neither should rely on the other to explain the core design language.
+the default output uses Google's public `DESIGN.md` format directly: YAML frontmatter for schema-valid tokens plus Markdown sections for rationale and guardrails. the markdown is the primary artifact for prompting and design direction. the yaml stays useful for hue-specific structured reuse, but it no longer tries to mirror every detail at implementation-spec depth.
 
-the package covers source capture, color tokens, typography, spacing, component inventory, light + dark mode strategy, hero-stage decisions, icon fallback selection, composition rules, responsive behavior, do's and don'ts, anti-patterns, and implementation guidance. hue now defaults to documentation, not to generating another installable skill.
+the package is designed to work well with AI page generators such as Stitch and similar tools:
+- clear atmosphere
+- color roles
+- typography behavior
+- component feel
+- layout rules
+- motion posture
+- anti-patterns
+
+`DESIGN.md` should pass the official validator:
+
+```bash
+npx @google/design.md lint DESIGN.md
+```
 
 ## install
 
@@ -22,70 +35,81 @@ the package covers source capture, color tokens, typography, spacing, component 
 git clone https://github.com/dominikmartn/hue "${CODEX_HOME:-$HOME/.codex}/skills/hue"
 ```
 
-`hue` is intended for explicit invocation. in a Codex session, say something like:
-
-- "use hue to create a design document from cursor.com"
-- "$hue generate a design-meta yaml, design-model yaml, and markdown document inspired by raycast"
-- "use hue with this screenshot to generate a design system document"
-- "use hue to analyze this local codebase and generate a reusable design package"
-- "use hue to remix this existing design document to feel warmer and more editorial"
-
-the skill defaults to direct browser inspection via `agent-browser`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked.
-
 ## when to use hue
 
-use `hue` when the goal is to **distill a source design language into reusable documentation**, not when the goal is to directly build a page or component.
+use `hue` when the goal is to **distill a source design language into a reusable design brief**, not when the goal is to directly ship UI code.
 
 good fits:
 
 - analyze a live website and turn it into a reusable design system package
-- analyze a known brand from its name and confirm the official site first
+- analyze a brand from its official website
 - analyze screenshots and infer a stable design language
-- analyze a local frontend codebase and extract tokens, components, and patterns
-- translate a vibe description into a concrete design system
-- remix an existing hue package without rewriting it from scratch
-- compare two generated design documents and tighten output consistency
+- analyze a local frontend codebase without overfitting to raw token volume
+- translate a vibe description into a concrete design language
+- remix an existing hue package to feel warmer, calmer, sharper, more editorial, or less strict
 
 not the default use:
 
-- generic "build me a landing page" requests with no documentation goal
-- directly generating production UI instead of design documentation
-- implicitly applying a style system without the user explicitly invoking `hue`
+- generic "build me a landing page" implementation requests
+- exhaustive component audits unless explicitly requested
+- silently applying the style system without explicit hue invocation
 
 ## accepted input modes
 
-hue supports these input types:
+hue supports:
 
 - `brand name`
-  hue finds the likely official website, asks the user to confirm it, then analyzes the brand across multiple surfaces.
 - `url`
-  hue inspects the live page directly, preferring browser-level DOM/CSS/screenshot analysis over summary-style fetching.
 - `local codebase`
-  hue reads tokens, components, CSS custom properties, Tailwind config, theme files, and stories when available.
 - `screenshots / images`
-  hue compares the screenshots, surfaces contradictions, and uses them as visual evidence.
 - `description / vibe`
-  hue converts adjectives into concrete design decisions.
 - `remix`
-  hue reads existing design artifacts and applies requested changes surgically.
+
+the skill defaults to direct browser inspection via `browser-automation` / `agent-browser`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked. hue uses named browser sessions and closes them after capture to avoid leaked Chrome/headless processes.
 
 ## output contract
 
-by default, `hue` writes exactly these three files:
+by default, hue writes exactly:
 
 - `design-meta.yaml`
 - `design-model.yaml`
-- `design-document.md`
+- `DESIGN.md`
 
-html previews, component libraries, landing pages, app screens, or code snippets are optional follow-up artifacts only when explicitly requested.
+the contract is unchanged at the file level, but the emphasis has changed:
+
+- `DESIGN.md` is the main deliverable
+- `design-model.yaml` is a lighter companion model
+- `design-meta.yaml` continues to hold source identifiers and provenance
+
+in other words: hue keeps the three-file package, but the markdown artifact is now the official `DESIGN.md` file rather than a separate `design-document.md` that must be merged later.
+
+`design-model.yaml` is still token-oriented. Component blocks should use concrete parameters such as `background`, `text`, `border`, `radius`, `padding`, `min_height`, `typography`, `shadow`, `hover`, `focus`, and `disabled`, not prose summaries. Higher-level component rationale belongs in `DESIGN.md`.
+
+html previews, component libraries, landing pages, app screens, or code snippets remain optional follow-up artifacts only when explicitly requested.
+
+## design philosophy of the skill
+
+hue now follows one central rule:
+
+> **prefer expressive constraints over exhaustive constraints**
+
+that means:
+
+- keep the design language clear
+- include the values that actually steer generation
+- ban the moves that would break the identity
+- avoid turning every source into a rigid implementation spec
+
+good hue output should still be opinionated, but it should leave room for downstream AI tools to compose strong screens instead of boxing them in with too many micro-rules.
 
 ## invocation patterns
 
-`hue` is explicit-invocation only. it should trigger when the user clearly asks for hue or for a design-document package, for example:
+`hue` is explicit-invocation only. say things like:
 
 - `use hue`
 - `$hue`
 - `create a design document`
+- `generate a DESIGN.md`
 - `generate a design-model yaml`
 - `generate a design system document`
 - `analyze this site and produce yaml + markdown`
@@ -93,109 +117,120 @@ html previews, component libraries, landing pages, app screens, or code snippets
 
 it should not trigger automatically for generic frontend or UI implementation work.
 
+## default document shape
+
+the default `DESIGN.md` follows Google's public section order:
+
+1. `Overview`
+2. `Colors`
+3. `Typography`
+4. `Layout`
+5. `Elevation & Depth`
+6. `Shapes`
+7. `Components`
+8. `Do's and Don'ts`
+
+this keeps the output short, reusable, and easy to feed into AI tools.
+
+the file also includes YAML frontmatter tokens for `colors`, `typography`, `rounded`, `spacing`, and `components`.
+
+## official DESIGN.md compatibility
+
+google's public spec lives here:
+
+- [`google-labs-code/design.md`](https://github.com/google-labs-code/design.md)
+
+the official format combines:
+
+- YAML front matter for machine-readable tokens
+- markdown sections for design rationale
+
+hue does **not** replace its three-file package with a single file, but its Markdown file is now `DESIGN.md` and uses the official buckets:
+
+- Overview
+- Colors
+- Typography
+- Layout
+- Elevation & Depth
+- Shapes
+- Components
+- Do's and Don'ts
+
+if you want to validate an exported official-format file, use:
+
+```bash
+npx @google/design.md lint DESIGN.md
+```
+
+the repo also includes a validation sample at [`validation/cursor-doc-validation/DESIGN.md`](/Users/guanwei/x/doit/hue/validation/cursor-doc-validation/DESIGN.md) that follows the public format while staying aligned with hue's lighter synthesis.
+
 ## reference map
 
-all reference files live in [`references/`](/Users/guanwei/x/doit/hue/references). they do not all activate at the same time.
+all reference files live in [`references/`](/Users/guanwei/x/doit/hue/references).
 
 ### always-on core refs
 
-these are the main refs for the current default workflow:
-
 - [`design-document-template.md`](/Users/guanwei/x/doit/hue/references/design-document-template.md)
-  controls the exact structure of `design-document.md`.
+  controls the default official-format `DESIGN.md` shape.
 - [`design-meta-template.yaml`](/Users/guanwei/x/doit/hue/references/design-meta-template.yaml)
-  controls the exact structure of `design-meta.yaml`.
+  controls the structure of `design-meta.yaml`.
 - [`hero-stage.md`](/Users/guanwei/x/doit/hue/references/hero-stage.md)
-  controls hero background + subject + relation analysis.
+  use when hero treatment is genuinely central to the design language.
 - [`icon-kits.md`](/Users/guanwei/x/doit/hue/references/icon-kits.md)
-  controls fallback icon-kit selection when brand icons are proprietary.
-- [`responsive-behavior.md`](/Users/guanwei/x/doit/hue/references/responsive-behavior.md)
-  controls breakpoint, collapse, and touch-target guidance.
-- [`dos-donts.md`](/Users/guanwei/x/doit/hue/references/dos-donts.md)
-  controls implementation-facing Do / Don't writing.
+  use when icon fallback selection materially matters.
+- [`google-design-md-compat.md`](/Users/guanwei/x/doit/hue/references/google-design-md-compat.md)
+  use for every default `DESIGN.md` output and validation pass.
 
 ### conditional refs
 
-these activate only for certain requests or certain detected brand traits:
-
 - [`background-shaders.md`](/Users/guanwei/x/doit/hue/references/background-shaders.md)
-  use only when the brand clearly relies on animated WebGL / shader identity and `hero_stage.background.medium` should be `shader`.
+  use only when the source clearly relies on shader-heavy identity.
 - [`preview-template.md`](/Users/guanwei/x/doit/hue/references/preview-template.md)
-  use when the user explicitly asks for a visual preview / `preview.html`.
+  use when the user explicitly asks for a visual preview.
 - [`component-library-template.md`](/Users/guanwei/x/doit/hue/references/component-library-template.md)
-  use when the user explicitly asks for a component library view / `component-library.html`.
+  use when the user explicitly asks for a component-library artifact.
 - [`landing-page-template.md`](/Users/guanwei/x/doit/hue/references/landing-page-template.md)
-  use when the user explicitly asks for a landing-page artifact / `landing-page.html`.
+  use when the user explicitly asks for a landing-page artifact.
 - [`app-screen-template.md`](/Users/guanwei/x/doit/hue/references/app-screen-template.md)
-  use when the user explicitly asks for an in-product app-screen artifact / `app-screen.html`.
+  use when the user explicitly asks for an app-screen artifact.
 
-### legacy or currently non-default refs
+### legacy refs
 
-these files are useful background material, but they are not part of the default current output contract:
+these remain in the repo for older artifact shapes and reference work, but they are no longer the default direction:
 
 - [`background-graphics.md`](/Users/guanwei/x/doit/hue/references/background-graphics.md)
-  legacy background model replaced by `hero-stage.md`.
 - [`components-template.md`](/Users/guanwei/x/doit/hue/references/components-template.md)
-  older standalone components document template.
 - [`tokens-template.md`](/Users/guanwei/x/doit/hue/references/tokens-template.md)
-  older standalone tokens document template.
 - [`platform-mapping-template.md`](/Users/guanwei/x/doit/hue/references/platform-mapping-template.md)
-  expanded platform implementation mapping template.
 - [`skill-template.md`](/Users/guanwei/x/doit/hue/references/skill-template.md)
-  older template for generating a standalone design skill instead of a documentation package.
-
-## reference trigger rules
-
-in practical terms, the refs activate like this:
-
-- if the user asks for the default package, use the core refs only
-- if the user asks for richer visual artifacts, activate the matching html template refs
-- if the analyzed brand clearly uses shader-heavy animated identity, activate `background-shaders.md`
-- if the request is about revising consistency or document quality, `design-document-template.md`, `responsive-behavior.md`, and `dos-donts.md` become especially important
-- if the request is about legacy outputs or older example parity, the legacy templates may be consulted, but they should not silently replace the current default workflow
 
 ## workflow summary
 
-the current hue workflow is:
+the default hue workflow is:
 
 1. identify the input type
 2. inspect the source directly whenever possible
-3. classify the brand as UI-rich or content-rich
-4. inventory observed vs derived components
-5. analyze hero stage and iconography fallback
-6. synthesize a neutral reusable system name
-7. generate `design-meta.yaml`, `design-model.yaml`, and `design-document.md`
-8. self-validate that markdown and yaml are aligned, source-agnostic where required, and structurally complete
+3. extract recurring visual signals
+4. synthesize a lightweight design language
+5. generate `design-meta.yaml`, `design-model.yaml`, and `DESIGN.md`
+6. run `npx @google/design.md lint DESIGN.md` when available
+7. self-check that the package is source-agnostic, concise, and still directionally complete
+8. close any named `agent-browser` session used for capture
 
 ## examples
 
-seventeen brands live in `examples/` showing the range of analysis hue can support. sixteen are fictional one-shots, one is real (meadow ↦ mymind.com).
+the repo contains multiple brand examples in `examples/`. treat them as a mix of historical and current styles:
 
-| brand | character |
-|---|---|
-| atlas | ivory engineering, classical maritime charts |
-| auris | premium audio, monochrome dark |
-| drift | hot pink fashion commerce |
-| fizz | y2k pop photo-sharing, candy chrome |
-| halcyon | cool teal sculptural glass |
-| kiln | dark fired earth, molten terracotta |
-| ledger | newsprint editorial, financial broadsheet |
-| meadow | warm cream editorial (real, from mymind-design) |
-| orivion | luminous red-violet glow |
-| oxide | brutalist mono compute protocol |
-| prism | cyberpunk holographic shader engine |
-| relay | swiss transit, departure board precision |
-| ridge | slate emerald dev platform |
-| solvent | warm amber generative shader |
-| stint | muted violet productivity |
-| thrive | sage green wellness, light mode |
-| velvet | noir editorial fragrance house |
+- some older examples still reflect the previous heavier schema
+- newer examples and validation fixtures should trend toward the lighter default
 
-many examples still include older html artifacts such as `landing-page.html`, `component-library.html`, and `app-screen.html`. treat those as reference builds and exploration surfaces, not as the default output contract for the current skill.
+many examples still include older html artifacts such as `landing-page.html`, `component-library.html`, and `app-screen.html`. treat those as reference builds, not as the default output contract.
 
 ## runtime expectations
 
 - `agent-browser` available for best results on live sites
+- named `agent-browser` sessions for live-site capture
+- close browser sessions after capture to avoid leaked processes
 - web access for public-source fallback
 - no Chrome DevTools MCP required
 

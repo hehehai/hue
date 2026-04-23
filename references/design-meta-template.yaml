@@ -29,6 +29,7 @@ capture_context:
 
 translation:
   abstraction_goal: "Separate source identity from reusable design language."
+  output_style: "Prefer expressive constraints over exhaustive constraints."
   derivation_summary: "{{derivation-summary}}"
   excluded_source_markers:
     - "Source brand names stay in this file only."

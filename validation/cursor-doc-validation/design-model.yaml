@@ -1,392 +1,196 @@
-name: "Warm Engineering Canvas"
-description: "A light-first design system built from warm paper neutrals, ink-dark typography, oversized pill actions, sparse orange signaling, and polished product-window demos."
-philosophy: "Warm editorial calm wrapped around high-leverage technical capability. The system stays restrained at the page level, then concentrates detail inside product windows, code-facing chrome, and a few high-signal action pills."
-primary_mode: "light"
-domain: "AI development tooling / agent workspace"
-system_type: "ui-rich"
-mono_for_code: true
-mono_for_metrics: false
+generated_at: "2026-04-22T00:00:00Z"
+system:
+  name: "Warm Engineering Canvas"
+  slug: "warm-engineering-canvas"
+  summary: "A light-first product marketing system built from warm paper neutrals, ink-dark typography, restrained accent signaling, and polished software-window hero framing."
+  primary_mode: "light"
+  domain: "AI development tooling / agent workspace"
+  system_type: "ui-rich"
 
-primitives:
+theme:
+  visual_atmosphere:
+    summary: "Warm, calm, technical, and quietly premium."
+    density: 4
+    variance: 3
+    motion: 3
+    signals:
+      - "paper-toned backgrounds"
+      - "ink-dark typography"
+      - "product-window hero framing"
+      - "sparse accent usage"
+
+palette:
   colors:
-    neutral:
-      0: "#FFFFFF"
-      50: "#FBFAF7"
-      100: "#F7F7F4"
-      200: "#F2F1ED"
-      300: "#EBEAE5"
-      400: "#E6E5E0"
-      500: "#C9C5BC"
-      600: "#8E877A"
-      700: "#5B564E"
-      800: "#3D392F"
-      900: "#26251E"
-      950: "#171611"
-    accent:
-      50: "#FFF2EB"
-      100: "#FFE3D6"
-      200: "#FFC5A9"
-      300: "#FFA67C"
-      400: "#FF7A3B"
-      500: "#F54E00"
-      600: "#D84500"
-      700: "#B33A00"
-      800: "#7E2F10"
-      900: "#4E2314"
-    green:
-      50: "#EAF8F2"
-      500: "#1F8A65"
-      900: "#134F3D"
-    amber:
-      50: "#FAF2E4"
-      500: "#C08532"
-      900: "#6A4922"
-    red:
-      50: "#FCE9EE"
-      500: "#CF2D56"
-      900: "#6E1E34"
-  spacing: [0, 2, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96]
-  radii: [0, 4, 8, 10, 16, 999]
+    - name: "Paper Canvas"
+      value: "#F7F7F4"
+      role: "Primary page background"
+    - name: "Quiet Card"
+      value: "#F2F1ED"
+      role: "Muted container and panel surface"
+    - name: "Soft Divider Surface"
+      value: "#EBEAE5"
+      role: "Secondary grouped surface"
+    - name: "Pressed Surface"
+      value: "#E6E5E0"
+      role: "Hover and active neutral surface"
+    - name: "Ink Charcoal"
+      value: "#26251E"
+      role: "Primary text and dark CTA fill"
+    - name: "Muted Ink"
+      value: "rgba(38, 37, 30, 0.60)"
+      role: "Secondary copy and metadata"
+    - name: "Whisper Border"
+      value: "rgba(38, 37, 30, 0.10)"
+      role: "Dividers and quiet borders"
+    - name: "Signal Orange"
+      value: "#F54E00"
+      role: "Sparse emphasis signal"
+    - name: "Soft Accent Tint"
+      value: "#FFF2EB"
+      role: "Accent-tinted background"
+  usage_rules:
+    - "Keep most of the page inside the warm-neutral family."
+    - "Use dark ink as the primary CTA fill before using the accent."
+    - "Use the accent as signal, not blanket fill."
+    - "Keep chroma low and concentrated."
+
+typography:
+  families:
+    display:
+      name: "Geist"
+      fallback: "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+      character: "restrained grotesk with very little weight drama"
+    body:
+      name: "Geist"
+      fallback: "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+      character: "calm UI voice that matches the display family"
+    mono:
+      name: "JetBrains Mono"
+      fallback: "\"SF Mono\", Menlo, Consolas, monospace"
+      character: "compact technical support font"
+  scale:
+    display: "clamp(2.6rem, 6vw, 4.6rem)"
+    h2: "clamp(2rem, 4vw, 3rem)"
+    body: "1rem"
+    caption: "0.75rem"
+  rules:
+    - "Use size and spacing before weight jumps."
+    - "Keep line length near 62ch for long text."
+    - "Reserve mono for code, utility chrome, and precise technical detail."
 
 tokens:
-  colors:
-    light:
-      background: "{neutral.100}"
-      surface1: "{neutral.200}"
-      surface2: "{neutral.300}"
-      surface3: "{neutral.400}"
-      border: "rgba(38,37,30,0.10)"
-      border_visible: "rgba(38,37,30,0.20)"
-      text1: "{neutral.900}"
-      text2: "rgba(38,37,30,0.60)"
-      text3: "rgba(38,37,30,0.55)"
-      text4: "rgba(38,37,30,0.40)"
-      accent: "{accent.500}"
-      accent_hover: "{accent.600}"
-      accent_subtle: "{accent.50}"
-    dark:
-      background: "{neutral.950}"
-      surface1: "{neutral.900}"
-      surface2: "{neutral.800}"
-      surface3: "{neutral.700}"
-      border: "rgba(247,247,244,0.10)"
-      border_visible: "rgba(247,247,244,0.16)"
-      text1: "{neutral.100}"
-      text2: "rgba(247,247,244,0.72)"
-      text3: "rgba(247,247,244,0.55)"
-      text4: "rgba(247,247,244,0.35)"
-      accent: "{accent.400}"
-      accent_hover: "{accent.300}"
-      accent_subtle: "{accent.900}"
-    status:
-      success: "{green.500}"
-      warning: "{amber.500}"
-      error: "{red.500}"
-
   spacing:
-    2xs: 2
-    xs: 4
-    sm: 8
-    md: 16
-    lg: 24
-    xl: 32
-    2xl: 48
-    3xl: 64
-    4xl: 96
-
+    section_gap: "clamp(4rem, 7vw, 7rem)"
+    group_gap: "1rem"
+    card_padding: "1.5rem"
   radii:
-    element: 4
-    control: 8
-    component: 10
-    container: 16
-    pill: 999
-
-  typography:
-    display:
-      family: "Geist"
-      observed_character: "Restrained proprietary grotesk with very little weight drama and a calm editorial posture."
-      fallback: "\"Helvetica Neue\", Helvetica, Arial, system-ui, sans-serif"
-      size: "36px"
-      weight: 400
-      line_height: 1.2
-      letter_spacing: "-0.02em"
-      google_fonts: "Geist:wght@400;500;600"
-    body:
-      family: "Geist"
-      observed_character: "Same voice as the display face so the whole system reads as one measured tone."
-      fallback: "\"Helvetica Neue\", Helvetica, Arial, system-ui, sans-serif"
-      size: "16px"
-      weight: 400
-      line_height: 1.5
-      letter_spacing: "0em"
-      google_fonts: "Geist:wght@400;500;600"
-    mono:
-      family: "JetBrains Mono"
-      observed_character: "Compact engineering mono reserved for code, technical chrome, and product-adjacent detail."
-      fallback: "\"SF Mono\", Menlo, Consolas, monospace"
-      size: "12px"
-      weight: 400
-      google_fonts: "JetBrains+Mono:wght@400;500"
-
-  type_scale:
-    display: { size: "72px", line_height: 1.1, letter_spacing: "-0.03em", weight: 400, use: "Large conversion headlines" }
-    h1: { size: "52px", line_height: 1.15, letter_spacing: "-0.025em", weight: 400, use: "Primary page titles" }
-    h2: { size: "36px", line_height: 1.2, letter_spacing: "-0.02em", weight: 400, use: "Main section statements" }
-    h3: { size: "26px", line_height: 1.25, letter_spacing: "-0.012em", weight: 400, use: "Feature leads and module titles" }
-    body: { size: "16px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Paragraphs, buttons, plan details" }
-    body_sm: { size: "14px", line_height: 1.5, letter_spacing: "0em", weight: 400, use: "Navigation and secondary controls" }
-    caption: { size: "12px", line_height: 1.45, letter_spacing: "0em", weight: 400, use: "Code-adjacent helper text" }
-    label: { size: "11px", line_height: 1.3, letter_spacing: "0.02em", weight: 400, use: "Tiny UI labels and overlines" }
-
-  elevation:
-    strategy: "subtle-product-window"
-    notes: "Page-level surfaces stay almost flat. Layered shadows are reserved for product windows and only when credibility needs to be concentrated."
-    shadows:
-      hero_window: "0px 28px 70px 0px rgba(0,0,0,0.14), 0px 14px 32px 0px rgba(0,0,0,0.10), 0px 0px 0px 1px rgba(38,37,30,0.10)"
-      nested_window: "0px 25px 50px -12px rgba(0,0,0,0.25), 0px 12px 24px -8px rgba(0,0,0,0.15), 0px 0px 0px 0.5px rgba(38,37,30,0.10)"
-      outline: "0 0 0 1px rgba(38,37,30,0.10)"
-
+    control: "999px"
+    component: "1rem"
+    container: "1.5rem"
   motion:
-    personality: "smooth"
+    duration: "150ms-220ms"
     easing: "cubic-bezier(.4, 0, .2, 1)"
-    duration_fast: "140ms"
-    duration_normal: "150ms"
-    duration_slow: "240ms"
-    notes: "The marketing layer should feel composed and frictionless rather than lively."
+    spring: "stiffness 100, damping 20"
 
-  hero_stage:
-    preset: null
-    observed_style:
-      description: "A split hero composed of blank cream space, a soft painterly field, and a polished product window as the main object of trust."
-      where_used:
-        - "landing hero"
-        - "primary product showcase"
-      notes: "Atmosphere supports the interface but never replaces it."
-    background:
-      medium: "painterly"
-      color_mode: "brand-tinted-neutral"
-      saturation: "muted"
-      light_source: "ambient"
-      falloff: "soft"
-      vignette: "subtle"
-      texture: "paper"
-      motion: "static"
-      intensity: "subtle"
-      safe_zone: "masked-for-text"
-      color_palette:
-        - "#F7F7F4"
-        - "#F2F1ED"
-        - "#D6D0C7"
-        - "#B7AAA2"
-        - "#F54E00"
-    hero:
-      subject: "device"
-      placement: "center"
-      scale: "dominant"
-      tint: "neutral"
-    relation:
-      type: "shadow-only"
-      bleed: 0
-    disclaimer: "Rendered as an abstract product-window composition with a painterly support field."
-
-  iconography:
-    observed_style:
-      description: "Compact geometric utility icons with regular strokes, soft corners, and minimal decorative variation."
-      stroke_weight: "regular"
-      corner_treatment: "soft"
-      fill_style: "mixed"
-      form_language: "geometric"
-      visual_density: "minimal"
-    fallback_kit:
-      name: "Tabler Icons"
-      weight: "outline"
-      match_score: "high"
-      match_reasoning: "Tabler preserves the compact, utility-first posture and quiet geometric stroke logic needed for product chrome and supporting UI."
-      cdn: "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
-      icon_class_prefix: "ti ti-"
-    disclaimer: "The generated package uses a best-match open icon kit rather than any proprietary source set."
+layout_principles:
+  - "Use contained widths and large negative space."
+  - "Prefer one strong media object over many competing cards."
+  - "Let software windows and screenshots carry the visual drama."
+  - "Use editorial two-column proof layouts where needed."
+  - "Collapse multi-column layouts below 768px."
 
 components:
-  button_primary:
-    source: "observed"
-    background: "{tokens.colors.light.text1}"
-    color: "{tokens.colors.light.background}"
-    font_family: "{tokens.typography.body.family}"
-    font_size: "{tokens.type_scale.body.size}"
-    font_weight: 400
-    padding: "12px 22px"
-    height: "43px"
-    radius: "{tokens.radii.pill}"
-    border: "1px solid {tokens.colors.light.text1}"
-    shadow: "none"
-    hover:
-      background: "{primitives.colors.neutral.800}"
-    notes: "Primary actions are ink-dark pills rather than accent-filled buttons."
-
-  button_secondary:
-    source: "observed"
-    background: "{tokens.colors.light.surface3}"
-    color: "{tokens.colors.light.text1}"
-    font_size: "{tokens.type_scale.body.size}"
-    font_weight: 400
-    padding: "12px 22px"
-    height: "43px"
-    radius: "{tokens.radii.pill}"
-    border: "1px solid rgba(38,37,30,0.025)"
-    shadow: "none"
-    hover:
-      background: "{tokens.colors.light.surface2}"
-
-  nav_pill:
-    source: "observed"
-    background: "transparent"
-    color: "{tokens.colors.light.text1}"
-    font_size: "{tokens.type_scale.body_sm.size}"
-    font_weight: 400
-    padding: "6px 10px"
-    height: "32px"
-    radius: "{tokens.radii.pill}"
-    border: "1px solid rgba(38,37,30,0.20)"
-
-  segmented_toggle:
-    source: "observed"
-    background: "{tokens.colors.light.surface1}"
-    radius: "{tokens.radii.pill}"
-    padding: "2px"
-    height: "42px"
-    active_track:
-      background: "{tokens.colors.light.surface3}"
-      border: "1px solid rgba(38,37,30,0.025)"
-    label:
-      font_size: "{tokens.type_scale.body.size}"
-      padding: "10px 20px"
-
-  pricing_card:
-    source: "observed"
-    background: "{tokens.colors.light.surface1}"
-    radius: "{tokens.radii.element}"
-    padding: "14px 15px 15px"
-    border: "none"
-    shadow: "none"
-
-  demo_window:
-    source: "observed"
-    background: "{tokens.colors.light.surface1}"
-    radius: "{tokens.radii.component}"
-    border: "1px solid rgba(38,37,30,0.10)"
-    shadow: "{tokens.elevation.shadows.hero_window}"
-    titlebar_background: "{tokens.colors.light.surface1}"
-    chrome_text: "{tokens.colors.light.text2}"
-
-  code_chip:
-    source: "observed"
-    background: "transparent"
-    color: "{tokens.colors.light.text2}"
-    font_size: "{tokens.type_scale.caption.size}"
-    font_weight: 400
-    padding: "4px 8px"
-    radius: "{tokens.radii.element}"
-    border: "1px solid rgba(38,37,30,0.10)"
-
-  input_field:
-    source: "derived"
-    background: "{tokens.colors.light.surface1}"
-    color: "{tokens.colors.light.text1}"
-    placeholder: "{tokens.colors.light.text3}"
-    border_default: "1px solid rgba(38,37,30,0.10)"
-    border_focus: "1px solid {tokens.colors.light.accent}"
-    focus_ring: "0 0 0 1px {tokens.colors.light.accent_subtle}"
-    radius: "{tokens.radii.control}"
-    padding: "12px 14px"
-    notes: "Derived from pricing cards, segmented controls, and product-window chrome."
-
-responsive_behavior:
-  breakpoints:
-    small_mobile:
-      width: "<479px"
-      key_changes:
-        - "Fully stacked layout"
-        - "Hero copy caps near 28px"
-        - "Product windows crop to the essential viewport"
-    mobile:
-      width: "479-640px"
-      key_changes:
-        - "Single-column layout"
-        - "Collapsed navigation"
-        - "Hero actions stack vertically"
-        - "Pricing cards stack vertically"
-    large_mobile:
-      width: "640-767px"
-      key_changes:
-        - "Single-column layout with wider content rail"
-    tablet:
-      width: "768-991px"
-      key_changes:
-        - "Selective 2-column sections"
-        - "Navigation remains condensed"
+  buttons:
+    primary:
+      background: "#26251E"
+      text: "#F7F7F4"
+      border: "1px solid #26251E"
+      radius: "{tokens.radii.control}"
+      padding: "0.75rem 1rem"
+      min_height: "40px"
+      typography: "body"
+      shadow: "none"
+      hover:
+        background: "#14120B"
+      focus:
+        ring: "2px solid #F54E00"
+    secondary:
+      background: "#F2F1ED"
+      text: "#26251E"
+      border: "1px solid rgba(38, 37, 30, 0.10)"
+      radius: "{tokens.radii.control}"
+      padding: "0.75rem 1rem"
+      min_height: "40px"
+      typography: "body"
+  cards:
+    default:
+      background: "#F2F1ED"
+      text: "#26251E"
+      border: "1px solid rgba(38, 37, 30, 0.10)"
+      radius: "{tokens.radii.component}"
+      padding: "{tokens.spacing.card_padding}"
+      shadow: "none"
+    product_window:
+      background: "#14120B"
+      text: "#F7F7F4"
+      border: "1px solid rgba(237, 236, 236, 0.08)"
+      radius: "{tokens.radii.container}"
+      padding: "2rem"
+      shadow: "0 28px 70px rgba(0, 0, 0, 0.14), 0 14px 32px rgba(0, 0, 0, 0.10)"
+  inputs:
+    default:
+      background: "#F2F1ED"
+      text: "#26251E"
+      placeholder: "rgba(38, 37, 30, 0.45)"
+      border: "1px solid rgba(38, 37, 30, 0.10)"
+      radius: "0.5rem"
+      padding: "0.75rem 0.875rem"
+      min_height: "40px"
+      focus:
+        border: "#F54E00"
+        ring: "2px solid rgba(245, 78, 0, 0.20)"
+  navigation:
     desktop:
-      width: "992px+"
-      key_changes:
-        - "Full multi-column layout"
-        - "Expanded top navigation"
-        - "Split hero composition"
-
-  typography_scaling:
-    display: { desktop: "72px", tablet: "56px", mobile: "40px", small_mobile: "28px" }
-    h1: { desktop: "52px", tablet: "40px", mobile: "32px", small_mobile: "26px" }
-    h2: { desktop: "36px", tablet: "30px", mobile: "24px", small_mobile: "22px" }
-    body: { desktop: "16px", tablet: "16px", mobile: "15px", small_mobile: "15px" }
-
-  touch_targets:
-    minimum: "44x44px"
-    notes:
-      - "Primary pills keep generous horizontal padding."
-      - "Mobile navigation rows stay thumb-friendly."
-      - "Clickable cards may act as large touch targets."
-
-  collapsing_strategy:
-    navigation: "Horizontal navigation becomes a compact menu trigger or drawer."
-    hero: "Copy and product demo stack vertically while preserving generous blank space."
-    feature_sections: "Side-by-side copy and demo modules become a single-column stack."
-    pricing_cards: "Side-by-side plans become vertically stacked cards."
-    section_padding: "Top-level white space reduces, but the calm paper rhythm stays intact."
-
-  image_behavior:
-    screenshots: "Product windows scale proportionally inside rounded 10px containers."
-    support_backgrounds: "Painterly backdrops may crop slightly but keep the same warm direction."
-    prioritization: "Preserve interface legibility before atmosphere on narrow screens."
-    art_direction_changes: false
-
-dos_and_donts:
-  do:
-    - "Use warm paper neutrals like #F7F7F4 as the default page canvas."
-    - "Use ink-dark pills for primary CTAs instead of accent-filled buttons."
-    - "Keep hierarchy in scale and spacing before weight."
-    - "Reserve layered shadows for prestige product-window demos."
-    - "Use mono only for code and technical chrome."
-    - "Let the product window be the most detailed object on the page."
-  dont:
-    - "Don't fill primary CTAs with orange by default."
-    - "Don't switch the system into a dark sci-fi AI aesthetic."
-    - "Don't use bright white page backgrounds."
-    - "Don't build hierarchy through repeated heavy bold weights."
-    - "Don't turn every navigation item into a pill."
-    - "Don't replace product demos with abstract shapes when capability must be shown."
+      height: "52px"
+      background: "#F7F7F4"
+      text: "rgba(38, 37, 30, 0.60)"
+      active_text: "#26251E"
+      item_padding: "0.5rem 0.75rem"
+      item_radius: "{tokens.radii.control}"
+  states:
+    success:
+      text: "#1F8A65"
+      background: "rgba(31, 138, 101, 0.08)"
+      border: "1px solid rgba(31, 138, 101, 0.18)"
+    error:
+      text: "#CF2D56"
+      background: "rgba(207, 45, 86, 0.08)"
+      border: "1px solid rgba(207, 45, 86, 0.18)"
+    loading:
+      skeleton_background: "rgba(38, 37, 30, 0.08)"
+      spinner: "avoid by default"
 
 anti_patterns:
-  - "No cold blue-white background canvas."
-  - "No full-surface accent fills on core marketing sections."
-  - "No heavy bold display typography."
-  - "No plush consumer-style card radius on structural surfaces."
-  - "No cinematic glow or glassmorphism on standard modules."
-  - "No decorative hero object that outranks the product window."
+  - "No neon glows or chromatic outer shadows."
+  - "No generic dark AI futurism as the default expression."
+  - "No oversized badge piles above the hero."
+  - "No gradient text headlines."
+  - "No three equal marketing cards as the main feature section."
+  - "No high-chroma accent buttons everywhere."
+  - "No cool-gray drift that breaks the warm-neutral palette."
+  - "No oversized mono usage across the main marketing surface."
+  - "No parallax or cinematic hero effects that compete with the product window."
+  - "No generic hype-copy that replaces product proof."
 
-iteration_heuristics:
-  safe_adjustments:
-    - "Warm or cool the neutral ramp slightly while preserving the paper family."
-    - "Increase or decrease accent visibility without changing the dark-CTA rule."
-    - "Tune product-window shadow strength while keeping page-level surfaces flat."
-  high_risk_changes:
-    - "Changing the page background to pure white or dark mode as the primary expression."
-    - "Turning the accent into the main fill color for buttons and cards."
-    - "Removing the pill geometry from the action system."
+optional:
+  hero_stage:
+    summary: "A product-led hero on top of a quiet atmospheric field."
+    guidance:
+      - "Treat atmosphere as support material, not the main event."
+      - "Keep the hero anchored by a polished software window."
+  iconography:
+    summary: "Compact outline utility icons with regular strokes and soft corners."
+  responsive_guidance:
+    - "Stack hero copy and product demo vertically below 768px."
+    - "Move metrics below the intro on narrow screens."
+    - "Preserve interface legibility before atmosphere on mobile."

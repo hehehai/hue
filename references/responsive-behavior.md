@@ -22,7 +22,7 @@ Every generated design package should describe:
 Responsive behavior belongs in both outputs:
 
 - `design-model.yaml` for structured implementation use
-- `design-document.md` for human-readable guidance
+- `DESIGN.md` for human-readable guidance
 
 Neither file should assume responsive behavior is "standard" or "obvious." It must be written down.
 
@@ -279,7 +279,7 @@ Keep the schema compact. The point is to document behavior, not create a respons
 
 ## Markdown Section Guidance
 
-In `design-document.md`, the responsive section should be scannable and implementation-friendly.
+In `DESIGN.md`, responsive guidance should stay scannable and implementation-friendly.
 
 Recommended structure:
 

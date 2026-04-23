@@ -1,322 +1,184 @@
-name: "Linear"
-description: "Real-brand analysis sample from linear.app. Near-black product canvas, cool indigo signal color, compact radii, dense framed UI, and a product-window hero with almost no decorative background."
-philosophy: "Precision before personality theater. Linear's visual identity comes from quiet control: restrained color, very small corners, disciplined typography, and product surfaces that feel machined rather than styled. The tension is between crisp operational UI and the occasional editorial interruption, not between minimalism and spectacle."
-primary_mode: "dark"
-brand_source: "https://linear.app"
-brand_domain: "issue tracking / product planning / agent-assisted product operations"
-brand_type: "ui-rich"
-mono_for_code: true
-mono_for_metrics: false
+generated_at: "2026-04-22T00:00:00Z"
+system:
+  name: "Operational Midnight Grid"
+  slug: "operational-midnight-grid"
+  summary: "A dark, compressed product system built from cool graphite surfaces, sharp utility chrome, and disciplined operational hierarchy."
+  primary_mode: "dark"
+  domain: "project management / issue tracking"
+  system_type: "ui-rich"
 
-primitives:
+theme:
+  visual_atmosphere:
+    summary: "Dense, operational, precise, and intentionally unsentimental."
+    density: 7
+    variance: 3
+    motion: 2
+    signals:
+      - "graphite surfaces"
+      - "cool restrained accent"
+      - "sharp utility hierarchy"
+      - "dense interface posture"
+
+palette:
   colors:
-    neutral:
-      0:   "#FFFFFF"
-      50:  "#F7F8F8"
-      100: "#E6E6E6"
-      200: "#D0D6E0"
-      300: "#8A8F98"
-      400: "#62666D"
-      500: "#3E4146"
-      600: "#28282C"
-      700: "#23252A"
-      800: "#141516"
-      900: "#0F1011"
-      950: "#08090A"
-    brand:
-      50:  "#EEF1FF"
-      100: "#D9DEFF"
-      200: "#B8C0FF"
-      300: "#9AA5FF"
-      400: "#828FFF"
-      500: "#7170FF"
-      600: "#5E6AD2"
-      700: "#5142C4"
-      800: "#2A2D48"
-      900: "#18182F"
-    red:
-      50:  "#FEF2F2"
-      500: "#EB5757"
-      900: "#7F1D1D"
-    green:
-      50:  "#F0FDF4"
-      500: "#27A644"
-      900: "#14532D"
-    amber:
-      50:  "#FFFBEB"
-      500: "#F0BF00"
-      900: "#78350F"
-    blue:
-      500: "#4EA7FC"
-    teal:
-      500: "#00B8CC"
-    orange:
-      500: "#FC7840"
-  spacing: [0, 2, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 128]
-  radii: [0, 4, 6, 8, 12, 16, 999]
+    - name: "Midnight Canvas"
+      value: "#0F1013"
+      role: "Primary application background"
+    - name: "Graphite Surface"
+      value: "#17181D"
+      role: "Default panel and list surface"
+    - name: "Elevated Graphite"
+      value: "#1D1F26"
+      role: "Raised controls and overlays"
+    - name: "Slate Border"
+      value: "rgba(255,255,255,0.10)"
+      role: "Quiet dividers and panel edges"
+    - name: "Cold White"
+      value: "#F5F7FB"
+      role: "Primary text"
+    - name: "Muted Steel"
+      value: "rgba(245,247,251,0.68)"
+      role: "Secondary text"
+    - name: "Linear Violet"
+      value: "#5E6AD2"
+      role: "Accent for focus, active, and selected states"
+    - name: "Accent Tint"
+      value: "rgba(94,106,210,0.14)"
+      role: "Subtle accent background"
+  usage_rules:
+    - "Keep the interface mostly monochrome."
+    - "Use accent on selection, focus, and active state rather than on broad fills."
+    - "Let contrast come from layering and density, not from many colors."
+
+typography:
+  families:
+    display:
+      name: "Geist"
+      fallback: "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+      character: "dense operational sans hierarchy with low ornament"
+    body:
+      name: "Geist"
+      fallback: "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+      character: "compact UI workhorse"
+    mono:
+      name: "JetBrains Mono"
+      fallback: "\"SF Mono\", Menlo, Consolas, monospace"
+      character: "technical support font for infra-like detail"
+  scale:
+    display: "clamp(2rem, 4vw, 3rem)"
+    h2: "clamp(1.5rem, 3vw, 2rem)"
+    body: "0.9375rem"
+    caption: "0.75rem"
+  rules:
+    - "Favor dense but readable scales."
+    - "Use mono for numbers, IDs, and timestamps when the interface becomes operational."
+    - "Avoid decorative display moments."
 
 tokens:
-  colors:
-    dark:
-      background:     "{neutral.950}"
-      surface1:       "{neutral.900}"
-      surface2:       "{neutral.800}"
-      surface3:       "{neutral.700}"
-      border:         "{neutral.700}"
-      border_visible: "{neutral.600}"
-      text1:          "{neutral.50}"
-      text2:          "{neutral.200}"
-      text3:          "{neutral.300}"
-      text4:          "{neutral.400}"
-      accent:         "{brand.500}"
-      accent_hover:   "{brand.400}"
-      accent_subtle:  "{brand.900}"
-    light:
-      background:     "{neutral.0}"
-      surface1:       "{neutral.50}"
-      surface2:       "#F5F5F5"
-      surface3:       "{neutral.100}"
-      border:         "#E0E0E0"
-      border_visible: "{neutral.200}"
-      text1:          "#2F2F31"
-      text2:          "#5C5D5F"
-      text3:          "#9E9EA0"
-      text4:          "#B0B5C0"
-      accent:         "{brand.600}"
-      accent_hover:   "#6D78D5"
-      accent_subtle:  "{brand.50}"
-    status:
-      success: "{green.500}"
-      warning: "{amber.500}"
-      error:   "{red.500}"
-
   spacing:
-    2xs: 2
-    xs: 4
-    sm: 8
-    md: 16
-    lg: 24
-    xl: 32
-    2xl: 48
-    3xl: 64
-    4xl: 96
-
+    section_gap: "2.5rem"
+    group_gap: "0.75rem"
+    card_padding: "1rem"
   radii:
-    element: 4
-    control: 6
-    component: 8
-    container: 12
-    pill: 999
-
-  typography:
-    display:
-      family: "Inter"
-      real_font: "Inter Variable"
-      fallback: "'SF Pro Display', -apple-system, system-ui, sans-serif"
-      size: "64px"
-      weight: 510
-      line_height: 1
-      letter_spacing: "-0.022em"
-      google_fonts: "Inter:wght@400;500;600;700"
-    body:
-      family: "Inter"
-      real_font: "Inter Variable"
-      fallback: "'SF Pro Display', -apple-system, system-ui, sans-serif"
-      size: "15px"
-      weight: 400
-      line_height: 1.6
-      letter_spacing: "-0.011em"
-      google_fonts: "Inter:wght@400;500;600;700"
-    mono:
-      family: "JetBrains Mono"
-      real_font: "Berkeley Mono"
-      approximation_note: "Linear's real monospace on the site is Berkeley Mono. JetBrains Mono is used here as a freely available fallback with a similarly technical, compact feel."
-      fallback: "'SF Mono', Menlo, monospace"
-      size: "12px"
-      weight: 400
-      google_fonts: "JetBrains+Mono:wght@400;500"
-    editorial_display:
-      family: "Cormorant Garamond"
-      real_font: "Tiempos Headline"
-      approximation_note: "Linear's /method page introduces Tiempos Headline as an editorial interrupt, not a system-wide display font. This is documented here, but not used as the primary landing-page display type."
-      google_fonts: "Cormorant+Garamond:wght@400;500;600"
-
-  type_scale:
-    display: { size: "64px", line_height: 1.0, letter_spacing: "-0.022em", weight: 510, use: "Primary hero claims" }
-    h1:      { size: "40px", line_height: 1.1, letter_spacing: "-0.022em", weight: 510, use: "Major section headings" }
-    h2:      { size: "20px", line_height: 1.33, letter_spacing: "-0.012em", weight: 590, use: "Feature card titles" }
-    h3:      { size: "16px", line_height: 1.45, letter_spacing: "-0.01em", weight: 510, use: "Subheads and tabs" }
-    body:    { size: "15px", line_height: 1.6, letter_spacing: "-0.011em", weight: 400, use: "Body copy and product labels" }
-    body_sm: { size: "13px", line_height: 1.5, letter_spacing: "-0.01em", weight: 400, use: "Navigation and metadata" }
-    caption: { size: "12px", line_height: 1.4, letter_spacing: "0em", weight: 400, use: "Footnotes and secondary product chrome" }
-    label:   { size: "11px", line_height: 1.3, letter_spacing: "0.06em", weight: 510, use: "Eyebrows, chips, tiny metadata" }
-
-  elevation:
-    strategy: "flat-with-micro-stack"
-    notes: "Most depth comes from border contrast, inset hairlines, and subtle layered shadow stacks. Large atmospheric shadows are absent."
-    shadows:
-      cta_light: "0px 8px 2px 0px rgba(0,0,0,0), 0px 5px 2px 0px rgba(0,0,0,0.01), 0px 3px 2px 0px rgba(0,0,0,0.04), 0px 1px 1px 0px rgba(0,0,0,0.07), 0px 0px 1px 0px rgba(0,0,0,0.08)"
-      cta_dark:  "0px 0px 0px 1px rgba(255,255,255,0.03) inset, 0px 1px 0px 0px rgba(255,255,255,0.04) inset, 0px 0px 0px 1px rgba(0,0,0,0.6), 0px 4px 4px 0px rgba(0,0,0,0.1)"
-      panel_inset: "0px 0px 0px 1px #23252A inset"
-
+    control: "0.625rem"
+    component: "0.875rem"
+    container: "1rem"
   motion:
-    personality: "mechanical"
-    easing: "ease-out"
-    duration_fast: "100ms"
-    duration_normal: "250ms"
-    duration_slow: "350ms"
-    notes: "Observed CSS exposes 0.1s quick transitions and 0.25s regular transitions. Motion is terse and never springy."
+    duration: "120ms-180ms"
+    easing: "cubic-bezier(.2, .8, .2, 1)"
+    spring: "stiffness 120, damping 22"
 
-  hero_stage:
-    preset: null
-    observed_style:
-      description: "Linear's homepage hero is almost blank: a near-black field, a restrained product-window composition centered below the headline, and only the faintest ambient lift behind it. The product frame is the identity signal; the background avoids claiming attention."
-      where_used:
-        - "homepage hero"
-      notes: "This is closer to a 'device-on-near-blank' stage than a true mesh. The absence of a decorative field is itself a major style decision."
-    background:
-      medium: "absent"
-      color_mode: "brand-tinted-neutral"
-      saturation: "flat"
-      light_source: "ambient"
-      falloff: "soft"
-      vignette: "off"
-      texture: "clean"
-      motion: "static"
-      intensity: "subtle"
-      safe_zone: "masked-for-text"
-      color_palette:
-        - "#08090A"
-        - "#0F1011"
-        - "#141516"
-        - "#18182F"
-        - "#5E6AD2"
-    hero:
-      subject: "device"
-      placement: "center"
-      scale: "dominant"
-      tint: "neutral"
-    relation:
-      type: "shadow-only"
-      bleed: 0
-    disclaimer: "Rendered as an abstract product-window composition. Linear's real UI and screenshots remain proprietary."
-
-  iconography:
-    observed_style:
-      description: "Linear's interface icons on the marketing site read as compact filled glyphs: 14-16px, geometric, minimal, and calm. They are less expressive than the typography and mainly serve scanning and product chrome."
-      stroke_weight: "filled"
-      corner_treatment: "soft"
-      fill_style: "solid"
-      form_language: "geometric"
-      visual_density: "minimal"
-    fallback_kit:
-      name: "Material Symbols Rounded"
-      weight: "400 fill"
-      match_score: "medium"
-      match_reasoning: "Material Symbols Rounded in filled mode gets closer to Linear's compact solid glyph feel than outline-focused kits. The geometry is more system-like than Linear's custom set, but it preserves the small, calm, filled-icon register better than Lucide or Phosphor regular."
-      cdn: "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,1,0"
-      icon_class_prefix: "material-symbols-rounded"
-    disclaimer: "The generated preview uses a best-match fallback icon kit. Linear's actual icons are proprietary."
+layout_principles:
+  - "Keep density high but disciplined."
+  - "Use stacked lists, split panes, and compact grouped surfaces."
+  - "Prefer strong row structure over decorative cards."
+  - "Preserve crisp alignment and narrow spacing variance."
+  - "Collapse complexity carefully on mobile without losing hierarchy."
 
 components:
-  button_primary:
-    source: "observed"
-    teardown: "Homepage header CTA ('Sign up') and repeated neutral-filled CTAs"
-    background: "{tokens.colors.light.surface3}"
-    background_dark: "{tokens.colors.dark.text1}"
-    color: "{tokens.colors.light.text1}"
-    color_dark: "{tokens.colors.dark.background}"
-    font_family: "{tokens.typography.body.family}"
-    font_size: "{tokens.type_scale.body_sm.size}"
-    font_weight: 510
-    padding: "10px 14px"
-    radius: "{tokens.radii.element}"
-    border: "1px solid currentColor"
-    border_opacity: 0
-    shadow_light: "{tokens.elevation.shadows.cta_light}"
-    hover:
-      background: "#FFFFFF"
-    notes: "Primary marketing CTA is neutral, not accent-colored."
+  buttons:
+    primary:
+      background: "#E6E8FF"
+      text: "#0B0D12"
+      border: "1px solid rgba(230, 232, 255, 0.20)"
+      radius: "{tokens.radii.control}"
+      padding: "0.5rem 0.75rem"
+      min_height: "32px"
+      typography: "label"
+      shadow: "none"
+    secondary:
+      background: "#16181D"
+      text: "#D7DAE0"
+      border: "1px solid rgba(255, 255, 255, 0.08)"
+      radius: "{tokens.radii.control}"
+      padding: "0.5rem 0.75rem"
+      min_height: "32px"
+      typography: "label"
+  cards:
+    default:
+      background: "#111318"
+      text: "#E7E9EE"
+      border: "1px solid rgba(255, 255, 255, 0.08)"
+      radius: "{tokens.radii.component}"
+      padding: "{tokens.spacing.card_padding}"
+      shadow: "none"
+    raised:
+      background: "#16181D"
+      text: "#E7E9EE"
+      border: "1px solid rgba(255, 255, 255, 0.10)"
+      radius: "{tokens.radii.component}"
+      padding: "1rem"
+      shadow: "0 16px 40px rgba(0, 0, 0, 0.28)"
+  inputs:
+    default:
+      background: "#0F1115"
+      text: "#E7E9EE"
+      placeholder: "rgba(231, 233, 238, 0.45)"
+      border: "1px solid rgba(255, 255, 255, 0.08)"
+      radius: "0.5rem"
+      padding: "0.5rem 0.625rem"
+      min_height: "32px"
+      focus:
+        border: "#8B8CFF"
+        ring: "2px solid rgba(139, 140, 255, 0.20)"
+  navigation:
+    sidebar:
+      width: "240px"
+      background: "#0B0D12"
+      text: "rgba(231, 233, 238, 0.62)"
+      active_text: "#E7E9EE"
+      active_background: "#16181D"
+      item_padding: "0.375rem 0.5rem"
+      item_radius: "0.5rem"
+  states:
+    success:
+      text: "#6DDC91"
+      background: "rgba(109, 220, 145, 0.10)"
+      border: "1px solid rgba(109, 220, 145, 0.18)"
+    error:
+      text: "#FF6B6B"
+      background: "rgba(255, 107, 107, 0.10)"
+      border: "1px solid rgba(255, 107, 107, 0.18)"
+    warning:
+      text: "#F6C177"
+      background: "rgba(246, 193, 119, 0.10)"
+      border: "1px solid rgba(246, 193, 119, 0.18)"
 
-  button_secondary:
-    source: "observed"
-    teardown: "Pricing comparison CTAs and dark surface actions"
-    background: "rgba(255,255,255,0.05)"
-    color: "{tokens.colors.dark.text1}"
-    font_size: "{tokens.type_scale.body_sm.size}"
-    font_weight: 510
-    padding: "10px 14px"
-    radius: "{tokens.radii.element}"
-    border: "1px solid rgba(255,255,255,0.08)"
-    shadow: "{tokens.elevation.shadows.cta_dark}"
+anti_patterns:
+  - "No warm editorial styling that softens the operational tone."
+  - "No oversized rounded cards."
+  - "No marketing-style hero dramatics inside product surfaces."
+  - "No glow-heavy selection treatment."
+  - "No colorful KPI-card layouts."
+  - "No loose spacing that breaks interface compression."
+  - "No playful illustration language."
+  - "No decorative gradients across large surfaces."
 
-  button_link:
-    source: "observed"
-    teardown: "Customer-page 'Make the switch' and homepage inline links"
-    background: "transparent"
-    color: "#828FFF"
-    font_size: "{tokens.type_scale.body.size}"
-    font_weight: 510
-    padding: "0px"
-    radius: 0
-    border: "none"
-    hover:
-      color: "{tokens.colors.dark.text1}"
-
-  card:
-    source: "observed"
-    teardown: "Customer story cards and homepage product panels"
-    background: "{tokens.colors.dark.surface1}"
-    radius: "{tokens.radii.container}"
-    padding: "24px 24px 28px"
-    border: "1px solid rgba(255,255,255,0.05)"
-    shadow: "none"
-    inset_stroke: "{tokens.elevation.shadows.panel_inset}"
-
-  input:
-    source: "observed"
-    teardown: "Homepage/product textarea styling from embedded product surfaces"
-    background: "rgba(255,255,255,0.02)"
-    radius: "{tokens.radii.control}"
-    padding: "12px 14px"
-    border_default: "1px solid rgba(255,255,255,0.08)"
-    border_focus: "1px solid #5E69D1"
-    focus_ring: "0px 0px 0px 1px #5E69D1"
-    text_color: "{tokens.colors.dark.text2}"
-    placeholder_color: "{tokens.colors.dark.text3}"
-
-  tab_pill:
-    source: "observed"
-    teardown: "Customers page category tabs"
-    radius: "{tokens.radii.pill}"
-    padding: "0px 16px"
-    height: "40px"
-    selected:
-      background: "{tokens.colors.dark.text1}"
-      color: "{tokens.colors.dark.background}"
-      border: "1px solid {tokens.colors.dark.text1}"
-    idle:
-      background: "transparent"
-      color: "{tokens.colors.dark.text3}"
-      border: "1px solid rgba(255,255,255,0.05)"
-
-  list_row:
-    source: "observed"
-    teardown: "Customers directory rows"
-    height: "56px"
-    padding: "0px 0px"
-    border_bottom: "1px solid rgba(255,255,255,0.05)"
-    text_primary: "{tokens.colors.dark.text1}"
-    text_secondary: "{tokens.colors.dark.text3}"
-    interaction: "Rows stay visually flat; emphasis comes from alignment and contrast rather than hover fill."
-
-  nav_item:
-    source: "observed"
-    teardown: "Embedded app sidebar items in homepage hero"
-    radius: "{tokens.radii.control}"
-    padding: "0px 6px"
-    font_size: "{tokens.type_scale.body_sm.size}"
-    font_weight: 510
-    idle_color: "{tokens.colors.dark.text2}"
-    active_background: "rgba(255,255,255,0.04)"
-    muted_color: "{tokens.colors.dark.text4}"
+optional:
+  hero_stage:
+    summary: "If used on marketing surfaces, keep the hero dark, dense, and product-led."
+  iconography:
+    summary: "Compact outline icons with strong utility posture."
+  responsive_guidance:
+    - "Preserve list clarity before preserving side-by-side density."
+    - "Collapse panels into linear stacks without losing active-state contrast."

@@ -9,13 +9,16 @@
 hue 默认会生成一套包含 3 个文件的设计包：
 
 - `design-meta.yaml`：面向来源的采集与溯源记录
-- `design-model.yaml`：面向机器和工具的结构化设计模型
-- `design-document.md`：面向人的可读设计文档
+- `design-model.yaml`：轻量的结构化设计模型
+- `DESIGN.md`：面向人的主设计文档，遵守 Google `design.md` 格式
 
-其中，`design-model.yaml` 和 `design-document.md` 是并行的主产物，应该都能独立使用。YAML 更适合结构化复用、程序处理和后续工具链；Markdown 更适合人工阅读、审阅和实现落地。两者都不应该依赖对方来解释核心设计语言。
+其中，`DESIGN.md` 是主交付物：它包含 YAML frontmatter token 和 Markdown 设计说明，应该能通过官方校验：
 
-整个设计包覆盖的内容包括：来源信息、颜色 token、字体系统、间距、组件清单、明暗模式策略、hero stage 决策、图标 fallback 选择、构图规则、响应式行为、Do's and Don'ts、Anti-Patterns，以及实现指引。  
-hue 现在的默认目标是**生成设计文档**，而不是生成另一个可安装的 design skill。
+```bash
+npx @google/design.md lint DESIGN.md
+```
+
+`design-model.yaml` 仍用于 hue 自己的结构化复用，但不会再和 Markdown 做实现级细节镜像。hue 现在的默认目标是**生成轻量、可喂给 AI 页面生成工具的设计规范**，不是生成另一个可安装的 design skill。
 
 ## 安装
 
@@ -31,7 +34,7 @@ git clone https://github.com/dominikmartn/hue "${CODEX_HOME:-$HOME/.codex}/skill
 - “use hue to analyze this local codebase and generate a reusable design package”
 - “use hue to remix this existing design document to feel warmer and more editorial”
 
-hue 默认优先通过 `agent-browser` 做直接浏览器级分析；如果直接访问受限，再依次退回到公开网页资料、本地代码或截图分析。
+hue 默认优先通过 `browser-automation` / `agent-browser` 做直接浏览器级分析。每次 URL 分析都应使用具名 session，并在采集结束后关闭 session，避免残留 Chrome/headless 进程；如果直接访问受限，再依次退回到公开网页资料、本地代码或截图分析。
 
 ## 什么时候适合用 hue
 
@@ -77,7 +80,9 @@ hue 当前支持以下输入方式：
 
 - `design-meta.yaml`
 - `design-model.yaml`
-- `design-document.md`
+- `DESIGN.md`
+
+`design-model.yaml` 仍然是 token-oriented 的结构化模型。组件层应该写具体参数，例如 `background`、`text`、`border`、`radius`、`padding`、`min_height`、`typography`、`shadow`、`hover`、`focus`、`disabled`，不要只写自然语言 summary。组件设计意图和使用说明放到 `DESIGN.md`。
 
 像 HTML 预览、组件库页面、落地页、app screen，或者代码片段，都属于**按需扩展产物**，只有在用户明确提出时才会生成。
 
@@ -88,6 +93,7 @@ hue 当前支持以下输入方式：
 - `use hue`
 - `$hue`
 - `create a design document`
+- `generate a DESIGN.md`
 - `generate a design-model yaml`
 - `generate a design system document`
 - `analyze this site and produce yaml + markdown`
@@ -105,7 +111,7 @@ hue 当前支持以下输入方式：
 这些是当前默认主流程一定会用到的 refs：
 
 - [`design-document-template.md`](/Users/guanwei/x/doit/hue/references/design-document-template.md)  
-  控制 `design-document.md` 的章节结构和整体形状。
+  控制官方格式 `DESIGN.md` 的 frontmatter token 和章节结构。
 - [`design-meta-template.yaml`](/Users/guanwei/x/doit/hue/references/design-meta-template.yaml)  
   控制 `design-meta.yaml` 的结构。
 - [`hero-stage.md`](/Users/guanwei/x/doit/hue/references/hero-stage.md)  
@@ -167,8 +173,10 @@ hue 当前支持以下输入方式：
 4. 盘点 observed 和 derived 的组件
 5. 分析 hero stage 和 iconography fallback
 6. 生成一个中性的、可复用的系统名称
-7. 产出 `design-meta.yaml`、`design-model.yaml` 和 `design-document.md`
-8. 自检 Markdown 和 YAML 是否一致、是否该 source-agnostic 的地方做到了 source-agnostic、结构是否完整
+7. 产出 `design-meta.yaml`、`design-model.yaml` 和 `DESIGN.md`
+8. 运行 `npx @google/design.md lint DESIGN.md` 校验 schema 和结构
+9. 自检 Markdown 和 YAML 是否方向一致、是否该 source-agnostic 的地方做到了 source-agnostic、结构是否完整
+10. 关闭本次使用的 `agent-browser` session
 
 ## 示例
 
@@ -199,6 +207,8 @@ hue 当前支持以下输入方式：
 ## 运行环境预期
 
 - 最佳情况：可用 `agent-browser`
+- URL 采集使用具名 session
+- 采集完成后关闭 session，避免残留进程
 - 回退分析时：需要可访问公开网页资料
 - 不依赖 Chrome DevTools MCP
 

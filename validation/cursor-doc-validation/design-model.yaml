@@ -91,6 +91,18 @@ tokens:
     duration: "150ms-220ms"
     easing: "cubic-bezier(.4, 0, .2, 1)"
     spring: "stiffness 100, damping 20"
+  status:
+    success:
+      text: "#1F8A65"
+      background: "rgba(31, 138, 101, 0.08)"
+      border: "1px solid rgba(31, 138, 101, 0.18)"
+    error:
+      text: "#CF2D56"
+      background: "rgba(207, 45, 86, 0.08)"
+      border: "1px solid rgba(207, 45, 86, 0.18)"
+    loading:
+      skeleton_background: "rgba(38, 37, 30, 0.08)"
+      spinner: "avoid by default"
 
 layout_principles:
   - "Use contained widths and large negative space."
@@ -157,18 +169,6 @@ components:
       active_text: "#26251E"
       item_padding: "0.5rem 0.75rem"
       item_radius: "{tokens.radii.control}"
-  states:
-    success:
-      text: "#1F8A65"
-      background: "rgba(31, 138, 101, 0.08)"
-      border: "1px solid rgba(31, 138, 101, 0.18)"
-    error:
-      text: "#CF2D56"
-      background: "rgba(207, 45, 86, 0.08)"
-      border: "1px solid rgba(207, 45, 86, 0.18)"
-    loading:
-      skeleton_background: "rgba(38, 37, 30, 0.08)"
-      spinner: "avoid by default"
 
 anti_patterns:
   - "No neon glows or chromatic outer shadows."

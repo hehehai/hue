@@ -65,7 +65,7 @@ hue supports:
 - `description / vibe`
 - `remix`
 
-the skill defaults to direct browser inspection via `browser-automation` / `agent-browser`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked. hue uses named browser sessions and closes them after capture to avoid leaked Chrome/headless processes.
+the skill defaults to direct browser inspection via `browser-automation`, then falls back to public web sources, local code, or screenshots if direct inspection is blocked. hue closes any browser session it opens after capture to avoid leaked browser processes.
 
 ## output contract
 
@@ -83,9 +83,21 @@ the contract is unchanged at the file level, but the emphasis has changed:
 
 in other words: hue keeps the three-file package, but the markdown artifact is now the official `DESIGN.md` file rather than a separate `design-document.md` that must be merged later.
 
-`design-model.yaml` is still token-oriented. Component blocks should use concrete parameters such as `background`, `text`, `border`, `radius`, `padding`, `min_height`, `typography`, `shadow`, `hover`, `focus`, and `disabled`, not prose summaries. Higher-level component rationale belongs in `DESIGN.md`.
+`design-model.yaml` is still token-oriented. Component blocks should use concrete parameters such as `background`, `text`, `border`, `radius`, `padding`, `min_height`, `typography`, `shadow`, `hover`, `focus`, and `disabled`, not prose summaries. These component values are visual recipes, not raw computed-style dumps. Higher-level component rationale belongs in `DESIGN.md`.
 
 html previews, component libraries, landing pages, app screens, or code snippets remain optional follow-up artifacts only when explicitly requested.
+
+## component extraction
+
+hue treats component tokens as **visual-first recipes**:
+
+- screenshots and visible geometry outrank raw computed CSS
+- computed styles are candidate evidence, not final truth
+- wrapper styles, pseudo-elements, opacity, and parent surfaces must be reconciled before writing component tokens
+- `design-meta.yaml` records capture confidence and source disagreements
+- `design-model.yaml` only keeps the reusable component recipe
+
+see [`component-extraction-policy.md`](/Users/guanwei/x/doit/hue/references/component-extraction-policy.md) for the detailed rule set.
 
 ## design philosophy of the skill
 
@@ -180,6 +192,8 @@ all reference files live in [`references/`](/Users/guanwei/x/doit/hue/references
   use when icon fallback selection materially matters.
 - [`google-design-md-compat.md`](/Users/guanwei/x/doit/hue/references/google-design-md-compat.md)
   use for every default `DESIGN.md` output and validation pass.
+- [`component-extraction-policy.md`](/Users/guanwei/x/doit/hue/references/component-extraction-policy.md)
+  use whenever component tokens are generated from a URL, screenshot, or codebase.
 
 ### conditional refs
 
@@ -211,11 +225,12 @@ the default hue workflow is:
 1. identify the input type
 2. inspect the source directly whenever possible
 3. extract recurring visual signals
-4. synthesize a lightweight design language
-5. generate `design-meta.yaml`, `design-model.yaml`, and `DESIGN.md`
-6. run `npx @google/design.md lint DESIGN.md` when available
-7. self-check that the package is source-agnostic, concise, and still directionally complete
-8. close any named `agent-browser` session used for capture
+4. reconcile component visuals before trusting computed CSS
+5. synthesize a lightweight design language
+6. generate `design-meta.yaml`, `design-model.yaml`, and `DESIGN.md`
+7. run `npx @google/design.md lint DESIGN.md` when available
+8. self-check that the package is source-agnostic, concise, and still directionally complete
+9. close any named browser session used for capture
 
 ## examples
 
@@ -228,8 +243,8 @@ many examples still include older html artifacts such as `landing-page.html`, `c
 
 ## runtime expectations
 
-- `agent-browser` available for best results on live sites
-- named `agent-browser` sessions for live-site capture
+- `browser-automation` available for best results on live sites
+- named browser sessions when the automation layer supports them
 - close browser sessions after capture to avoid leaked processes
 - web access for public-source fallback
 - no Chrome DevTools MCP required

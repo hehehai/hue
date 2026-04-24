@@ -25,16 +25,46 @@ capture_context:
   evidence:
     - kind: "computed-styles"
       location: "buttons, page canvas, product windows"
-      notes: "Warm off-white neutrals, ink-dark CTA fill, pill controls, sparse orange signal."
+      notes: "Used as candidate evidence only; final component recipes were reconciled against screenshots."
     - kind: "layout-inspection"
       location: "hero and pricing surfaces"
       notes: "Large blank paper field at page level, compact internals inside product and pricing modules."
     - kind: "visual-review"
       location: "hero atmosphere"
       notes: "Painterly support field sits behind the product window rather than becoming the hero itself."
+    - kind: "visual-component-sampling"
+      location: "CTA cluster, plan cards, product windows, and input-like controls"
+      notes: "Visible fills, borders, radii, and shadows were prioritized over single-node computed CSS."
+  component_capture:
+    strategy: "visual-first reconciliation"
+    sampled_families:
+      - family: "buttons"
+        variants:
+          - "primary"
+          - "secondary"
+        evidence: "screenshot + geometry + computed-style"
+        confidence: "medium"
+        notes: "Button backgrounds and pill geometry were visually clear; padding was normalized into a reusable recipe."
+      - family: "cards"
+        variants:
+          - "default"
+          - "product_window"
+        evidence: "screenshot + computed-style + parent-shell inspection"
+        confidence: "medium"
+        notes: "Product-window depth came from the rendered composite rather than a single DOM node."
+      - family: "inputs"
+        variants:
+          - "default"
+        evidence: "pricing and signup-like field visuals"
+        confidence: "low"
+        notes: "Input treatment was inferred from visible field-like controls and normalized into a reusable default."
+    known_disagreements:
+      - "Transparent or inherited element backgrounds were replaced by the visible surface fill when parent shells supplied the actual component color."
+      - "Layered product-window shadows were collapsed into one practical recipe value."
 
 translation:
   abstraction_goal: "Separate source identity from reusable design language."
+  component_output_style: "Components are visual recipes, not raw computed-style audits."
   derivation_summary: "The source was abstracted into a generic warm developer-tool system: paper-toned neutrals, pill-based action geometry, restrained accent usage, and product-window-first credibility."
   excluded_source_markers:
     - "Source brand name is kept in this file only."

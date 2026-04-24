@@ -26,10 +26,22 @@ capture_context:
     - kind: "{{evidence-kind}}"
       location: "{{evidence-location}}"
       notes: "{{evidence-notes}}"
+  component_capture:
+    strategy: "visual-first reconciliation"
+    sampled_families:
+      - family: "{{component-family}}"
+        variants:
+          - "{{component-variant}}"
+        evidence: "{{screenshot|geometry|computed-style|source-token}}"
+        confidence: "{{high|medium|low}}"
+        notes: "{{component-capture-notes}}"
+    known_disagreements:
+      - "{{computed-style-disagreed-with-rendered-visual}}"
 
 translation:
   abstraction_goal: "Separate source identity from reusable design language."
   output_style: "Prefer expressive constraints over exhaustive constraints."
+  component_output_style: "Components are visual recipes, not raw computed-style audits."
   derivation_summary: "{{derivation-summary}}"
   excluded_source_markers:
     - "Source brand names stay in this file only."

@@ -101,6 +101,8 @@ components:
 
 {{components}}
 
+Component values should be written as visible design recipes. If a source component relies on wrappers, pseudo-elements, or translucent layers, describe the perceived component treatment rather than the raw computed style of one DOM node.
+
 ## Do's and Don'ts
 
 {{dos-and-donts}}

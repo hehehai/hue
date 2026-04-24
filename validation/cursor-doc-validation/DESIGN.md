@@ -118,6 +118,8 @@ The shape language mixes pill-based actions with softly rounded surfaces.
 
 ## Components
 
+Component tokens are visual recipes: values describe the perceived fill, shape, depth, and state behavior rather than a single DOM node's computed style.
+
 - **Buttons:** Dark pill primary actions and quiet neutral secondary actions. Avoid accent-filled buttons as the default.
 - **Cards:** Low-elevation neutral panels used sparingly, mainly to frame proof or grouped content.
 - **Inputs:** Border-first, calm, label-above fields with restrained focus treatment.

@@ -77,6 +77,11 @@ components:
 
 {{overview}}
 
+<!-- Omit this subsection when there is no intentional first-load or arrival sequence. -->
+### Entry & Arrival Motion
+
+{{entry-and-arrival-motion}}
+
 ## Colors
 
 {{colors}}
@@ -89,6 +94,11 @@ components:
 
 {{layout}}
 
+<!-- Omit this subsection when page-level scroll motion is decorative only. -->
+### Scroll Rhythm & Narrative
+
+{{scroll-rhythm-and-narrative}}
+
 ## Elevation & Depth
 
 {{elevation-and-depth}}
@@ -99,6 +109,11 @@ components:
 
 ## Components
 
+<!-- Omit this subsection when the site does not use a custom cursor system. -->
+### Cursor Behavior
+
+{{cursor-behavior}}
+
 {{components}}
 
 Component values should be written as visible design recipes. If a source component relies on wrappers, pseudo-elements, or translucent layers, describe the perceived component treatment rather than the raw computed style of one DOM node.
@@ -106,3 +121,5 @@ Component values should be written as visible design recipes. If a source compon
 ## Do's and Don'ts
 
 {{dos-and-donts}}
+
+When `optional.entry_motion`, `optional.scroll_motion`, or `optional.custom_cursor` are present, include 1-3 source-agnostic guardrails in this section. Keep them implementation-facing and focused on cadence, readability, fallback behavior, and reduced-motion behavior rather than library choice.

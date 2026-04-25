@@ -49,5 +49,8 @@ This skill is explicit-invocation only. Pair it with `agents/openai.yaml` so Cod
 |------|----------|
 | `references/tokens.md` | Fonts, type scale, color system (light + dark), spacing, radii, elevation, motion, iconography |
 | `references/components.md` | Cards, buttons, inputs, lists, navigation, tags, overlays, state patterns |
+| `references/entry-motion-systems.md` | Optional ref: use only when the source clearly has an intentional first-load or arrival sequence, and separate it from normal micro motion |
+| `references/scroll-motion-systems.md` | Optional ref: use only when the source clearly has a supportive or load-bearing scroll system, and separate page narrative from hero-only motion |
+| `references/custom-cursor-systems.md` | Optional ref: use only when the source clearly has a custom cursor system globally or in key zones, and separate it from default pointer states |
 | `references/platform-mapping.md` | HTML/CSS, SwiftUI, React/Tailwind — platform-specific code and loading instructions |
 | `agents/openai.yaml` | Display name, short description, default prompt, and explicit invocation policy |

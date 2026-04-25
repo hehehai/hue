@@ -26,6 +26,51 @@ capture_context:
     - kind: "{{evidence-kind}}"
       location: "{{evidence-location}}"
       notes: "{{evidence-notes}}"
+  motion_capture:
+    detected: "{{true|false}}"
+    load_bearing: "{{true|false}}"
+    role: "{{decorative|supportive|load-bearing}}"
+    scroll_driver: "{{native|smooth|hijacked/pinned}}"
+    libraries:
+      - "{{library-name}}"
+    patterns:
+      - "{{motion-pattern}}"
+    narrative_scope: "{{narrative-scope}}"
+    evidence:
+      - kind: "{{runtime-library|data-attribute|sticky-structure|rendered-behavior|source-code|inference}}"
+        location: "{{motion-evidence-location}}"
+        notes: "{{motion-evidence-notes}}"
+    section_flow:
+      - section: "{{section-name}}"
+        behavior: "{{section-behavior}}"
+  entry_capture:
+    detected: "{{true|false}}"
+    role: "{{decorative|supportive|load-bearing}}"
+    trigger: "{{every-load|session-once|first-visit-only}}"
+    patterns:
+      - "{{entry-pattern}}"
+    evidence:
+      - kind: "{{overlay|hero-entrance|runtime-library|rendered-behavior|source-code|inference}}"
+        location: "{{entry-evidence-location}}"
+        notes: "{{entry-evidence-notes}}"
+    sequence_flow:
+      - step: "{{entry-step}}"
+        behavior: "{{entry-behavior}}"
+  cursor_capture:
+    detected: "{{true|false}}"
+    role: "{{decorative|supportive|load-bearing}}"
+    scope: "{{global|section-only|hover-zones}}"
+    libraries:
+      - "{{cursor-library-name}}"
+    modes:
+      - "{{cursor-mode}}"
+    evidence:
+      - kind: "{{runtime-library|data-attribute|cursor-overlay|cursor-style|rendered-behavior|source-code|inference}}"
+        location: "{{cursor-evidence-location}}"
+        notes: "{{cursor-evidence-notes}}"
+    zone_behavior:
+      - zone: "{{cursor-zone}}"
+        behavior: "{{cursor-zone-behavior}}"
   component_capture:
     strategy: "visual-first reconciliation"
     sampled_families:

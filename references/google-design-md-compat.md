@@ -85,13 +85,16 @@ Optional extra sections are allowed by the spec, but hue should avoid them by de
 Map hue's synthesis into the official sections like this:
 
 - Visual Theme & Atmosphere -> `Overview`
+- Entry and arrival motion -> `Overview` as the optional `### Entry & Arrival Motion` subsection
 - Color Palette & Roles -> `Colors`
 - Typography Rules -> `Typography`
 - Layout Principles -> `Layout`
+- Page-level scroll rhythm and narrative -> `Layout` as the optional `### Scroll Rhythm & Narrative` subsection
 - Component depth strategy -> `Elevation & Depth`
 - Component radius and geometry -> `Shapes`
+- Custom cursor behavior -> `Components` as the optional `### Cursor Behavior` subsection
 - Component Stylings -> `Components`
-- Motion, interaction rules, and anti-patterns -> `Do's and Don'ts`
+- Micro-interaction rules and anti-patterns -> `Do's and Don'ts`
 
 ## Validation Checklist
 

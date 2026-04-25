@@ -9,11 +9,17 @@ You are a senior product designer who distills a source experience into a reusab
 
 Hue does not write implementation specs by default. It writes a **lightweight but complete design language** with three artifacts:
 
-1. `design-meta.yaml` for source and capture context
+1. `design-meta.yaml` for source and capture context only
 2. `design-model.yaml` for a source-agnostic, machine-readable core design model
 3. `DESIGN.md` for the source-agnostic, official-format design brief
 
 `DESIGN.md` is the Markdown design document. It must follow Google's public `design.md` format and pass `npx @google/design.md lint DESIGN.md` before the result is considered clean.
+
+The **core design specification** lives only in:
+- `design-model.yaml`
+- `DESIGN.md`
+
+`design-meta.yaml` is supporting capture evidence. It is not part of the normative design spec and should not become a third competing expression of the system.
 
 ## Core Principle
 
@@ -61,7 +67,7 @@ Required flow:
 
 1. Open the URL with browser automation.
 2. Wait for `networkidle`.
-3. Extract visible UI patterns, DOM rects, and computed styles with `eval --stdin`.
+3. Extract visible UI patterns, DOM rects, computed styles, motion signals, intro-sequence hints, and cursor behavior with `eval --stdin`.
 4. Take screenshots and inspect the rendered result directly.
 5. Reconcile component values visually before writing tokens.
 6. Visit 2-3 meaningful subpages and repeat.
@@ -86,6 +92,29 @@ agent-browser --session "$HUE_SESSION" wait --load networkidle
 agent-browser --session "$HUE_SESSION" eval --stdin <<'EVALEOF'
 JSON.stringify(
 (() => {
+  const attrSelectors = [
+    '[data-scroll]',
+    '[data-scroll-speed]',
+    '[data-scroll-container]',
+    '[data-scroll-section]',
+    '[data-speed]',
+    '[data-parallax]',
+    '[data-aos]',
+    '[data-aos-delay]',
+    '[data-aos-duration]',
+  ];
+  const cursorAttrSelectors = [
+    '[data-cursor]',
+    '[data-cursor-text]',
+    '[data-cursor-label]',
+    '[data-magnetic]',
+    '[data-hover]',
+    '[data-pointer]',
+  ];
+
+  const hasWindowProp = (key) => typeof window[key] !== 'undefined';
+  const lower = (value) => String(value || '').toLowerCase();
+
   const visibleTextColors = [...new Set(
     Array.from(document.querySelectorAll('body *'))
       .filter((el) => el instanceof HTMLElement && el.innerText.trim())
@@ -152,6 +181,259 @@ JSON.stringify(
       };
     });
 
+  const scriptHints = Array.from(document.scripts)
+    .map((script) => `${script.src || ''} ${script.textContent || ''}`.slice(0, 400))
+    .join('\n');
+
+  const runtimeLibraries = [
+    hasWindowProp('gsap') || /gsap/i.test(scriptHints) ? 'gsap' : null,
+    hasWindowProp('ScrollTrigger') || /scrolltrigger/i.test(scriptHints) ? 'ScrollTrigger' : null,
+    hasWindowProp('Lenis') || /lenis/i.test(scriptHints) ? 'Lenis' : null,
+    hasWindowProp('Motion') || /motion[-/.]/i.test(scriptHints) ? 'Motion' : null,
+    /framer-motion/i.test(scriptHints) ? 'Framer Motion' : null,
+    /locomotive-scroll/i.test(scriptHints) ? 'locomotive-scroll' : null,
+    /aos/i.test(scriptHints) ? 'AOS' : null,
+  ].filter(Boolean);
+
+  const introLibraryHints = [
+    /barba/i.test(scriptHints) ? 'barba.js' : null,
+    /splitting/i.test(scriptHints) ? 'Splitting.js' : null,
+    /anime(\.js)?/i.test(scriptHints) ? 'anime.js' : null,
+    /lottie/i.test(scriptHints) ? 'Lottie' : null,
+  ].filter(Boolean);
+
+  const motionDataAttributes = Array.from(document.querySelectorAll(attrSelectors.join(',')))
+    .slice(0, 40)
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        attrs: attrSelectors.reduce((acc, selector) => {
+          const attrName = selector.slice(1, -1);
+          if (el.hasAttribute(attrName)) acc[attrName] = el.getAttribute(attrName) || '';
+          return acc;
+        }, {}),
+        rect: {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+      };
+    });
+
+  const stickyCandidates = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      const className = typeof el.className === 'string' ? el.className : '';
+      return (
+        rect.height >= window.innerHeight * 0.3 &&
+        (
+          style.position === 'sticky' ||
+          /sticky|pin|parallax|chapter|step/i.test(className)
+        )
+      );
+    })
+    .slice(0, 24)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        position: style.position,
+        top: style.top,
+        height: Math.round(rect.height),
+      };
+    });
+
+  const animatedNodes = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      const transitionTargets = lower(style.transitionProperty);
+      return (
+        rect.width >= 24 &&
+        rect.height >= 24 &&
+        (
+          style.animationName !== 'none' ||
+          transitionTargets.includes('transform') ||
+          transitionTargets.includes('opacity') ||
+          transitionTargets.includes('filter') ||
+          transitionTargets.includes('clip-path')
+        )
+      );
+    })
+    .slice(0, 32)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        transitionProperty: style.transitionProperty,
+        transitionDuration: style.transitionDuration,
+      };
+    });
+
+  const viewportSections = Array.from(document.querySelectorAll('main section, body > section, [class*="section"], [data-scroll-section]'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.height >= window.innerHeight * 0.75;
+    })
+    .slice(0, 20)
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        height: Math.round(rect.height),
+      };
+    });
+
+  const scrollIndicators = Array.from(document.querySelectorAll('progress, [role="progressbar"], canvas, [class*="progress"], [class*="marquee"]'))
+    .slice(0, 20)
+    .map((el) => ({
+      tag: el.tagName.toLowerCase(),
+      className: typeof el.className === 'string' ? el.className : '',
+    }));
+
+  const introCandidates = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      const className = typeof el.className === 'string' ? el.className : '';
+      return (
+        (style.position === 'fixed' || style.position === 'absolute') &&
+        rect.width >= window.innerWidth * 0.45 &&
+        rect.height >= window.innerHeight * 0.35 &&
+        (
+          style.animationName !== 'none' ||
+          lower(style.transitionProperty).includes('opacity') ||
+          lower(style.transitionProperty).includes('transform') ||
+          /intro|preload|preloader|loader|splash|reveal|enter|opening/i.test(className)
+        )
+      );
+    })
+    .slice(0, 20)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        position: style.position,
+        zIndex: style.zIndex,
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        transitionProperty: style.transitionProperty,
+        transitionDuration: style.transitionDuration,
+        rect: {
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+      };
+    });
+
+  const heroEntranceCandidates = Array.from(document.querySelectorAll('h1, [class*="hero"], [class*="Hero"], main > *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      const topFold = rect.top < window.innerHeight * 0.8;
+      return (
+        topFold &&
+        (
+          style.animationName !== 'none' ||
+          lower(style.transitionProperty).includes('opacity') ||
+          lower(style.transitionProperty).includes('transform') ||
+          lower(style.transform) !== 'none'
+        )
+      );
+    })
+    .slice(0, 20)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        transitionProperty: style.transitionProperty,
+      };
+    });
+
+  const bodyCursor = getComputedStyle(document.body).cursor;
+  const htmlCursor = getComputedStyle(document.documentElement).cursor;
+  const cursorOverrideNodes = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const className = typeof el.className === 'string' ? el.className : '';
+      return (
+        style.cursor !== 'auto' ||
+        /cursor|pointer|magnetic|follow/i.test(className)
+      );
+    })
+    .slice(0, 40)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        cursor: style.cursor,
+        rect: {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+      };
+    });
+
+  const cursorAttributeNodes = Array.from(document.querySelectorAll(cursorAttrSelectors.join(',')))
+    .slice(0, 30)
+    .map((el) => ({
+      tag: el.tagName.toLowerCase(),
+      className: typeof el.className === 'string' ? el.className : '',
+      attrs: cursorAttrSelectors.reduce((acc, selector) => {
+        const attrName = selector.slice(1, -1);
+        if (el.hasAttribute(attrName)) acc[attrName] = el.getAttribute(attrName) || '';
+        return acc;
+      }, {}),
+    }));
+
+  const cursorOverlayCandidates = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const style = getComputedStyle(el);
+      const className = typeof el.className === 'string' ? el.className : '';
+      return (
+        (style.position === 'fixed' || style.position === 'absolute') &&
+        style.pointerEvents === 'none' &&
+        /cursor|pointer|trail|mouse|follower/i.test(className)
+      );
+    })
+    .slice(0, 16)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        width: style.width,
+        height: style.height,
+        mixBlendMode: style.mixBlendMode,
+      };
+    });
+
   const fontTargets = {};
   ['body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach((selector) => {
     const node = document.querySelector(selector);
@@ -177,6 +459,26 @@ JSON.stringify(
     accents,
     fontTargets,
     customProperties,
+    motionSignals: {
+      runtimeLibraries,
+      motionDataAttributes,
+      stickyCandidates,
+      animatedNodes,
+      viewportSections,
+      scrollIndicators,
+    },
+    introSignals: {
+      introLibraryHints,
+      introCandidates,
+      heroEntranceCandidates,
+    },
+    cursorSignals: {
+      bodyCursor,
+      htmlCursor,
+      cursorOverrideNodes,
+      cursorAttributeNodes,
+      cursorOverlayCandidates,
+    },
   };
 })()
 )
@@ -192,8 +494,17 @@ What to extract:
 - component geometry and CTA treatment
 - recurring layout behavior
 - hero/background treatment from actual screenshots
+- runtime library hints such as `gsap`, `ScrollTrigger`, `Lenis`, `Motion`, or `Framer Motion`
+- scroll-linked attributes, sticky/pinned structures, and viewport-sized section sequencing
+- transform/opacity-driven motion targets and any canvas/WebGL surfaces reacting to scroll or pointer
+- whether motion is decorative, supportive, or load-bearing for the page narrative
+- whether the page has a first-load intro or arrival sequence, and whether it is decorative or load-bearing for first impression
+- whether the site uses a global or zone-specific custom cursor system, and what changes when the pointer enters those regions
 
 For components, follow `references/component-extraction-policy.md`. Component values in `design-model.yaml` are visual recipes, not CSS audit records. Treat computed CSS as candidate evidence only; screenshot observation and visible geometry win when they disagree.
+For page-level scroll or motion systems, follow `references/scroll-motion-systems.md`. Keep source-specific libraries, selectors, and runtime evidence in `design-meta.yaml`; only abstract page logic into `design-model.yaml` when the motion system is supportive or load-bearing.
+For first-load animation systems, follow `references/entry-motion-systems.md`. Keep source-specific preloaders, overlays, and runtime evidence in `design-meta.yaml`; only abstract the arrival sequence into `design-model.yaml` when it materially shapes the first impression.
+For custom cursor systems, follow `references/custom-cursor-systems.md`. Keep source-specific cursor selectors and runtime evidence in `design-meta.yaml`; only abstract the behavior into `design-model.yaml` when the cursor treatment is global or clearly intentional in key zones.
 
 If the site is blocked by login, CAPTCHA, or bot detection:
 1. Search for public product docs, help centers, screenshots, blog posts, or press kits.
@@ -206,6 +517,10 @@ Search for design-relevant files:
 - `tokens.css`, `variables.css`, `theme.ts`, `tokens.json`
 - `tailwind.config.*`
 - `Button.*`, `Card.*`, `Input.*`
+- motion libraries or clues such as `gsap`, `ScrollTrigger`, `framer-motion`, `motion`, `lenis`, `locomotive-scroll`, `AOS`
+- intro or preload clues such as `preloader`, `loader`, `splash`, `intro`, `opening`, `enter`, `reveal`, `barba`, `lottie`
+- cursor clues such as `cursor`, `pointer`, `mouse-follower`, `trail`, `magnetic`, `hover-zone`
+- scroll-linked markup such as `data-scroll*`, sticky chapter wrappers, pinned sections, or viewport-sized sequences
 - CSS custom properties
 - theme providers
 - stories or component demos
@@ -252,8 +567,15 @@ Gather facts from the source:
 - density and spacing
 - corner philosophy
 - layout behavior
-- motion posture
+- entry or arrival motion, if any
+- micro interaction posture
+- page scroll narrative, if any
+- cursor behavior, if any
 - what the brand avoids
+
+Use `references/scroll-motion-systems.md` whenever the page might depend on pinned progression, sticky chapters, parallax, or staged reveals.
+Use `references/entry-motion-systems.md` whenever the page appears to stage the first impression with a preloader, opening overlay, or hero entrance sequence.
+Use `references/custom-cursor-systems.md` whenever the site hides the native pointer, uses a follower, or changes cursor behavior in specific zones.
 
 Classify the source as either:
 - `ui-rich`
@@ -270,7 +592,7 @@ Reduce the source into seven default questions:
 3. How does typography behave?
 4. How do buttons, cards, inputs, navigation, and states feel?
 5. What are the layout principles?
-6. What is the motion philosophy?
+6. What is the motion philosophy across arrival, scroll, and interaction, and does the page use a supportive or load-bearing scroll, entry, or cursor system?
 7. What are the most important anti-patterns?
 
 Default to describing:
@@ -279,12 +601,24 @@ Default to describing:
 - the banned moves
 - the few values that actually matter
 
+Before writing any artifact, produce one internal **canonical spec sheet** for the source. It must settle:
+- system name, summary, mode, and domain
+- palette roles and their exact values
+- typography families and the canonical scale values
+- the component families that matter
+- which optional systems are present vs omitted
+- any negative interaction posture that materially defines the system, such as "keep native pointer semantics"
+
+`design-model.yaml` and `DESIGN.md` must both be projections of that same canonical spec sheet. Do not invent or refine a design decision in one core artifact without updating the other.
+
 Do **not** default to:
 - full component teardown sheets
 - exhaustive observed vs derived provenance per component
 - detailed implementation mappings
 - giant breakpoint matrices
 - mandatory hero/icon sections when they are not central
+- full animation timeline audits when the site only uses decorative motion
+- full cursor selector inventories when the site only changes `cursor: pointer` on links
 - raw computed-style dumps pretending to be component recipes
 
 Use `observed` vs `derived` only when it materially improves truthfulness or remixability.
@@ -337,10 +671,17 @@ Always run `npx @google/design.md lint DESIGN.md` when the CLI is available. If 
 #### `design-meta.yaml`
 
 Create this first. It is the only source-facing artifact. Use `references/design-meta-template.yaml`.
+Treat it as capture bookkeeping and evidence, not as a core design spec artifact.
+Keep source-specific motion evidence here: libraries, runtime hints, sticky/pinned structures, and section flow all belong in `capture_context.motion_capture`.
+Keep source-specific first-load evidence in `capture_context.entry_capture`.
+Keep source-specific cursor selectors, overlays, and zone behavior in `capture_context.cursor_capture`.
 
 #### `design-model.yaml`
 
 This is the lightweight core model. It should stay source-agnostic and compact.
+Together with `DESIGN.md`, it is one of the two normative design-spec outputs.
+
+Write this from the canonical spec sheet first. It is the structured source of truth for the reusable system.
 
 Default structure:
 
@@ -491,6 +832,49 @@ anti_patterns:
 optional:
   hero_stage:
     summary: "Product-led hero on a quiet atmospheric background."
+  entry_motion:
+    role: "supportive"
+    trigger: "every-load"
+    patterns:
+      - "overlay reveal"
+      - "hero staged entrance"
+    sequence_logic:
+      - "An opening veil clears before the hero resolves into its resting state."
+      - "Primary copy and media arrive in a deliberate order rather than all at once."
+    constraints:
+      - "Keep the resting hero legible without the sequence."
+      - "Avoid delaying access to primary navigation."
+    reduced_motion:
+      - "Skip the staged reveal and render the settled first frame immediately."
+  scroll_motion:
+    role: "load-bearing"
+    scroll_driver: "smooth"
+    cadence: "calm"
+    patterns:
+      - "pinned hero progression"
+      - "section reveal"
+      - "depth parallax"
+    page_logic:
+      - "Hero media stays anchored while copy advances."
+      - "Feature sections reveal one focal object at a time."
+    constraints:
+      - "Prefer transform and opacity over layout-changing motion."
+      - "Keep text readable without motion."
+    reduced_motion:
+      - "Remove parallax and pinning; preserve final static hierarchy."
+  custom_cursor:
+    role: "supportive"
+    scope: "global"
+    behavior_modes:
+      - "default follower"
+      - "label swap in interactive zones"
+    zone_logic:
+      - "The pointer enlarges or relabels when entering high-intent media or CTA regions."
+    constraints:
+      - "Never hide affordance or text-selection feedback."
+      - "Do not rely on cursor styling alone to communicate action."
+    fallback:
+      - "Preserve clear native cursor semantics when the custom layer is unavailable."
   iconography:
     summary: "Utility-first outline icons."
   responsive_guidance:
@@ -506,7 +890,13 @@ Requirements:
 - Prefer 2-4 variants per component family over a full observed-component inventory.
 - Use stable parameter keys such as `background`, `text`, `border`, `radius`, `padding`, `height`, `min_height`, `typography`, `shadow`, `hover`, `focus`, `disabled`, and `active`.
 - Put explanatory component rationale in `DESIGN.md`; keep `design-model.yaml` component blocks machine-usable.
+- Keep source-specific library names such as `gsap`, `ScrollTrigger`, `Lenis`, and `Framer Motion` out of `design-model.yaml`.
+- Keep source-specific entry libraries, preloaders, selectors, and cursor plugin names out of `design-model.yaml`.
+- Add `optional.entry_motion` only when the first-load sequence is clearly intentional.
+- Add `optional.scroll_motion` only when the page-level system is supportive or load-bearing. Decorative motion stays in the normal motion posture.
+- Add `optional.custom_cursor` only when the site uses a global or clearly designed zone-specific cursor treatment.
 - Keep optional sections optional.
+- Omit optional blocks entirely when they do not clear the detection threshold. Do not leave empty placeholders in the core design spec.
 
 #### `DESIGN.md`
 
@@ -518,6 +908,16 @@ The default document must be an official-format Google `DESIGN.md`:
 - semantic rules over exhaustive listings
 - concise but opinionated
 - YAML frontmatter tokens that pass schema validation
+
+Together with `design-model.yaml`, this is one of the two normative design-spec outputs. It should only describe systems that actually cleared the capture threshold.
+
+Write this second, deriving it from the same canonical spec sheet and from the completed `design-model.yaml`. It should restate the same design language in human-readable form rather than introducing new token decisions.
+
+When first-load motion is present, document it as a `### Entry & Arrival Motion` subsection under `## Overview`.
+When page-level scroll motion is supportive or load-bearing, document it as a `### Scroll Rhythm & Narrative` subsection under `## Layout`. Do not add a new top-level heading for motion.
+When the site uses a custom cursor system, document it as a `### Cursor Behavior` subsection under `## Components`.
+
+If an optional system is omitted but its absence materially shapes the interaction posture, express that absence as a normal design rule or anti-pattern in both core artifacts instead of creating an empty optional block. Example: keeping native pointer semantics can appear as an anti-pattern or component rule when cursor theatrics are intentionally absent.
 
 Do not default to appendices. Add optional notes only when the source clearly demands them or the user asks for more implementation detail.
 
@@ -543,13 +943,29 @@ Structure:
 After writing:
 1. Re-read all three files.
 2. Verify source identifiers appear only in `design-meta.yaml`.
-3. Verify `DESIGN.md` clearly reads like a lightweight design brief, not an implementation audit.
-4. Verify `design-model.yaml` keeps the same direction without forcing exhaustive detail.
-5. Verify component values read like visible recipes, not raw DOM/CSS dumps.
-6. Verify colors, typography, layout, component behavior, motion, and anti-patterns all appear in both design artifacts.
-7. Verify the result leaves room for downstream AI generation instead of boxing it in.
-8. Run `npx @google/design.md lint DESIGN.md` when available and fix errors.
-9. Close any browser session used for capture.
+3. Verify `design-meta.yaml` reads like evidence and capture context, not like the main design spec.
+4. Verify `design-model.yaml` and `DESIGN.md` carry the actual reusable design language.
+5. Compare `design-model.yaml` and `DESIGN.md` directly and verify they agree on:
+   - system name, summary, mode, and domain
+   - palette roles and the key color values that define the system
+   - typography families and canonical scale values
+   - component families and their visible recipes
+   - which optional systems are present and which are omitted
+   - any negative posture rules that matter, such as preserving the native pointer
+6. Verify `DESIGN.md` clearly reads like a lightweight design brief, not an implementation audit.
+7. Verify `design-model.yaml` keeps the same direction without forcing exhaustive detail.
+8. Verify component values read like visible recipes, not raw DOM/CSS dumps.
+9. Verify `hero_stage`, `entry_motion`, and `scroll_motion` are not collapsed into the same concept.
+10. Verify low-grade hero drift, hover states, loaders, or ambient background breathing are not misclassified as page-level scroll logic.
+11. Verify decorative preloaders or brief fades are not over-modeled as a load-bearing entry system.
+12. Verify plain `cursor: pointer` states are not misclassified as a custom cursor system.
+13. Verify `optional.entry_motion`, `optional.scroll_motion`, and `optional.custom_cursor` appear only when those systems are clearly intentional.
+14. Verify omitted optional systems leave no empty placeholder block in `design-model.yaml` or `DESIGN.md`.
+15. Verify omitted optional systems are either absent everywhere or, when materially relevant, expressed as the same negative posture rule in both core artifacts.
+16. Verify colors, typography, layout, component behavior, motion, and anti-patterns all appear in both core design artifacts.
+17. Verify the result leaves room for downstream AI generation instead of boxing it in.
+18. Run `npx @google/design.md lint DESIGN.md` when available and fix errors.
+19. Close any browser session used for capture.
 
 ### Step 6: Offer Iteration
 
@@ -578,6 +994,8 @@ Update the affected artifacts together. Do not let them drift.
   - `DESIGN.md`
 - `design-meta.yaml` is source-facing.
 - `design-model.yaml` and `DESIGN.md` are source-agnostic.
+- The core design specification lives only in `design-model.yaml` and `DESIGN.md`.
+- `design-meta.yaml` is evidence only. It must not become a third competing design-spec document.
 - The default tone is lightweight and synthesis-first.
 - The output must be useful for AI-assisted page generation.
 - `DESIGN.md` must follow the public Google `design.md` format and schema.
@@ -599,6 +1017,7 @@ Update the affected artifacts together. Do not let them drift.
 - confusing provenance accuracy with useful output
 - trusting computed CSS over the visible component result
 - drifting so far into custom structure that the package can no longer map cleanly to public `DESIGN.md` conventions
+- leaving optional motion or cursor sections in the core spec when the source did not actually justify them
 
 ### Markdown Expectations
 
@@ -619,12 +1038,15 @@ Update the affected artifacts together. Do not let them drift.
 - Keep tokens to the values that actually steer the system.
 - Treat hero, iconography, responsive, and implementation notes as optional support blocks.
 - When helpful, keep the model mappable to `colors`, `typography`, `rounded`, `spacing`, and `components` from the public spec.
+- Use `design-model.yaml` as the structured anchor for the core spec. `DESIGN.md` should elaborate it, not diverge from it.
 
 ### Source Separation
 
 - Brand names, URLs, and source labels stay in `design-meta.yaml`.
 - `design-model.yaml` and `DESIGN.md` must feel reusable in another project immediately.
 - If a proprietary font or asset matters, describe its character and supply a practical fallback.
+- Optional systems that fail detection stay out of `design-model.yaml` and `DESIGN.md` entirely rather than appearing as empty sections or placeholders.
+- If the absence of an optional system is itself part of the design posture, encode that absence consistently as a normal rule in both core artifacts.
 
 ### Final Heuristic
 

@@ -211,11 +211,17 @@ Semantic tokens reference the primitives above. Components use semantic tokens, 
 
 ## 6. MOTION & INTERACTION
 
-### Personality
+### Entry & Arrival Logic
+
+Include this subsection only when the site uses an intentional first-load or arrival sequence. Keep it source-agnostic. Overlay names, runtime hooks, and preloader implementation details belong in `design-meta.yaml`, not here.
+
+{{entry-and-arrival-logic}}
+
+### Micro Interaction Personality
 
 {{motion-personality}}
 
-### Timing
+### Micro Timing
 
 | Type | Duration | Easing | Use |
 |------|----------|--------|-----|
@@ -223,9 +229,21 @@ Semantic tokens reference the primitives above. Components use semantic tokens, 
 | **Standard** | {{motion-duration-medium}} | `{{motion-easing-medium}}` | Card expand, content transitions |
 | **Emphasis** | {{motion-duration-slow}} | `{{motion-easing-slow}}` | Sheet present, navigation, page transitions |
 
+### Page Motion & Scroll Logic
+
+Include this subsection only when page-level scroll motion is supportive or load-bearing. Keep it source-agnostic. Library names and runtime evidence belong in `design-meta.yaml`, not here.
+
+{{page-motion-and-scroll-logic}}
+
 ### Interaction States
 
 {{interaction-states}}
+
+### Cursor Interaction Logic
+
+Include this subsection only when the site uses a custom cursor system. Keep it source-agnostic. Plugin names, selectors, and cursor DOM overlays belong in `design-meta.yaml`, not here.
+
+{{cursor-interaction-logic}}
 
 ---
 

@@ -52,5 +52,7 @@ This skill is explicit-invocation only. Pair it with `agents/openai.yaml` so Cod
 | `references/entry-motion-systems.md` | Optional ref: use only when the source clearly has an intentional first-load or arrival sequence, and separate it from normal micro motion |
 | `references/scroll-motion-systems.md` | Optional ref: use only when the source clearly has a supportive or load-bearing scroll system, and separate page narrative from hero-only motion |
 | `references/custom-cursor-systems.md` | Optional ref: use only when the source clearly has a custom cursor system globally or in key zones, and separate it from default pointer states |
+| `references/three-dimensional-systems.md` | Optional ref: use only when the source clearly uses a live 3D or spatial WebGL scene, and separate live spatial logic from still imagery |
+| `references/image-direction-systems.md` | Optional ref: use only when the source clearly has a recurring image art direction worth translating into reusable visual guidance or AI generation cues |
 | `references/platform-mapping.md` | HTML/CSS, SwiftUI, React/Tailwind — platform-specific code and loading instructions |
 | `agents/openai.yaml` | Display name, short description, default prompt, and explicit invocation policy |

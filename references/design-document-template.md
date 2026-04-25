@@ -77,6 +77,11 @@ components:
 
 {{overview}}
 
+<!-- Omit this subsection when the site has no clear recurring image art direction worth codifying. -->
+### Image Direction
+
+{{image-direction}}
+
 <!-- Omit this subsection when there is no intentional first-load or arrival sequence. -->
 ### Entry & Arrival Motion
 
@@ -103,6 +108,11 @@ components:
 
 {{elevation-and-depth}}
 
+<!-- Omit this subsection when the site does not use an intentional live 3D or spatial scene system. -->
+### 3D & Spatial Logic
+
+{{three-d-and-spatial-logic}}
+
 ## Shapes
 
 {{shapes}}
@@ -122,4 +132,4 @@ Component values should be written as visible design recipes. If a source compon
 
 {{dos-and-donts}}
 
-When `optional.entry_motion`, `optional.scroll_motion`, or `optional.custom_cursor` are present, include 1-3 source-agnostic guardrails in this section. Keep them implementation-facing and focused on cadence, readability, fallback behavior, and reduced-motion behavior rather than library choice.
+When `optional.entry_motion`, `optional.scroll_motion`, `optional.custom_cursor`, `optional.three_d_scene`, or `optional.image_direction` are present, include 1-3 source-agnostic guardrails in this section. Keep them implementation-facing and focused on cadence, readability, fallback behavior, reduced-motion behavior, originality, or generation quality rather than library choice.

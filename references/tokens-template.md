@@ -150,6 +150,12 @@ Semantic tokens reference the primitives above. Components use semantic tokens, 
 
 {{color-usage-rules}}
 
+### Image Direction
+
+Include this subsection only when the site uses an intentional recurring image art direction. Keep it source-agnostic. Asset URLs, filenames, and campaign labels belong in `design-meta.yaml`, not here.
+
+{{image-direction}}
+
 ---
 
 ## 3. SPACING
@@ -206,6 +212,12 @@ Semantic tokens reference the primitives above. Components use semantic tokens, 
 | **3** | `{{shadow-3-light}}` | `{{shadow-3-dark}}` | Modals, sheets, dialogs |
 
 {{elevation-notes}}
+
+### 3D & Spatial Logic
+
+Include this subsection only when the site uses an intentional live 3D or spatial scene system. Keep it source-agnostic. Library names, scene wrappers, and runtime hooks belong in `design-meta.yaml`, not here.
+
+{{three-d-and-spatial-logic}}
 
 ---
 

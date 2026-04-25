@@ -71,6 +71,36 @@ capture_context:
     zone_behavior:
       - zone: "{{cursor-zone}}"
         behavior: "{{cursor-zone-behavior}}"
+  three_capture:
+    detected: "{{true|false}}"
+    role: "{{decorative|supportive|load-bearing}}"
+    integration: "{{background-field|hero-object|section-scene|full-page-stage}}"
+    libraries:
+      - "{{three-library-name}}"
+    behaviors:
+      - "{{three-behavior}}"
+    evidence:
+      - kind: "{{runtime-library|canvas-wrapper|rendered-behavior|source-code|inference}}"
+        location: "{{three-evidence-location}}"
+        notes: "{{three-evidence-notes}}"
+    scene_flow:
+      - zone: "{{three-zone}}"
+        behavior: "{{three-zone-behavior}}"
+  image_capture:
+    detected: "{{true|false}}"
+    role: "{{decorative|supportive|load-bearing}}"
+    media_types:
+      - "{{image-media-type}}"
+    recurring_subjects:
+      - "{{image-subject}}"
+    treatments:
+      - "{{image-treatment}}"
+    evidence:
+      - kind: "{{rendered-image|screenshot|asset-pattern|source-code|inference}}"
+        location: "{{image-evidence-location}}"
+        notes: "{{image-evidence-notes}}"
+    composition_patterns:
+      - "{{image-composition-pattern}}"
   component_capture:
     strategy: "visual-first reconciliation"
     sampled_families:

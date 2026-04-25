@@ -67,11 +67,23 @@ Required flow:
 
 1. Open the URL with browser automation.
 2. Wait for `networkidle`.
-3. Extract visible UI patterns, DOM rects, computed styles, motion signals, intro-sequence hints, and cursor behavior with `eval --stdin`.
-4. Take screenshots and inspect the rendered result directly.
-5. Reconcile component values visually before writing tokens.
-6. Visit 2-3 meaningful subpages and repeat.
-7. Close the named session before finishing, even if capture fails.
+3. If the page clearly needs settling or one small interaction to reveal its real design language, do that before capture.
+4. Extract visible UI patterns, DOM rects, computed styles, motion signals, intro-sequence hints, cursor behavior, spatial/3D signals, and image-direction clues with `eval --stdin`.
+5. Take screenshots and inspect the rendered result directly.
+6. Reconcile component values visually before writing tokens.
+7. Visit 2-3 meaningful subpages and repeat.
+8. Close the named session before finishing, even if capture fails.
+
+Allowed lightweight interactions before capture:
+
+- wait an extra 2-5 seconds for intro or hero motion to settle
+- dismiss cookie banners, newsletter popups, age gates, or announcement bars
+- open the main menu once if navigation styling is a meaningful part of the system
+- hover one or two primary CTAs, cards, or media zones when hover treatment is important
+- scroll 1-2 viewports to expose pinned, sticky, or chaptered behavior
+- expand one representative accordion, tab, filter, or modal when it materially affects the design language
+
+Keep these interactions minimal and purposeful. Hue is trying to understand the page's real resting states and interaction posture, not run a full product QA pass.
 
 Use this exact pattern as the default starting point:
 
@@ -193,6 +205,11 @@ JSON.stringify(
     /framer-motion/i.test(scriptHints) ? 'Framer Motion' : null,
     /locomotive-scroll/i.test(scriptHints) ? 'locomotive-scroll' : null,
     /aos/i.test(scriptHints) ? 'AOS' : null,
+    hasWindowProp('THREE') || /three/i.test(scriptHints) ? 'Three.js' : null,
+    /@react-three\/fiber|react-three-fiber/i.test(scriptHints) ? 'React Three Fiber' : null,
+    /spline/i.test(scriptHints) ? 'Spline' : null,
+    /babylon/i.test(scriptHints) ? 'Babylon.js' : null,
+    /model-viewer/i.test(scriptHints) ? 'model-viewer' : null,
   ].filter(Boolean);
 
   const introLibraryHints = [
@@ -434,6 +451,57 @@ JSON.stringify(
       };
     });
 
+  const threeCandidates = Array.from(document.querySelectorAll('canvas, model-viewer, spline-viewer, [data-spline-url], [class*="webgl"], [class*="three"], [class*="scene"], [class*="viewer"]'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width >= window.innerWidth * 0.2 && rect.height >= window.innerHeight * 0.2;
+    })
+    .slice(0, 24)
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        rect: {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+        position: style.position,
+        pointerEvents: style.pointerEvents,
+      };
+    });
+
+  const imageCandidates = Array.from(document.querySelectorAll('img, picture img, figure img, [style*="background-image"], video[poster]'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width >= 120 && rect.height >= 120;
+    })
+    .slice(0, 30)
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return {
+        tag: el.tagName.toLowerCase(),
+        className: typeof el.className === 'string' ? el.className : '',
+        objectFit: style.objectFit,
+        borderRadius: style.borderRadius,
+        filter: style.filter,
+        mixBlendMode: style.mixBlendMode,
+        backgroundImage: style.backgroundImage !== 'none' ? style.backgroundImage.slice(0, 180) : 'none',
+        rect: {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+      };
+    });
+
   const fontTargets = {};
   ['body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach((selector) => {
     const node = document.querySelector(selector);
@@ -479,6 +547,13 @@ JSON.stringify(
       cursorAttributeNodes,
       cursorOverlayCandidates,
     },
+    threeSignals: {
+      runtimeLibraries: runtimeLibraries.filter((name) => ['Three.js', 'React Three Fiber', 'Spline', 'Babylon.js', 'model-viewer'].includes(name)),
+      threeCandidates,
+    },
+    imageSignals: {
+      imageCandidates,
+    },
   };
 })()
 )
@@ -486,6 +561,8 @@ EVALEOF
 
 agent-browser --session "$HUE_SESSION" screenshot /tmp/hue-source-page.png
 ```
+
+If the page needs a small interaction before capture, do it after the first `networkidle` and before the `eval --stdin` pass. Prefer the smallest action that reveals the real design language.
 
 What to extract:
 - real background and text colors
@@ -500,16 +577,23 @@ What to extract:
 - whether motion is decorative, supportive, or load-bearing for the page narrative
 - whether the page has a first-load intro or arrival sequence, and whether it is decorative or load-bearing for first impression
 - whether the site uses a global or zone-specific custom cursor system, and what changes when the pointer enters those regions
+- whether the site uses a live 3D or spatial scene system, where it integrates, and whether it is decorative, supportive, or load-bearing
+- whether the site has a recurring image art direction, and what reusable visual cues would help a downstream AI generate analogous imagery without copying proprietary assets
 
 For components, follow `references/component-extraction-policy.md`. Component values in `design-model.yaml` are visual recipes, not CSS audit records. Treat computed CSS as candidate evidence only; screenshot observation and visible geometry win when they disagree.
 For page-level scroll or motion systems, follow `references/scroll-motion-systems.md`. Keep source-specific libraries, selectors, and runtime evidence in `design-meta.yaml`; only abstract page logic into `design-model.yaml` when the motion system is supportive or load-bearing.
 For first-load animation systems, follow `references/entry-motion-systems.md`. Keep source-specific preloaders, overlays, and runtime evidence in `design-meta.yaml`; only abstract the arrival sequence into `design-model.yaml` when it materially shapes the first impression.
 For custom cursor systems, follow `references/custom-cursor-systems.md`. Keep source-specific cursor selectors and runtime evidence in `design-meta.yaml`; only abstract the behavior into `design-model.yaml` when the cursor treatment is global or clearly intentional in key zones.
+For live spatial systems, follow `references/three-dimensional-systems.md`. Keep source-specific scene wrappers, libraries, and runtime hooks in `design-meta.yaml`; only abstract the spatial logic into `design-model.yaml` when the 3D layer is clearly intentional.
+For recurring image art direction, follow `references/image-direction-systems.md`. Keep source-specific assets and screenshot evidence in `design-meta.yaml`; only abstract reusable visual cues into `design-model.yaml` when the image language is clearly intentional and remixable.
+
+If `agent-browser` throws runtime errors, returns malformed output, fails to render the page reliably, or gets stuck behind verification/interstitial friction, do not stop at a source-only fallback immediately. First fall back to the system browser Chrome and continue the capture there. Use Chrome when you need a more stable renderer, a visible verification flow, or a lightweight manual-style interaction path. Only fall back to public HTML/CSS/JS or screenshots alone when Chrome capture is also blocked or unavailable.
 
 If the site is blocked by login, CAPTCHA, or bot detection:
-1. Search for public product docs, help centers, screenshots, blog posts, or press kits.
-2. If that is enough to infer the design language, proceed.
-3. If not, ask for browser-auth access, local codebase, or screenshots in that order.
+1. Try the same capture flow in system Chrome first.
+2. If Chrome still cannot get you through, search for public product docs, help centers, screenshots, blog posts, or press kits.
+3. If that is enough to infer the design language, proceed.
+4. If not, ask for browser-auth access, local codebase, or screenshots in that order.
 
 ### Local Codebase
 
@@ -518,6 +602,8 @@ Search for design-relevant files:
 - `tailwind.config.*`
 - `Button.*`, `Card.*`, `Input.*`
 - motion libraries or clues such as `gsap`, `ScrollTrigger`, `framer-motion`, `motion`, `lenis`, `locomotive-scroll`, `AOS`
+- spatial scene clues such as `three`, `@react-three/fiber`, `spline`, `babylon`, `model-viewer`, `webgl`, `scene`, `viewer`
+- image direction clues such as `hero-image`, `art-direction`, `renders`, `illustrations`, `gallery`, `posters`, and structured media folders
 - intro or preload clues such as `preloader`, `loader`, `splash`, `intro`, `opening`, `enter`, `reveal`, `barba`, `lottie`
 - cursor clues such as `cursor`, `pointer`, `mouse-follower`, `trail`, `magnetic`, `hover-zone`
 - scroll-linked markup such as `data-scroll*`, sticky chapter wrappers, pinned sections, or viewport-sized sequences
@@ -675,6 +761,9 @@ Treat it as capture bookkeeping and evidence, not as a core design spec artifact
 Keep source-specific motion evidence here: libraries, runtime hints, sticky/pinned structures, and section flow all belong in `capture_context.motion_capture`.
 Keep source-specific first-load evidence in `capture_context.entry_capture`.
 Keep source-specific cursor selectors, overlays, and zone behavior in `capture_context.cursor_capture`.
+Keep source-specific 3D scene wrappers, libraries, and runtime hints in `capture_context.three_capture`.
+Keep source-specific image examples, media types, and observed treatments in `capture_context.image_capture`.
+If capture began in `agent-browser` but had to continue in system Chrome, record that explicitly in `capture_context.evidence` so the fallback path is auditable.
 
 #### `design-model.yaml`
 
@@ -875,6 +964,42 @@ optional:
       - "Do not rely on cursor styling alone to communicate action."
     fallback:
       - "Preserve clear native cursor semantics when the custom layer is unavailable."
+  three_d_scene:
+    role: "supportive"
+    integration: "hero-object"
+    behaviors:
+      - "ambient drift"
+      - "pointer reactive"
+      - "material shift"
+    spatial_logic:
+      - "A single spatial object or field anchors the hero's depth strategy."
+      - "Camera or object motion should reinforce focus, not create game-like exploration."
+    material_logic:
+      - "Use a restrained material palette and clear silhouette before chasing realism."
+    fallback:
+      - "Replace the live scene with a still render or poster frame that preserves the same composition."
+    reduced_motion:
+      - "Freeze the scene or remove reactive camera movement while keeping the final depth hierarchy."
+  image_direction:
+    role: "supportive"
+    media_types:
+      - "3d render"
+      - "editorial cutout"
+    subject_patterns:
+      - "one isolated hero subject"
+      - "tight detail crops for supporting modules"
+    composition_logic:
+      - "Keep subjects large in frame with enough negative space for typography."
+      - "Use consistent camera angle and crop discipline across modules."
+    treatment_rules:
+      - "Favor a narrow palette and one recurring post-processing language."
+      - "Preserve subject clarity before adding texture or effects."
+    generation_cues:
+      - "Describe medium, lighting, crop, surface finish, and background behavior in prompts."
+      - "Generate new original assets that follow the same visual logic rather than copying the source image."
+    avoid:
+      - "No generic stock-photo drift."
+      - "No mixing unrelated image styles inside the same system."
   iconography:
     summary: "Utility-first outline icons."
   responsive_guidance:
@@ -891,10 +1016,12 @@ Requirements:
 - Use stable parameter keys such as `background`, `text`, `border`, `radius`, `padding`, `height`, `min_height`, `typography`, `shadow`, `hover`, `focus`, `disabled`, and `active`.
 - Put explanatory component rationale in `DESIGN.md`; keep `design-model.yaml` component blocks machine-usable.
 - Keep source-specific library names such as `gsap`, `ScrollTrigger`, `Lenis`, and `Framer Motion` out of `design-model.yaml`.
-- Keep source-specific entry libraries, preloaders, selectors, and cursor plugin names out of `design-model.yaml`.
+- Keep source-specific entry libraries, preloaders, selectors, cursor plugin names, 3D scene wrappers, and asset URLs out of `design-model.yaml`.
 - Add `optional.entry_motion` only when the first-load sequence is clearly intentional.
 - Add `optional.scroll_motion` only when the page-level system is supportive or load-bearing. Decorative motion stays in the normal motion posture.
 - Add `optional.custom_cursor` only when the site uses a global or clearly designed zone-specific cursor treatment.
+- Add `optional.three_d_scene` only when the site clearly uses a live spatial scene as part of the experience.
+- Add `optional.image_direction` only when the site has a recurring image art direction worth translating into reusable guidance.
 - Keep optional sections optional.
 - Omit optional blocks entirely when they do not clear the detection threshold. Do not leave empty placeholders in the core design spec.
 
@@ -914,8 +1041,12 @@ Together with `design-model.yaml`, this is one of the two normative design-spec 
 Write this second, deriving it from the same canonical spec sheet and from the completed `design-model.yaml`. It should restate the same design language in human-readable form rather than introducing new token decisions.
 
 When first-load motion is present, document it as a `### Entry & Arrival Motion` subsection under `## Overview`.
+When image art direction is present, document it as a `### Image Direction` subsection under `## Overview`.
 When page-level scroll motion is supportive or load-bearing, document it as a `### Scroll Rhythm & Narrative` subsection under `## Layout`. Do not add a new top-level heading for motion.
+When the site uses a live 3D or spatial scene system, document it as a `### 3D & Spatial Logic` subsection under `## Elevation & Depth`.
 When the site uses a custom cursor system, document it as a `### Cursor Behavior` subsection under `## Components`.
+When `optional.hero_stage` is present, fold its composition rules into the main `## Overview` prose instead of creating a separate heading.
+When any optional block is present in `design-model.yaml`, `DESIGN.md` must explicitly cover the same system's role plus its main patterns and at least one fallback, constraint, or reduced-motion rule. Do not merely hint that the system exists.
 
 If an optional system is omitted but its absence materially shapes the interaction posture, express that absence as a normal design rule or anti-pattern in both core artifacts instead of creating an empty optional block. Example: keeping native pointer semantics can appear as an anti-pattern or component rule when cursor theatrics are intentionally absent.
 
@@ -955,17 +1086,18 @@ After writing:
 6. Verify `DESIGN.md` clearly reads like a lightweight design brief, not an implementation audit.
 7. Verify `design-model.yaml` keeps the same direction without forcing exhaustive detail.
 8. Verify component values read like visible recipes, not raw DOM/CSS dumps.
-9. Verify `hero_stage`, `entry_motion`, and `scroll_motion` are not collapsed into the same concept.
+9. Verify `hero_stage`, `entry_motion`, `scroll_motion`, `three_d_scene`, and `image_direction` are not collapsed into the same concept.
 10. Verify low-grade hero drift, hover states, loaders, or ambient background breathing are not misclassified as page-level scroll logic.
 11. Verify decorative preloaders or brief fades are not over-modeled as a load-bearing entry system.
 12. Verify plain `cursor: pointer` states are not misclassified as a custom cursor system.
-13. Verify `optional.entry_motion`, `optional.scroll_motion`, and `optional.custom_cursor` appear only when those systems are clearly intentional.
+13. Verify `optional.entry_motion`, `optional.scroll_motion`, `optional.custom_cursor`, `optional.three_d_scene`, and `optional.image_direction` appear only when those systems are clearly intentional.
 14. Verify omitted optional systems leave no empty placeholder block in `design-model.yaml` or `DESIGN.md`.
 15. Verify omitted optional systems are either absent everywhere or, when materially relevant, expressed as the same negative posture rule in both core artifacts.
-16. Verify colors, typography, layout, component behavior, motion, and anti-patterns all appear in both core design artifacts.
-17. Verify the result leaves room for downstream AI generation instead of boxing it in.
-18. Run `npx @google/design.md lint DESIGN.md` when available and fix errors.
-19. Close any browser session used for capture.
+16. Verify every optional block present in `design-model.yaml` is clearly represented in `DESIGN.md`, including its main behavior and at least one guardrail or fallback rule.
+17. Verify colors, typography, layout, component behavior, motion, spatial logic, image direction, and anti-patterns all appear in both core design artifacts when relevant.
+18. Verify the result leaves room for downstream AI generation instead of boxing it in.
+19. Run `npx @google/design.md lint DESIGN.md` when available and fix errors.
+20. Close any browser session used for capture.
 
 ### Step 6: Offer Iteration
 

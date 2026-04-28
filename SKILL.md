@@ -54,8 +54,14 @@ The user will give you one of these input types. Handle each differently.
 
 1. Use available web search to find the brand's official website.
 2. Present the URL to the user and confirm it before proceeding.
-3. Once confirmed, analyze the main page plus 2-3 meaningful subpages.
+3. Once confirmed, analyze the main page plus 2-3 meaningful subpaths on the same confirmed origin only.
 4. Focus on recurring design patterns, not just homepage theatrics.
+
+Subpath rule:
+- Treat the confirmed canonical origin as the analysis boundary.
+- Follow only same-origin URLs that differ by path, locale segment, query, or hash.
+- Do not expand "related pages" across different domains or subdomains, even when they belong to the same company.
+- If the navigation pushes users into another host, treat that as out of scope unless the user explicitly asks for a multi-property comparison.
 
 ### URL
 
@@ -71,8 +77,14 @@ Required flow:
 4. Extract visible UI patterns, DOM rects, computed styles, motion signals, intro-sequence hints, cursor behavior, spatial/3D signals, and image-direction clues with `eval --stdin`.
 5. Take screenshots and inspect the rendered result directly.
 6. Reconcile component values visually before writing tokens.
-7. Visit 2-3 meaningful subpages and repeat.
+7. Visit 2-3 meaningful same-origin subpaths and repeat.
 8. Close the named session before finishing, even if capture fails.
+
+URL boundary rule:
+- Lock the capture scope to the canonical origin of the starting URL after redirects settle.
+- Only follow URLs on that exact origin. Path changes are allowed; hostname changes are not.
+- Do not treat docs sites, blogs, app subdomains, checkout hosts, careers hosts, regional domains, or campaign microsites as "related pages" unless they share the exact same origin.
+- If the page meaningfully links out to a different host, note the boundary and stay inside the current origin rather than blending styles across properties.
 
 Allowed lightweight interactions before capture:
 
@@ -591,9 +603,10 @@ If `agent-browser` throws runtime errors, returns malformed output, fails to ren
 
 If the site is blocked by login, CAPTCHA, or bot detection:
 1. Try the same capture flow in system Chrome first.
-2. If Chrome still cannot get you through, search for public product docs, help centers, screenshots, blog posts, or press kits.
-3. If that is enough to infer the design language, proceed.
-4. If not, ask for browser-auth access, local codebase, or screenshots in that order.
+2. If Chrome still cannot get you through, look first for public pages on the same origin, plus user-provided screenshots or a local codebase.
+3. Avoid using cross-domain docs, help centers, blog hosts, or press kits as substitute "related pages" unless the user explicitly asks for broader brand-family synthesis.
+4. If same-origin evidence is enough to infer the design language, proceed.
+5. If not, ask for browser-auth access, local codebase, or screenshots in that order.
 
 ### Local Codebase
 

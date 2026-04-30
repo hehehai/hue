@@ -76,9 +76,10 @@ Required flow:
 3. If the page clearly needs settling or one small interaction to reveal its real design language, do that before capture.
 4. Extract visible UI patterns, DOM rects, computed styles, motion signals, intro-sequence hints, cursor behavior, spatial/3D signals, and image-direction clues with `eval --stdin`.
 5. Take screenshots and inspect the rendered result directly.
-6. Reconcile component values visually before writing tokens.
-7. Visit 2-3 meaningful same-origin subpaths and repeat.
-8. Close the named session before finishing, even if capture fails.
+6. Run a contrast sanity check on visible text and components. If foreground/background contrast looks abnormally weak for a normal readable site, assume the capture may be wrong until you verify it.
+7. Reconcile component values visually before writing tokens.
+8. Visit 2-3 meaningful same-origin subpaths and repeat.
+9. Close the named session before finishing, even if capture fails.
 
 URL boundary rule:
 - Lock the capture scope to the canonical origin of the starting URL after redirects settle.
@@ -138,6 +139,54 @@ JSON.stringify(
 
   const hasWindowProp = (key) => typeof window[key] !== 'undefined';
   const lower = (value) => String(value || '').toLowerCase();
+  const parseRgb = (value) => {
+    const match = String(value || '').match(/rgba?\(([^)]+)\)/i);
+    if (!match) return null;
+    const parts = match[1].split(',').map((part) => Number.parseFloat(part.trim()));
+    if (parts.length < 3 || parts.slice(0, 3).some((part) => Number.isNaN(part))) return null;
+    return {
+      r: parts[0],
+      g: parts[1],
+      b: parts[2],
+      a: Number.isNaN(parts[3]) ? 1 : parts[3],
+    };
+  };
+  const isUsablyOpaque = (rgb) => rgb && rgb.a >= 0.9;
+  const srgbToLinear = (value) => {
+    const normalized = value / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  };
+  const relativeLuminance = (rgb) => {
+    if (!rgb) return null;
+    return (
+      0.2126 * srgbToLinear(rgb.r) +
+      0.7152 * srgbToLinear(rgb.g) +
+      0.0722 * srgbToLinear(rgb.b)
+    );
+  };
+  const contrastRatio = (foreground, background) => {
+    const fg = relativeLuminance(parseRgb(foreground));
+    const bg = relativeLuminance(parseRgb(background));
+    if (fg === null || bg === null) return null;
+    const lighter = Math.max(fg, bg);
+    const darker = Math.min(fg, bg);
+    return Number(((lighter + 0.05) / (darker + 0.05)).toFixed(2));
+  };
+  const resolveOpaqueBackground = (el) => {
+    let current = el;
+    while (current && current instanceof HTMLElement) {
+      const background = getComputedStyle(current).backgroundColor;
+      if (isUsablyOpaque(parseRgb(background))) return background;
+      current = current.parentElement;
+    }
+    const bodyBackground = getComputedStyle(document.body).backgroundColor;
+    return isUsablyOpaque(parseRgb(bodyBackground)) ? bodyBackground : 'rgb(255, 255, 255)';
+  };
+  const contrastThresholds = {
+    normalText: 3,
+    largeText: 2.4,
+    ui: 2.2,
+  };
 
   const visibleTextColors = [...new Set(
     Array.from(document.querySelectorAll('body *'))
@@ -163,6 +212,11 @@ JSON.stringify(
       const before = getComputedStyle(el, '::before');
       const after = getComputedStyle(el, '::after');
       const rect = el.getBoundingClientRect();
+      const background = style.backgroundColor;
+      const resolvedBackground = isUsablyOpaque(parseRgb(background))
+        ? background
+        : resolveOpaqueBackground(el);
+      const ratio = contrastRatio(style.color, resolvedBackground);
       return {
         text: (el.textContent || '').trim(),
         tag: el.tagName.toLowerCase(),
@@ -174,8 +228,11 @@ JSON.stringify(
           height: Math.round(rect.height),
         },
         radius: style.borderRadius,
-        background: style.backgroundColor,
+        background,
+        resolvedBackground,
         color: style.color,
+        contrastRatio: ratio,
+        contrastWarning: ratio !== null && ratio < contrastThresholds.ui ? 'verify-low-contrast' : null,
         border: style.border,
         boxShadow: style.boxShadow,
         opacity: style.opacity,
@@ -204,6 +261,43 @@ JSON.stringify(
         },
       };
     });
+
+  const suspiciousTextPairs = Array.from(document.querySelectorAll('body *'))
+    .filter((el) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const text = el.innerText.replace(/\s+/g, ' ').trim();
+      if (!text || text.length < 2) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width >= 24 && rect.height >= 10;
+    })
+    .slice(0, 120)
+    .map((el) => {
+      const style = getComputedStyle(el);
+      const fontSize = Number.parseFloat(style.fontSize || '0');
+      const fontWeight = Number.parseFloat(style.fontWeight || '400');
+      const threshold = fontSize >= 24 || (fontSize >= 18 && fontWeight >= 600)
+        ? contrastThresholds.largeText
+        : contrastThresholds.normalText;
+      const background = resolveOpaqueBackground(el);
+      const ratio = contrastRatio(style.color, background);
+      return {
+        tag: el.tagName.toLowerCase(),
+        text: el.innerText.replace(/\s+/g, ' ').trim().slice(0, 80),
+        color: style.color,
+        background,
+        fontSize: style.fontSize,
+        fontWeight: style.fontWeight,
+        contrastRatio: ratio,
+        threshold,
+      };
+    })
+    .filter((entry) => entry.contrastRatio !== null && entry.contrastRatio < entry.threshold)
+    .sort((a, b) => a.contrastRatio - b.contrastRatio)
+    .slice(0, 20);
+
+  const suspiciousComponentPairs = componentCandidates
+    .filter((entry) => entry.contrastRatio !== null && entry.contrastRatio < contrastThresholds.ui)
+    .slice(0, 20);
 
   const scriptHints = Array.from(document.scripts)
     .map((script) => `${script.src || ''} ${script.textContent || ''}`.slice(0, 400))
@@ -539,6 +633,11 @@ JSON.stringify(
     accents,
     fontTargets,
     customProperties,
+    contrastSignals: {
+      thresholds: contrastThresholds,
+      suspiciousTextPairs,
+      suspiciousComponentPairs,
+    },
     motionSignals: {
       runtimeLibraries,
       motionDataAttributes,
@@ -578,6 +677,7 @@ If the page needs a small interaction before capture, do it after the first `net
 
 What to extract:
 - real background and text colors
+- readable foreground/background pairings, plus any suspicious low-contrast pair that might indicate an incorrect capture, overlay, loading state, or wrong DOM ownership
 - distinct accent colors
 - font families from body and headings
 - component geometry and CTA treatment
@@ -593,6 +693,7 @@ What to extract:
 - whether the site has a recurring image art direction, and what reusable visual cues would help a downstream AI generate analogous imagery without copying proprietary assets
 
 For components, follow `references/component-extraction-policy.md`. Component values in `design-model.yaml` are visual recipes, not CSS audit records. Treat computed CSS as candidate evidence only; screenshot observation and visible geometry win when they disagree.
+Treat obviously unreadable foreground/background combinations as suspicious by default. Normal production sites rarely rely on text that users cannot see. Before accepting a low-contrast reading, verify that you are not looking at a transient state, transparent child over a parent fill, blended overlay, masked text, or a failed capture.
 For page-level scroll or motion systems, follow `references/scroll-motion-systems.md`. Keep source-specific libraries, selectors, and runtime evidence in `design-meta.yaml`; only abstract page logic into `design-model.yaml` when the motion system is supportive or load-bearing.
 For first-load animation systems, follow `references/entry-motion-systems.md`. Keep source-specific preloaders, overlays, and runtime evidence in `design-meta.yaml`; only abstract the arrival sequence into `design-model.yaml` when it materially shapes the first impression.
 For custom cursor systems, follow `references/custom-cursor-systems.md`. Keep source-specific cursor selectors and runtime evidence in `design-meta.yaml`; only abstract the behavior into `design-model.yaml` when the cursor treatment is global or clearly intentional in key zones.
@@ -627,6 +728,7 @@ Search for design-relevant files:
 Extract real token values when present, but do not let raw token volume force the output into a giant implementation audit. Synthesize upward.
 
 For components, prefer rendered stories, previews, app routes, or screenshots over raw source. If only source code exists, treat CSS variables and component props as candidate values and still synthesize compact visual recipes using `references/component-extraction-policy.md`.
+If source tokens imply very low text/background contrast, do not trust them blindly. Verify against rendered output first. When the rendered result is also unreadable, treat that as a contradiction that needs explicit confirmation before it enters the model.
 
 ### Screenshots
 
@@ -640,6 +742,7 @@ Before generating:
 Do not overfit to one screenshot if the set is clearly mixed.
 
 When screenshots show components, derive component values from visible pixels and geometry first. Use source CSS only to explain or normalize the values.
+If a screenshot appears to show unreadable text or invisible controls, assume capture error, transitional UI, or layered-surface misread before assuming the product intentionally shipped that contrast. Re-check with another frame, another page state, or DOM ownership before collecting the value.
 
 ### Description
 

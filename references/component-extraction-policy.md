@@ -58,6 +58,20 @@ Use these rules when turning evidence into `design-model.yaml.components`:
 
 If screenshot observation and computed CSS disagree, prefer the visual result and record the disagreement in `design-meta.yaml.capture_context.component_capture.notes`.
 
+## Contrast Sanity Check
+
+Do not treat a low computed contrast reading as truth by default.
+
+Normal production UI usually keeps text and key controls readable against their visible surfaces. When a component appears to have unreadable contrast, first verify whether the reading is distorted by:
+
+- a transparent child sitting on an opaque parent shell
+- pseudo-elements, gradients, overlays, or masks that carry the visible fill
+- transient loading, intro, disabled, hover, or pressed states
+- backdrop blur or alpha blending that changes the real visible contrast
+- capture timing problems, stale paint, or incomplete browser rendering
+
+If the component still looks low-contrast after screenshot inspection and DOM reconciliation, mark that evidence as low confidence in `design-meta.yaml` and avoid promoting it into `design-model.yaml` unless the low-contrast behavior is clearly intentional and repeated.
+
 ## Output Rules
 
 `design-model.yaml.components` should stay compact and machine-usable:
